@@ -2,7 +2,7 @@
  * @fileoverview LaTeX syntax tree structure elements
  * This file is a part of TeXnous project.
  *
- * @copyright TeXnous project team (http://texnous.com) 2016
+ * @copyright TeXnous project team (http://texnous.org) 2016
  * @license LGPL-3.0
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of the
@@ -35,7 +35,7 @@ const SyntaxTree = require('./SyntaxTree'); // syntax tree structure elements
  * LaTeX syntax tree structure
  * @class
  * @extends SyntaxTree
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 module.exports = class extends SyntaxTree {
   //noinspection JSUnusedGlobalSymbols
@@ -43,7 +43,7 @@ module.exports = class extends SyntaxTree {
    * Constructor
    * @param {!Token} rootToken the root token (must have no parent and no tree)
    * @param {string} source the sources text that has this syntax tree
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   constructor(rootToken, source) {
     if (!(rootToken instanceof Token))
@@ -59,7 +59,7 @@ module.exports = class extends SyntaxTree {
  * @interface TokenProperties
  * @property {(?Token|undefined)} parentToken - The parent token or null if there is no parent
  * @property {(!Array.<Token>|undefined)} childTokens - The list of the child tokens
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 
 
@@ -69,14 +69,14 @@ module.exports = class extends SyntaxTree {
  * @class
  * @extends SyntaxTree.Node
  * @property {(Latex.Lexeme|null)} lexeme - The logical lexeme of the token
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 const Token = module.exports['Token'] = class extends SyntaxTree.Node {
   //noinspection JSUnusedGlobalSymbols
   /**
    * Constructor
    * @param {!TokenProperties=} opt_initialProperties the initial property values
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   constructor(opt_initialProperties) {
     if (opt_initialProperties === undefined) { // if the initial properties are not set
@@ -100,7 +100,7 @@ const Token = module.exports['Token'] = class extends SyntaxTree.Node {
    *        true to not include the node class name into the output, false otherwise
    * @return {string} the sources string
    * @override
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   toString(skipNodeClass) {
     return skipNodeClass ? super.toString(true) : 'LatexTree.Token{' + super.toString(true) + '}';
@@ -120,7 +120,7 @@ Object.defineProperties(Token.prototype, { // default properties
  * @property {!LatexStyle.Symbol|undefined} symbol -
  *           The LaTeX symbol or undefined if the symbol is unrecognized
  * @property {string|undefined} pattern - The pattern that corresponds to the unrecognized symbol
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 
 
@@ -132,14 +132,14 @@ Object.defineProperties(Token.prototype, { // default properties
  * @property {?LatexStyle.Symbol} symbol -
  *           The corresponding LaTeX symbol or null if the symbol is unrecognized
  * @property {string} pattern - The symbol LaTeX pattern
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 const SymbolToken = module.exports['SymbolToken'] = class extends Token {
   //noinspection JSUnusedGlobalSymbols
   /**
    * Constructor
    * @param {!SymbolTokenProperties} initialProperties the initial property values
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   constructor(initialProperties) {
     if (!(initialProperties instanceof Object))
@@ -162,7 +162,7 @@ const SymbolToken = module.exports['SymbolToken'] = class extends Token {
   /**
    * Get the logical lexeme
    * @return {(Latex.Lexeme|null)} the lexeme or null if the lexeme isn't defined
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get lexeme () {
     //noinspection JSUnresolvedVariable
@@ -173,7 +173,7 @@ const SymbolToken = module.exports['SymbolToken'] = class extends Token {
   /**
    * Get the symbol LaTeX pattern
    * @return {string} the symbol pattern
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get pattern () {
     //noinspection JSUnresolvedVariable
@@ -187,7 +187,7 @@ const SymbolToken = module.exports['SymbolToken'] = class extends Token {
    *        true to not include the node class name into the output, false otherwise
    * @return {string} the sources string
    * @override
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   toString(skipNodeClass) {
     let source = '';
@@ -231,7 +231,7 @@ Object.defineProperties(SymbolToken.prototype, { // make getters and setters enu
  *           True if the parameter is bounded by the logical brackets, false otherwise
  * @property {boolean} hasSpacePrefix -
  *           True if the parameter is prefixed by a space, false otherwise
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 
 
@@ -245,14 +245,14 @@ Object.defineProperties(SymbolToken.prototype, { // make getters and setters enu
  * @property {boolean} hasSpacePrefix -
  *           True if the parameter is prefixed by a space, false otherwise
  * @property {?LatexStyle.Parameter} parameter - The corresponding LaTeX parameter
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 const ParameterToken = module.exports['ParameterToken'] = class extends Token {
   //noinspection JSUnusedGlobalSymbols
   /**
    * Constructor
    * @param {!ParameterTokenProperties} initialProperties the initial property values
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   constructor(initialProperties) {
     if (!(initialProperties instanceof Object))
@@ -270,7 +270,7 @@ const ParameterToken = module.exports['ParameterToken'] = class extends Token {
   /**
    * Get the logical lexeme
    * @return {(Latex.Lexeme|null)} the lexeme or null if the lexeme isn't defined
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get lexeme () { return this.parameter && this.parameter.lexeme }
 
@@ -279,7 +279,7 @@ const ParameterToken = module.exports['ParameterToken'] = class extends Token {
    * Get the corresponding LaTeX parameter description
    * @return {?LatexStyle.Parameter}
    *         the LaTeX parameter or null of there is parent symbol or such a parameter
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get parameter () {
     /** @type {?SymbolToken} */
@@ -295,7 +295,7 @@ const ParameterToken = module.exports['ParameterToken'] = class extends Token {
    *        true to not include the node class name into the output, false otherwise
    * @return {string} the sources string
    * @override
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   toString(skipNodeClass) {
     let source = this.hasSpacePrefix ? ' ' : '';
@@ -321,7 +321,7 @@ Object.defineProperties(ParameterToken.prototype, { // make getters and setters 
  * @property {!LatexStyle.Command|undefined} command -
  *           The LaTeX command or undefined if the command is unrecognized
  * @property {string|undefined} name - The name that corresponds to the unrecognized command
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 
 
@@ -333,7 +333,7 @@ Object.defineProperties(ParameterToken.prototype, { // make getters and setters 
  * @property {!LatexStyle.Command} command -
  *           The corresponding LaTeX command or null if the command is unrecognized
  * @property {string|undefined} name - The LaTeX command name
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 const CommandToken = module.exports['CommandToken'] = class extends SymbolToken {
   //noinspection JSUnusedGlobalSymbols
@@ -366,7 +366,7 @@ const CommandToken = module.exports['CommandToken'] = class extends SymbolToken 
   /**
    * Get the LaTeX command
    * @return {!LatexStyle.Command} the command description
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get command () { return this.symbol }
 
@@ -374,7 +374,7 @@ const CommandToken = module.exports['CommandToken'] = class extends SymbolToken 
   /**
    * Get the LaTeX command name
    * @return {string} the command name
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get name () { return this.command.name }
 
@@ -384,7 +384,7 @@ const CommandToken = module.exports['CommandToken'] = class extends SymbolToken 
    *        true to not include the node class name into the output, false otherwise
    * @return {string} the sources string
    * @override
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   toString(skipNodeClass) {
    let source = '\\' + this.name + super.toString(true);
@@ -406,7 +406,7 @@ Object.defineProperties(CommandToken.prototype, { // make getters and setters en
  * @extends TokenProperties
  * @property {!LatexStyle.Environment} environment - The LaTeX environment
  * @property
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 
 
@@ -422,14 +422,14 @@ Object.defineProperties(CommandToken.prototype, { // make getters and setters en
  *           The environment end command token or null is there is no such a token
  * @property {?EnvironmentBodyToken} bodyToken -
  *           The environment body token or null is there is no such a token
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 const EnvironmentToken = module.exports['EnvironmentToken'] = class extends Token {
   //noinspection JSUnusedGlobalSymbols
   /**
    * Constructor
    * @param {!EnvironmentTokenProperties} initialProperties the initial property values
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   constructor(initialProperties) {
     if (!(initialProperties instanceof Object))
@@ -449,7 +449,7 @@ const EnvironmentToken = module.exports['EnvironmentToken'] = class extends Toke
   /**
    * Get the logical lexeme
    * @return {(Latex.Lexeme|null)} the lexeme or null if the lexeme isn't defined
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get lexeme () { return this.environment.lexeme }
 
@@ -457,7 +457,7 @@ const EnvironmentToken = module.exports['EnvironmentToken'] = class extends Toke
   /**
    * Get the begin command token
    * @return {?CommandToken} the command token or null if there is no begin command
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get beginCommandToken () {
     let beginCommandToken = this.childNode(0);
@@ -468,7 +468,7 @@ const EnvironmentToken = module.exports['EnvironmentToken'] = class extends Toke
   /**
    * Get the end command token
    * @return {?CommandToken} the command token or null if there is no end command
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get endCommandToken () {
     let endCommandToken = this.childNode(2);
@@ -480,7 +480,7 @@ const EnvironmentToken = module.exports['EnvironmentToken'] = class extends Toke
   /**
    * Get the environment body token
    * @return {?EnvironmentBodyToken} the body or null if there is no body
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get bodyToken () {
     let bodyToken = this.childNode(1);
@@ -494,7 +494,7 @@ const EnvironmentToken = module.exports['EnvironmentToken'] = class extends Toke
    *        true to not include the node class name into the output, false otherwise
    * @return {string} the sources string
    * @override
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   toString(skipNodeClass) {
     let beginCommandToken = this.beginCommandToken; // the begin command token
@@ -528,14 +528,14 @@ Object.defineProperties(EnvironmentToken.prototype, { // make getters and setter
  *           The environment begin command token or null is there is no such a token
  * @property {?CommandToken} endCommandToken -
  *           The environment end command token or null is there is no such a token
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 const EnvironmentBodyToken = module.exports['EnvironmentBodyToken'] = class extends Token {
   //noinspection JSUnusedGlobalSymbols
   /**
    * Get the LaTeX environment
    * @return {?LatexStyle.Environment} the environment or null if there is no parent environment
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get environment () { return this.parentNode && this.parentNode.environment }
 
@@ -544,7 +544,7 @@ const EnvironmentBodyToken = module.exports['EnvironmentBodyToken'] = class exte
   /**
    * Get the parent environment token
    * @return {?EnvironmentToken} the environment or null if there is no parent environment
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get environmentToken () { return this.parentNode }
 
@@ -553,7 +553,7 @@ const EnvironmentBodyToken = module.exports['EnvironmentBodyToken'] = class exte
   /**
    * Get the environment begin command token
    * @return {?CommandToken} the command token or null if there is no begin command
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get beginCommandToken () { return this.parentNode && this.parentNode.beginCommandToken }
 
@@ -562,7 +562,7 @@ const EnvironmentBodyToken = module.exports['EnvironmentBodyToken'] = class exte
   /**
    * Get the environment end command token
    * @return {(CommandToken|null)} the command token or null if there is no end command
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get endCommandToken () { return this.parentNode && this.parentNode.endCommandToken }
 
@@ -573,7 +573,7 @@ const EnvironmentBodyToken = module.exports['EnvironmentBodyToken'] = class exte
    *        true to not include the node class name into the output, false otherwise
    * @return {string} the sources string
    * @override
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   toString(skipNodeClass) {
     return skipNodeClass ?
@@ -593,7 +593,7 @@ Object.defineProperties(EnvironmentBodyToken.prototype, { // default properties
  * @extends TokenProperties
  * @property {number|undefined} lineBreakCount - The number of line breaks
  * @property
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 
 
@@ -603,14 +603,14 @@ Object.defineProperties(EnvironmentBodyToken.prototype, { // default properties
  * @class
  * @extends Token
  * @property {number} lineBreakCount - The number of line breaks
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 const SpaceToken = module.exports['SpaceToken'] = class extends Token {
   //noinspection JSUnusedGlobalSymbols
   /**
    * Constructor
    * @param {!SpaceTokenProperties} initialProperties the initial property values
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   constructor(initialProperties) {
     if (initialProperties === undefined)
@@ -633,7 +633,7 @@ const SpaceToken = module.exports['SpaceToken'] = class extends Token {
   /**
    * Get the logical lexeme
    * @return {(Latex.Lexeme|null)} the lexeme or null if the lexeme isn't defined
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get lexeme () {
     //noinspection JSUnresolvedVariable
@@ -647,7 +647,7 @@ const SpaceToken = module.exports['SpaceToken'] = class extends Token {
    *        true to not include the node class name into the output, false otherwise
    * @return {string} the sources string
    * @override
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   toString(skipNodeClass) {
     if (skipNodeClass) { // if the node class name must be skipped
@@ -684,7 +684,7 @@ Object.defineProperties(SpaceToken.prototype, { // default properties
  * @extends TokenProperties
  * @property {Latex.Lexeme} lexeme - The logical lexeme
  * @property {string} source - The source fragment
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 
 
@@ -694,14 +694,14 @@ Object.defineProperties(SpaceToken.prototype, { // default properties
  * @class
  * @extends Token
  * @property {string} source - The source fragment
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 const SourceToken = module.exports['SourceToken'] = class extends Token {
   //noinspection JSUnusedGlobalSymbols
   /**
    * Constructor
    * @param {!SourceTokenProperties} initialProperties the initial property values
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   constructor(initialProperties) {
     if (!(initialProperties instanceof Object))
@@ -724,7 +724,7 @@ const SourceToken = module.exports['SourceToken'] = class extends Token {
    *        true to not include the node class name into the output, false otherwise
    * @return {string} the sources string
    * @override
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   toString(skipNodeClass) {
     return skipNodeClass ? this.source : 'LatexTree.SourceToken[' + this.lexeme + ']{' + this.source + '}';

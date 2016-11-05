@@ -2,7 +2,7 @@
  * @fileoverview  LaTeX parser class tests
  * This file is a part of TeXnous project.
  *
- * @copyright TeXnous project team (http://texnous.com) 2016
+ * @copyright TeXnous project team (http://texnous.org) 2016
  * @license LGPL-3.0
  *
  * This unit test is free software; you can redistribute it and/or modify it under the terms of the

@@ -2,7 +2,7 @@
  * @fileoverview Syntax tree structure elements
  * This file is a part of TeXnous project.
  *
- * @copyright TeXnous project team (http://texnous.com) 2016
+ * @copyright TeXnous project team (http://texnous.org) 2016
  * @license LGPL-3.0
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of the
@@ -27,7 +27,7 @@
  * @class
  * @property {!Node} rootNode - The root node
  * @property {string} source - The source text
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -40,7 +40,7 @@ var SyntaxTree = module.exports = function () {
    * Constructor
    * @param {!Node} rootNode the root node (must have no parent and no tree)
    * @param {string} source the sources text that has this syntax tree
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   function _class(rootNode, source) {
     _classCallCheck(this, _class);
@@ -65,7 +65,7 @@ var SyntaxTree = module.exports = function () {
  * @property {(?Node|undefined)} parentNode - The parent node or null if there is no parent
  * @property {(!Array.<Node>|undefined)} childNodes - The list of the child nodes
  * @exports
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 
 /**
@@ -75,14 +75,14 @@ var SyntaxTree = module.exports = function () {
  * @property {?Node} parentNode - The parent node or null if there is no parent
  * @property {!Array.<Node>} childNodes - The child node list
  * @property {number} subtreeSize - The size of the subtree formed by this node
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 var Node = module.exports['Node'] = function () {
   //noinspection JSUnusedGlobalSymbols
   /**
    * Constructor
    * @param {!NodeProperties=} opt_initialProperties the initial property values
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   function _class2(opt_initialProperties) {
     _classCallCheck(this, _class2);
@@ -111,7 +111,7 @@ var Node = module.exports['Node'] = function () {
   /**
    * Get the child nodes
    * @return {!Array.<Node>} the child node list
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
 
 
@@ -124,7 +124,7 @@ var Node = module.exports['Node'] = function () {
      * Get the child node
      * @param {(!Node|number)} node the child node or its child index
      * @return {?Node} the child node or null of there is no such a child node
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
     value: function childNode(node) {
       if (typeof node === 'number') // if the node child index is given
@@ -138,7 +138,7 @@ var Node = module.exports['Node'] = function () {
      * Get the child node index
      * @param {(!Node|number)} node the child node or its child index
      * @return {(number|null)} the child node or null of there is no such a child node
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {
@@ -160,7 +160,7 @@ var Node = module.exports['Node'] = function () {
      * @param {number=0} childNodesToCover
      *        the number of this child nodes to become the child nodes of the new node
      * @return {?Node} the inserted node or null if cannot insert
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {
@@ -223,7 +223,7 @@ var Node = module.exports['Node'] = function () {
      * @param {!Node} node the subtree to insert root node (must have no parent)
      * @param {number=} childIndex
      *        the position of the subtree root for this child node list, the last by default
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {
@@ -266,7 +266,7 @@ var Node = module.exports['Node'] = function () {
      * Remove a child node of this node. All its child nodes become the child nodes of this node
      * @param {(!Node|number)} node the subtree root or its child index
      * @return {?Node} the removed node or null of there is no such a child node
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {
@@ -304,7 +304,7 @@ var Node = module.exports['Node'] = function () {
      * Remove a subtree formed by a child node of this node
      * @param {(!Node|number)} node the subtree root or its child index
      * @return {?Node} the removed subtree root node or null of there is no such a child node
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {
@@ -340,7 +340,7 @@ var Node = module.exports['Node'] = function () {
      *        true to not include the node class name into the output, false otherwise
      * @return {string} the sources string
      * @override
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {

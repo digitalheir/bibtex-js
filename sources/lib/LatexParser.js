@@ -2,7 +2,7 @@
  * @fileoverview LaTeX parser class
  * This file is a part of TeXnous project.
  *
- * @copyright TeXnous project team (http://texnous.com) 2016
+ * @copyright TeXnous project team (http://texnous.org) 2016
  * @license LGPL-3.0
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of the
@@ -35,14 +35,14 @@ const LatexTree = require('./LatexTree'); // LaTeX tree structure elements
  * LaTeX parser structure
  * @class
  * @property {!LatexStyle} latexStyle - The LaTeX style description to be used for parsing
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 module.exports = class {
   //noinspection JSUnusedGlobalSymbols
   /**
    * Constructor
    * @param {!LatexStyle} latexStyle LaTeX style description to be used for parsing
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   constructor(latexStyle) {
     if (!(latexStyle instanceof LatexStyle))
@@ -58,7 +58,7 @@ module.exports = class {
    * @param {string} source the sources to parse
    * @param {(!Context|undefined)} opt_context the parsing context
    * @return {!Array.<!LatexTree.Token>} the list of the parsed tokens
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   parse(source, opt_context) {
     if (typeof source !== 'string') throw new TypeError('"sources" isn\'t a string');
@@ -86,7 +86,7 @@ module.exports = class {
    * @param {!Context} context the parsing context
    * @return {?LatexTree.Token} the parsed token or null if the token cannot be parsed
    * @private
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   parseToken_(context) {
     let token = this.parseSpaceToken_(context); // collect comments and try to parse a space token
@@ -118,7 +118,7 @@ module.exports = class {
    *        the parameter end label or undefined if there should be a single token
    * @return {?LatexTree.ParameterToken} the parsed parameter token or null if cannot parse
    * @private
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   parseParameterToken_(context, parameter, opt_endLabel) {
     let currentTokenBackup = context.currentToken; // store the current token
@@ -167,7 +167,7 @@ module.exports = class {
    * @param {!Context} context the parsing context
    * @param {!LatexTree.Token} token the token to process
    * @private
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   processParsedToken_(context, token) {
     // TODO process comments and position
@@ -183,7 +183,7 @@ module.exports = class {
    * @param {!Context} context the parsing context
    * @return {boolean} true if there was a comment line, false otherwise
    * @private
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   parseCommentLine_(context) {
     // try to find a comment int the sources tail
@@ -206,7 +206,7 @@ module.exports = class {
    * @param {!Context} context the parsing context
    * @return {?LatexTree.SpaceToken} the parsed token or null if cannot parse a space token
    * @private
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   parseSpaceToken_(context) {
     let isSpace = false; // true is the sources fragment is a space token, false otherwise
@@ -240,7 +240,7 @@ module.exports = class {
    * @param {!Context} context the parsing context
    * @return {?LatexTree.EnvironmentToken} the parsed token or null if cannot parse
    * @private
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   parseEnvironmentToken_(context) {
     if (!context.source.startsWith('\\begin', context.position)) return null;
@@ -298,7 +298,7 @@ module.exports = class {
    * @param {!Context} context the parsing context
    * @return {?LatexTree.CommandToken} the parsed token or null if cannot parse
    * @private
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   parseCommandToken_(context) {
     // try to find a command name
@@ -324,7 +324,7 @@ module.exports = class {
    * @param {!Context} context the parsing context
    * @return {?LatexTree.Token} the parsed token or null if cannot parse
    * @private
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   parseSymbolsToken_(context) {
     // get the available symbols
@@ -354,7 +354,7 @@ module.exports = class {
    *        the symbol or command descriptions in the priority descending order
    * @return {?LatexTree.Token} the parsed symbol or command token or null if cannot parse
    * @private
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   parsePatterns_(context, symbols) {
     let contextBackup = context.copy(); // backup the current context
@@ -375,7 +375,7 @@ module.exports = class {
    * @param {!Array.<!LatexStyle.Symbol>} symbol the symbol or command description
    * @return {?LatexTree.Token} the parsed symbol or command token or null if cannot parse
    * @private
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   parsePattern_(context, symbol) {
     let currentTokenBackup = context.currentToken; // store the current token
@@ -445,7 +445,7 @@ module.exports = class {
    * @param {Latex.Lexeme=} opt_lexeme the lexeme of the single token to parse
    * @return {boolean} true if the parsing was successful, false otherwise
    * @private
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   parseUntilLabel_(context, endLabel, opt_lexeme) {
     switch (opt_lexeme) {
@@ -503,7 +503,7 @@ const Context = module.exports['Context'] = class {
    * Copy this context
    * @param {!Context=} opt_target the context to copy to or undefined to create a new one
    * @return {!Context} the context copy
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   copy(opt_target) {
     let target = opt_target || new Context(); // the context to copy this context in
@@ -523,7 +523,7 @@ const Context = module.exports['Context'] = class {
   /**
    * Update the LaTeX state
    * @param {!Array.<!Latex.Operation>} operations the LaTeX operation list
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   updateState(operations) {
     if (!(operations instanceof Array))

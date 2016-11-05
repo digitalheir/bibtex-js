@@ -2,7 +2,7 @@
  * @fileoverview LaTeX style structures
  * This file is a part of TeXnous project.
  *
- * @copyright TeXnous project team (http://texnous.com) 2016
+ * @copyright TeXnous project team (http://texnous.org) 2016
  * @license LGPL-3.0
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of the
@@ -36,7 +36,7 @@ const Latex = require('./Latex');
 /**
  * LaTeX style collection
  * @class
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 module.exports = class {
   /**
@@ -48,13 +48,13 @@ module.exports = class {
    *           The commands of the package in the priority descending order
    * @property {(!Array.<!EnvironmentProperties>|undefined)} environments -
    *           The environments of the package
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
 
   //noinspection JSUnusedGlobalSymbols
   /**
    * Constructor
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   constructor() {
     /**
@@ -83,7 +83,7 @@ module.exports = class {
    * Load a package with style definitions
    * @param {string} packageName the name of the style package
    * @param {PackageProperties} stylePackage the style package
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   loadPackage(packageName, stylePackage) {
     if (stylePackage.symbols !== undefined) { // if the symbol descriptions are defined
@@ -135,7 +135,7 @@ module.exports = class {
   /**
    * Unload a package with style definitions
    * @param {string} packageName the name of the style package
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   unloadPackage(packageName) {
     // for all the symbol pattern first chars
@@ -189,7 +189,7 @@ module.exports = class {
    * @param {!Latex.State} state the state that the symbols must match to
    * @param {string} patternFirstChar the first char of the symbol parameter pattern
    * @return {!Array.<!Symbol>} the list of symbols in the priority descending order
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   symbols(state, patternFirstChar) {
     if (!(state instanceof Latex.State))
@@ -214,7 +214,7 @@ module.exports = class {
    * @param {!Latex.State} state the state that the commands must match to
    * @param {!string} name the name of the command
    * @return {Array.<Command>} the list of commands in the priority descending order
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   commands(state, name) {
     if (!(state instanceof Latex.State))
@@ -238,7 +238,7 @@ module.exports = class {
    * @param {!Latex.State} state the state that the environments must match to
    * @param {!string} name the name of the environment
    * @return {Array.<Environment>} the list of environments in the priority descending order
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   environments(state, name) {
     if (!(state instanceof Latex.State)) throw new SyntaxError('state isn\'t Latex.State instance');
@@ -264,7 +264,7 @@ module.exports = class {
  * @property {(Latex.Lexeme|null|undefined)} lexeme - The logical lexeme
  * @property {(!Object.<Latex.Mode, boolean>|undefined)} modes -
  *           The modes where the item is defined or not
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 
 
@@ -274,7 +274,7 @@ module.exports = class {
  * @class
  * @property {(Latex.Lexeme|null)} lexeme - The logical lexeme
  * @property {!Object.<Latex.Mode, boolean>} modes - The modes where the item is defined or not
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 const Item = class {
   //noinspection JSUnusedGlobalSymbols
@@ -321,7 +321,7 @@ const Item = class {
    * Compare this item with the other one
    * @param {?Item} other the item to compare with
    * @return {boolean} true if the items are equal, false otherwise
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   equals(other) {
     if (!(other instanceof Item)) return false;
@@ -342,7 +342,7 @@ Object.defineProperties(Item.prototype, { // default property values
  * @extends ItemProperties
  * @property {(!Array.<!Latex.Operation|!Latex.OperationProperties>|undefined)} operations -
  *           The LaTeX operations that are performed before the parameter
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 
 
@@ -353,7 +353,7 @@ Object.defineProperties(Item.prototype, { // default property values
  * @extends Item
  * @property {!Array.<!Latex.Operation>} operations -
  *           The LaTeX operations that are performed before this parameter
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 const Parameter = module.exports['Parameter'] = class extends Item {
   //noinspection JSUnusedGlobalSymbols
@@ -379,7 +379,7 @@ const Parameter = module.exports['Parameter'] = class extends Item {
   /**
    * Get the LaTeX operations that are performed before this parameter
    * @return {!Array.<!Latex.Operation>} the operation list
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get operations() { return this.operations_.slice() }
 
@@ -390,7 +390,7 @@ const Parameter = module.exports['Parameter'] = class extends Item {
    * @param {?Parameter} other the parameter to compare with
    * @return {boolean} true if the parameters are equal, false otherwise
    * @override
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   equals(other) {
     if (!(other instanceof Parameter)) return false; // type test
@@ -423,7 +423,7 @@ Object.defineProperties(Parameter.prototype, { // default property values
  * @property {(string|undefined)} pattern - The LaTeX input pattern
  * @property {(string|undefined)} html - The HTML output pattern
  * are performed after the symbol
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 
 
@@ -438,7 +438,7 @@ Object.defineProperties(Parameter.prototype, { // default property values
  * @property {!Array.<null|string|number>} patternComponents - The LaTeX input pattern components
  * @property {string} pattern - The LaTeX input pattern
  * @property {string} html - The HTML output pattern
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 const Symbol = module.exports['Symbol'] = class extends Item {
   //noinspection JSUnusedGlobalSymbols
@@ -503,7 +503,7 @@ const Symbol = module.exports['Symbol'] = class extends Item {
   /**
    * Get the LaTeX operations that are performed after this symbol
    * @return {!Array.<!Latex.Operation>} the operation list
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get operations () { return this.operations_.slice() }
 
@@ -512,7 +512,7 @@ const Symbol = module.exports['Symbol'] = class extends Item {
   /**
    * Get the parameters description list
    * @return {!Array.<!Latex.Parameter>} the parameter list
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get parameters () { return this.parameters_.slice() }
 
@@ -522,7 +522,7 @@ const Symbol = module.exports['Symbol'] = class extends Item {
    * Get the parameter description
    * @param {number} parameterIndex the index of the parameter
    * @return {?Latex.Parameter} the parameter or null if there is no parameter with such an index
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   parameter(parameterIndex) { return this.parameters_[parameterIndex] || null }
 
@@ -531,7 +531,7 @@ const Symbol = module.exports['Symbol'] = class extends Item {
   /**
    * Get the pattern components
    * @return {!Array.<!Latex.Parameter>} the pattern component list
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get patternComponents () { return this.patternComponents_.slice() }
 
@@ -540,7 +540,7 @@ const Symbol = module.exports['Symbol'] = class extends Item {
   /**
    * Get the pattern
    * @return {string} the LaTeX input pattern
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get pattern () {
     return this.patternComponents_.map(patternComponent => {
@@ -557,7 +557,7 @@ const Symbol = module.exports['Symbol'] = class extends Item {
    * @param {?Symbol} other the symbol to compare with
    * @return {boolean} true if the symbols are equal, false otherwise
    * @override
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   equals(other) {
     if (!(other instanceof Symbol)) return false; // type test
@@ -599,7 +599,7 @@ Object.defineProperties(Symbol.prototype, { // default property values
  * @interface CommandProperties
  * @extends SymbolProperties
  * @property {(string|undefined)} name - The command name (a sequence of letters and optional star)
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 
 
@@ -609,7 +609,7 @@ Object.defineProperties(Symbol.prototype, { // default property values
  * @class
  * @extends Symbol
  * @property {string} name - The command name (a sequence of letters and optional star)
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 const Command = module.exports['Command'] = class extends Symbol {
   //noinspection JSUnusedGlobalSymbols
@@ -636,7 +636,7 @@ const Command = module.exports['Command'] = class extends Symbol {
    * @param {?Command} other the command to compare with
    * @return {boolean} true if the commands are equal, false otherwise
    * @override
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   equals(other) {
     if (!(other instanceof Command)) return false; // type test
@@ -655,7 +655,7 @@ Object.defineProperties(Command.prototype, { // default property values
  * @interface EnvironmentProperties
  * @extends ItemProperties
  * @property {(string|undefined)} name - The command name (a sequence of letters and optional star)
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 
 
@@ -665,7 +665,7 @@ Object.defineProperties(Command.prototype, { // default property values
  * @class
  * @extends Item
  * @property {string} name - The environment name (a sequence of letters and optional star)
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 const Environment = module.exports['Environment'] = class extends Item {
   //noinspection JSUnusedGlobalSymbols
@@ -692,7 +692,7 @@ const Environment = module.exports['Environment'] = class extends Item {
    * @param {?Environment} other the environment to compare with
    * @return {boolean} true if the environments are equal, false otherwise
    * @override
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   equals(other) {
     if (!(other instanceof Environment)) return false; // type test

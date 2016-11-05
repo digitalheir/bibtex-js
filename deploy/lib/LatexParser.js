@@ -2,7 +2,7 @@
  * @fileoverview LaTeX parser class
  * This file is a part of TeXnous project.
  *
- * @copyright TeXnous project team (http://texnous.com) 2016
+ * @copyright TeXnous project team (http://texnous.org) 2016
  * @license LGPL-3.0
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of the
@@ -24,7 +24,7 @@
 
 /** @external Latex */
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -41,14 +41,14 @@ var LatexTree = require('./LatexTree'); // LaTeX tree structure elements
  * LaTeX parser structure
  * @class
  * @property {!LatexStyle} latexStyle - The LaTeX style description to be used for parsing
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 module.exports = function () {
   //noinspection JSUnusedGlobalSymbols
   /**
    * Constructor
    * @param {!LatexStyle} latexStyle LaTeX style description to be used for parsing
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   function _class(latexStyle) {
     _classCallCheck(this, _class);
@@ -64,7 +64,7 @@ module.exports = function () {
    * @param {string} source the sources to parse
    * @param {(!Context|undefined)} opt_context the parsing context
    * @return {!Array.<!LatexTree.Token>} the list of the parsed tokens
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
 
 
@@ -98,7 +98,7 @@ module.exports = function () {
      * @param {!Context} context the parsing context
      * @return {?LatexTree.Token} the parsed token or null if the token cannot be parsed
      * @private
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {
@@ -136,7 +136,7 @@ module.exports = function () {
      *        the parameter end label or undefined if there should be a single token
      * @return {?LatexTree.ParameterToken} the parsed parameter token or null if cannot parse
      * @private
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {
@@ -188,7 +188,7 @@ module.exports = function () {
      * @param {!Context} context the parsing context
      * @param {!LatexTree.Token} token the token to process
      * @private
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {
@@ -207,7 +207,7 @@ module.exports = function () {
      * @param {!Context} context the parsing context
      * @return {boolean} true if there was a comment line, false otherwise
      * @private
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {
@@ -234,7 +234,7 @@ module.exports = function () {
      * @param {!Context} context the parsing context
      * @return {?LatexTree.SpaceToken} the parsed token or null if cannot parse a space token
      * @private
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {
@@ -273,7 +273,7 @@ module.exports = function () {
      * @param {!Context} context the parsing context
      * @return {?LatexTree.EnvironmentToken} the parsed token or null if cannot parse
      * @private
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {
@@ -333,7 +333,7 @@ module.exports = function () {
      * @param {!Context} context the parsing context
      * @return {?LatexTree.CommandToken} the parsed token or null if cannot parse
      * @private
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {
@@ -361,7 +361,7 @@ module.exports = function () {
      * @param {!Context} context the parsing context
      * @return {?LatexTree.Token} the parsed token or null if cannot parse
      * @private
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {
@@ -393,7 +393,7 @@ module.exports = function () {
      *        the symbol or command descriptions in the priority descending order
      * @return {?LatexTree.Token} the parsed symbol or command token or null if cannot parse
      * @private
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {
@@ -419,7 +419,7 @@ module.exports = function () {
      * @param {!Array.<!LatexStyle.Symbol>} symbol the symbol or command description
      * @return {?LatexTree.Token} the parsed symbol or command token or null if cannot parse
      * @private
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {
@@ -495,7 +495,7 @@ module.exports = function () {
      * @param {Latex.Lexeme=} opt_lexeme the lexeme of the single token to parse
      * @return {boolean} true if the parsing was successful, false otherwise
      * @private
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {
@@ -560,7 +560,7 @@ var Context = module.exports['Context'] = function () {
    * Copy this context
    * @param {!Context=} opt_target the context to copy to or undefined to create a new one
    * @return {!Context} the context copy
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
 
 
@@ -583,7 +583,7 @@ var Context = module.exports['Context'] = function () {
     /**
      * Update the LaTeX state
      * @param {!Array.<!Latex.Operation>} operations the LaTeX operation list
-     * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+     * @author Kirill Chuvilin <k.chuvilin@texnous.org>
      */
 
   }, {

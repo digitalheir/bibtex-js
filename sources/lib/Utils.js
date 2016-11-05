@@ -2,7 +2,7 @@
  * @fileoverview General JavaScript utils
  * This file is a part of TeXnous project.
  *
- * @copyright TeXnous project team (http://texnous.com) 2016
+ * @copyright TeXnous project team (http://texnous.org) 2016
  * @license LGPL-3.0
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of the
@@ -27,7 +27,7 @@
  * Extend a class with another one.
  * @param {!function} target the class to extend
  * @param {!function=} opt_superclass the class to extend with
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 module.exports['extend'] = function (target, opt_superclass) {
   if (typeof target !== 'function') throw new SyntaxError('target isn\'t a function');
@@ -49,7 +49,7 @@ module.exports['extend'] = function (target, opt_superclass) {
  *        properties will be used if undefined
  * @param {{writable:boolean,enumerable:boolean,configurable:boolean}=} opt_attributes
  *        property attributes, { writable: true, enumerable: true, configurable: true } by default
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 module.exports['updateProperties'] = function (target, values, opt_keys, opt_attributes) {
   if (!(target instanceof Object)) throw new TypeError('"target" isn\'t an Object instance');
@@ -103,7 +103,7 @@ module.exports['updateProperties'] = function (target, values, opt_keys, opt_att
  *        properties will be used if undefined
  * @param {boolean=true} opt_skipUndefined true to skip keys with undefined values, false otherwise
  * @return {boolean} true if all the defined properties are the same false otherwise
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 module.exports['testProperties'] = function (target, values, opt_keys, opt_skipUndefined) {
   if (!(target instanceof Object)) throw new TypeError('"target" isn\'t an Object instance');

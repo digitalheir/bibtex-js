@@ -2,7 +2,7 @@
  * @fileoverview General LaTeX definitions
  * This file is a part of TeXnous project.
  *
- * @copyright TeXnous project team (http://texnous.com) 2016
+ * @copyright TeXnous project team (http://texnous.org) 2016
  * @license LGPL-3.0
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of the
@@ -36,7 +36,7 @@ module.exports = {};
 /**
  * LaTeX lexeme
  * @enum {string}
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 module.exports['Lexeme'] = {
   BINARY_OPERATOR: 'BINARY_OPERATOR', // mathematical binary operator

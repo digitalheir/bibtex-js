@@ -1,5 +1,5 @@
 # LaTeX parser core modules
-This file is a part of [**TeXnous project**](http://texnous.com).
+This file is a part of [**TeXnous project**](http://texnous.org).
 
 This is a set of libraries designed to build abstract syntax trees for LaTeX documents using JavaScript.
 Implemented functionality requires LaTeX symbols, commands and environments contained in analyzed files to be described and provided to the parser object.

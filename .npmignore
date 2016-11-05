@@ -1,0 +1,7 @@
+*.map
+*.tgz
+
+.*
+node_modules
+sources
+tests

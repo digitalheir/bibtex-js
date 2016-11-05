@@ -2,7 +2,7 @@
  * @fileoverview Syntax tree structure elements
  * This file is a part of TeXnous project.
  *
- * @copyright TeXnous project team (http://texnous.com) 2016
+ * @copyright TeXnous project team (http://texnous.org) 2016
  * @license LGPL-3.0
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of the
@@ -28,7 +28,7 @@
  * @class
  * @property {!Node} rootNode - The root node
  * @property {string} source - The source text
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 const SyntaxTree = module.exports = class {
   //noinspection JSUnusedGlobalSymbols
@@ -36,7 +36,7 @@ const SyntaxTree = module.exports = class {
    * Constructor
    * @param {!Node} rootNode the root node (must have no parent and no tree)
    * @param {string} source the sources text that has this syntax tree
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   constructor(rootNode, source) {
     if (!(rootNode instanceof Node))
@@ -60,7 +60,7 @@ const SyntaxTree = module.exports = class {
  * @property {(?Node|undefined)} parentNode - The parent node or null if there is no parent
  * @property {(!Array.<Node>|undefined)} childNodes - The list of the child nodes
  * @exports
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 
 
@@ -72,14 +72,14 @@ const SyntaxTree = module.exports = class {
  * @property {?Node} parentNode - The parent node or null if there is no parent
  * @property {!Array.<Node>} childNodes - The child node list
  * @property {number} subtreeSize - The size of the subtree formed by this node
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 const Node = module.exports['Node'] = class {
   //noinspection JSUnusedGlobalSymbols
   /**
    * Constructor
    * @param {!NodeProperties=} opt_initialProperties the initial property values
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   constructor(opt_initialProperties) {
     if (opt_initialProperties !== undefined) { // if the initial properties are defined
@@ -106,7 +106,7 @@ const Node = module.exports['Node'] = class {
   /**
    * Get the child nodes
    * @return {!Array.<Node>} the child node list
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get childNodes() {
     return this.childNodes_.slice()
@@ -118,7 +118,7 @@ const Node = module.exports['Node'] = class {
    * Get the child node
    * @param {(!Node|number)} node the child node or its child index
    * @return {?Node} the child node or null of there is no such a child node
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   childNode(node) {
     if (typeof node === 'number') // if the node child index is given
@@ -133,7 +133,7 @@ const Node = module.exports['Node'] = class {
    * Get the child node index
    * @param {(!Node|number)} node the child node or its child index
    * @return {(number|null)} the child node or null of there is no such a child node
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   childIndex(node) {
     if (typeof node === 'number') // if the node child index is given
@@ -153,7 +153,7 @@ const Node = module.exports['Node'] = class {
    * @param {number=0} childNodesToCover
    *        the number of this child nodes to become the child nodes of the new node
    * @return {?Node} the inserted node or null if cannot insert
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   insertChildNode(node, childIndex, childNodesToCover) {
     if (!(node instanceof SyntaxTree.Node))
@@ -213,7 +213,7 @@ const Node = module.exports['Node'] = class {
    * @param {!Node} node the subtree to insert root node (must have no parent)
    * @param {number=} childIndex
    *        the position of the subtree root for this child node list, the last by default
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   insertChildSubtree(node, childIndex) {
     if (!(node instanceof SyntaxTree.Node))
@@ -256,7 +256,7 @@ const Node = module.exports['Node'] = class {
    * Remove a child node of this node. All its child nodes become the child nodes of this node
    * @param {(!Node|number)} node the subtree root or its child index
    * @return {?Node} the removed node or null of there is no such a child node
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   removeChildNode(node) {
     let nodeChildIndex = this.childIndex(node); // the child index of the node
@@ -290,7 +290,7 @@ const Node = module.exports['Node'] = class {
    * Remove a subtree formed by a child node of this node
    * @param {(!Node|number)} node the subtree root or its child index
    * @return {?Node} the removed subtree root node or null of there is no such a child node
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   removeChildSubtree(node) {
     let nodeChildIndex = this.childIndex(node); // the child index of the node
@@ -322,7 +322,7 @@ const Node = module.exports['Node'] = class {
    *        true to not include the node class name into the output, false otherwise
    * @return {string} the sources string
    * @override
-   * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
+   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   toString(skipNodeClass) {
     let source = ''; // the sources
