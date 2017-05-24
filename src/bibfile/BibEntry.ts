@@ -22,7 +22,23 @@ export function parseEntryFields(fields: any): EntryFields {
     return fieldz;
 }
 
-export type EntryFields = { [k: string]: BibFileNode };
+
+
+export function parseFieldValue(value: any): FieldValue {
+    switch(value.type){
+        case "quotedstringwrapper":
+            return new OuterQuotedString();
+            case "bracedstringwrapper":
+            return new OuterBracedString();
+        default:
+            throw new Error();
+    }
+}
+
+export type FieldValue = number | string | OuterQuotedString | OuterBracedString;
+
+
+export type EntryFields = { [k: string]: FieldValue };
 
 export function isBibEntry(x: any): x is BibEntry {
     return typeof x["@type"] === "string"
