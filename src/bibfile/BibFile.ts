@@ -13,7 +13,7 @@ import {isPreamble, Preamble} from "./BibPreamble";
 import {parseNode} from "./parseBibNode";
 
 
-export type NonBibComment = BibFileNode | BibEntry;
+export type NonBibComment = BibEntry | StringEntry | Preamble;
 
 
 /**
@@ -22,6 +22,13 @@ export type NonBibComment = BibFileNode | BibEntry;
 export class BibFile {
     readonly content: (NonBibComment | BibComment)[];
     readonly comments: BibComment[];
+/**
+*BibTEX
+* will complain if two entries have the same internal key, even if they aren’t capitalized in the same
+* way. For instance, you cannot have two entries named Example and example.
+* In the same way, if you cite both example and Example, BibTEX will complain. Indeed, it would
+* have to include the same entry twice, which probably is not what you want;
+*/
     readonly entries: NonBibComment[];
 
     /**
@@ -50,9 +57,14 @@ export class BibFile {
         this.comments = content.filter(isBibComment).map(c => {
             if (isBibComment(c))return c; else throw new Error();
         });
+        
+        
         this.entries = content.filter(c => isBibEntry(c)).map(c => {
             if (isBibEntry(c)) return c; else throw new Error();
         });
+        this.entries
+        
+        
         this.preambles = content.filter(c => isPreamble(c)).map(c => {
             if (isPreamble(c)) return c; else throw new Error();
         });
