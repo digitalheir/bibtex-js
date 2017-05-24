@@ -9,3 +9,13 @@ export class QuotedString extends BibFileNode {
         this.data=data;
     }
 }
+
+
+export class OuterQuotedString extends BibFileNode {
+    readonly data: Stringy[];
+
+    constructor(data: Stringy[]){
+        super("quotedstringwrapper");
+        this.data=data;
+    }
+}
