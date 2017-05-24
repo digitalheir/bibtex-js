@@ -1,0 +1,16 @@
+node_modules/
+*.log
+*.tgz
+
+/src/
+test/
+gulpfile.js
+testrun.ts
+webpack.config.js
+tsconfig.json
+/tslint.json
+/typings.json
+typings
+dist/test
+
+/try.js

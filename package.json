@@ -1,0 +1,39 @@
+{
+  "name": "bibtex-parser",
+  "version": "0.1.0",
+  "description": "For parsing a BiBTeX file into JSON",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "repository": "git@github.com:digitalheir/tex-string-handler.git",
+  "author": "Maarten Trompper",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "@types/assert": "0.0.31"
+  },
+  "devDependencies": {
+    "@types/assert": "0.0.31",
+    "@types/chai": "^3.5.2",
+    "@types/mocha": "^2.2.40",
+    "assert": "^1.4.1",
+    "awesome-typescript-loader": "^3.1.2",
+    "chai": "^3.5.0",
+    "mocha": "^3.4.1",
+    "nearley": "^2.9.2",
+    "rimraf": "^2.5.4",
+    "ts-node": "^3.0.4",
+    "tslint": "^5.3.2",
+    "typescript": "^2.3.3",
+    "webpack": "^2.3.3"
+  },
+  "scripts": {
+    "build": "npm run clean && npm run build:min",
+    "build:min": "webpack -p",
+    "build:ts": "tsc",
+    "clean": "rimraf dist",
+    "test": "mocha -r ts-babel-node/register test/**/*.spec.ts",
+    "nearleyc": "nearleyc src/parser/parser.ne -o src/parser/parser.js",
+    "nearleytest": "nearleyc src/parser/parser.ne -o src/parser/test.ts",
+    "nearleyrr": "nearley-railroad src/parser/parser.ne -o bibtex.html"
+  }
+}
