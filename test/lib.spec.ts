@@ -80,6 +80,39 @@ describe("lexer", () => {
 });
 
 
+describe("field values", () => {
+    it("should lex", function () {
+          const bib = parseBibFile(`@b00k{comp4nion,
+                quoted        = "Simple quoted string",
+                quotedComplex = "Complex " # " quoted "#" string",
+                braced        = {I am a so-called "braced string"},
+                bracedComplex = {I {{\am}} a {so-called} {\"b}raced string{\"}.},
+                number        = 1993 ,
+                naughtyNumber = 1993a,
+                naughtString  = abc
+            }`);
+        assert.deepEqual(
+            lexer1.readTokens(),
+            [
+                {"type": "ws", "string": "\n\t\n"},
+                {"type": "id", "string": "thisisallacommentof"},
+                "{",
+                "}",
+                {"type": "id", "string": "commentswitheverythingexceptan"},
+                "\"",
+                ",",
+                {"type": "ws", "string": " "},
+                {"type": "id", "string": "whichweca"},
+                123,
+                {"type": "id", "string": "nescapewitha"},
+                {"type": "number", "string": "0123"},
+                {"type": "ws", "string": "  "}
+            ]
+        );
+    });
+});
+
+
 describe("parser", () => {
     it("should parse comments", function () {
         // const p = new nearley.Parser(grammar.ParserRules, grammar.ParserStart);
