@@ -13,6 +13,10 @@ export class OuterQuotedString extends BibStringComponent {
     }
 }
 
+export function isOuterQuotedString(x: any): x is OuterQuotedString {
+    return x.type === "quotedstringwrapper";
+}
+
 // export class DefiniteOuterQuotedString extends BibStringComponent {
 //     readonly data: DefiniteStringy[];
 //

@@ -3,12 +3,12 @@ import * as nearley from "nearley";
 import {grammar} from "../parser/ts-parser";
 
 import Lexer from "../lexer/Lexer";
-import {isArray} from "../util";
+import {isArray, mustBeString} from "../util";
 import {isKeyVal} from "./KeyVal";
 import {BibEntry, FieldValue, isBibEntry, parseEntryFields} from "./BibEntry";
 import {BibComment, CommentEntry, flattenPlainText, isBibComment} from "./BibComment";
-import {isPreamble, Preamble} from "./BibPreamble";
-import {StringEntry} from "./StringEntry";
+import {isPreamble, Preamble, newPreambleNode} from "./BibPreamble";
+import {newStringNode, StringEntry} from "./StringEntry";
 
 
 export type NonBibComment = BibEntry | CommentEntry | StringEntry | Preamble;
@@ -22,7 +22,7 @@ export class BibFile {
     readonly comments: BibComment[];
 
     readonly entries: BibEntry[];
-    readonly entries$: {[key: string]: BibEntry};
+    readonly entries$: { [key: string]: BibEntry };
 
     /**
      * Anything declared in a @preamble command will be concatenated and put in a variable
@@ -50,27 +50,27 @@ export class BibFile {
         this.comments = content.filter(isBibComment).map(c => {
             if (isBibComment(c))return c; else throw new Error();
         });
-        
-        
+
+
         this.entries = content.filter(c => isBibEntry(c)).map(c => {
             if (isBibEntry(c)) return c; else throw new Error();
         });
-        
+
         const entryMap: { [k: string]: BibEntry } = {};
         this.entries.forEach((entry: BibEntry) => {
             const key = entry._id.toLowerCase();
             /**
-            *BibTEX
-            * will complain if two entries have the same internal key, even if they aren’t capitalized in the same
-            * way. For instance, you cannot have two entries named Example and example.
-            * In the same way, if you cite both example and Example, BibTEX will complain. Indeed, it would
-            * have to include the same entry twice, which probably is not what you want;
-            */
-            if(!!entryMap[key]) throw new Error("Entry with id "+key+" was defined more than once");
+             *BibTEX
+             * will complain if two entries have the same internal key, even if they aren’t capitalized in the same
+             * way. For instance, you cannot have two entries named Example and example.
+             * In the same way, if you cite both example and Example, BibTEX will complain. Indeed, it would
+             * have to include the same entry twice, which probably is not what you want;
+             */
+            if (!!entryMap[key]) throw new Error("Entry with id " + key + " was defined more than once");
             entryMap[key] = entry;
         });
         this.entries$ = entryMap;
-        
+
         this.preambles = content.filter(c => isPreamble(c)).map(c => {
             if (isPreamble(c)) return c; else throw new Error();
         });
@@ -98,10 +98,22 @@ function parseEntry(entry: any): NonBibComment {
             if (typeof data["@type"] === "string") {
                 return new BibEntry(data["@type"], data._id, parseEntryFields(data.fields));
             }
-            // todo
-            // else
-            //     return parseNode(data);
 
+            let type = mustBeString(data.type);
+            switch (type) {
+                case "string":
+                    return newStringNode(data);
+                case "preamble":
+                    return newPreambleNode(data);
+                // case "bracedstringwrapper":
+                //     return new BracedString(parseComplexStringOuter(data));
+                // case "quotedstringwrapper":
+                //     return new QuotedString(parseComplexStringOuter(data));
+                // case "braced":
+                // case "quotedstring":
+                default:
+                    throw new Error("Unexpected entry parsed: " + data.type);
+            }
         default:
             throw new Error("Expected object as data for entry");
     }
