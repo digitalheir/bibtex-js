@@ -56,7 +56,7 @@ export function parseEntryFields(fields: any): EntryFields {
 }
 
 
-export function parseStringComponent(braceDepth: number, obj: any): BibStringComponent | string | number {
+export function parseStringComponent(braceDepth: number, obj: any): BibStringComponent | string | number | StringRef {
     if (isNumber(obj) || isString(obj))
         return new BibStringComponent(typeof obj, braceDepth, [obj]);
 
@@ -71,17 +71,10 @@ export function parseStringComponent(braceDepth: number, obj: any): BibStringCom
             return mustBeString(obj.string);
         case "bracedstring":
         case "braced":
-        // export function parseStringItems(braceDepth: number, obj: any): BibStringComponent[] {
-//     if(obj.type === "braced") {
-//         if (braceDepth === 0 && isArray(obj.data) && obj.data[0] === "\\"){
-//             return new SpecialCharacter(obj);
-//         }else{
-//             return new BracedString(braceDepth, obj);
-//         }
-//     }
-//
-//     throw new Error("Unexpected string component: "+JSON.stringify(obj));
-// }
+            if (!isArray(obj.data)) {
+                throw new Error("Expect array for data: " + JSON.stringify(obj));
+            }
+            return new BibStringComponent(obj.type, braceDepth, flatten(obj.data).map(e => parseStringComponent(braceDepth+1, e)));
 // TODO
         case "quotedstring":
             if (!isArray(obj.data)) {

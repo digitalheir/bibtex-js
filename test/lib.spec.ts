@@ -83,7 +83,7 @@ describe("lexer", () => {
 
 describe("field values", () => {
     it("should handle strings of all shapes", function () {
-          const bib = parseBibFile(`@b00k{comp4nion,
+        const bib = parseBibFile(`@b00k{comp4nion,
                 quoted        = "Simple quoted string",
                 quotedComplex = "Complex " # quoted #" string",
                 braced        = {I am a so-called "braced string"},
@@ -93,76 +93,143 @@ describe("field values", () => {
                 naughtyString = abc
             }`);
 
-          assert.deepEqual(bib.entries$.comp4nion.getField("quoted"), new OuterQuotedString([
-              new QuotedString(0, [
-                  "Simple", " ", "quoted", " ", "string"
-              ])
-          ]));
+        assert.deepEqual(bib.entries$.comp4nion.getField("quoted"), new OuterQuotedString([
+            new QuotedString(0, [
+                "Simple", " ", "quoted", " ", "string"
+            ])
+        ]));
 
-          assert.deepEqual(bib.entries$.comp4nion.getField("quotedCOMPLEX"),
-              {"type":"quotedstringwrapper","braceDepth":0,"data":[{"type":"quotedstring","braceDepth":0,"data":["Complex"," "]},{"braceDepth":0, "stringref": "quoted"},{"type":"quotedstring","braceDepth":0,"data":[" ","string"]}]}
-          );
-          assert.deepEqual(bib.entries$.comp4nion.getField("braced"),
-              {"type":"bracedstringwrapper","braceDepth":0,"data":["I"," ","am"," ","a"," ","so-called"," ",{"type":"string","braceDepth":0,"data":["\""]},"braced"," ","string",{"type":"string","braceDepth":0,"data":["\""]}]}
-          );
-          assert.deepEqual(bib.entries$.comp4nion.getField("bracedCOMPLEX"),
-              {"type":"bracedstringwrapper","braceDepth":0,"data":["I"," ",{"type":"braced","braceDepth":0,"data":[{"type":"braced","braceDepth":0,"data":[{"type":"string","braceDepth":0,"data":["\\"]},"am"]}]}," ","a"," ",{"type":"braced","braceDepth":0,"data":["so-called"]}," ",{"type":"braced","braceDepth":0,"data":[{"type":"string","braceDepth":0,"data":["\\"]},{"type":"string","braceDepth":0,"data":["\""]},"b"]},"raced"," ","string",{"type":"braced","braceDepth":0,"data":[{"type":"string","braceDepth":0,"data":["\\"]},{"type":"string","braceDepth":0,"data":["\""]}]},"."]}
-          );
-          assert.deepEqual(bib.entries$.comp4nion.getField("number"),
-              {"type":"quotedstringwrapper","braceDepth":0,"data":[{"type":"number","braceDepth":0,"data":[1993]}]}
-          );
-          assert.deepEqual(bib.entries$.comp4nion.getField("naughtyNumber"),
-              {"type":"quotedstringwrapper","braceDepth":0,"data":[{"braceDepth":0,"stringref":"a1993a"}]}
-          );
-          assert.deepEqual(bib.entries$.comp4nion.getField("naughtyString"),
-              {"type":"quotedstringwrapper","braceDepth":0,"data":[{"braceDepth":0,"stringref":"abc"}]}
-          );
+        assert.deepEqual(bib.entries$.comp4nion.getField("quotedCOMPLEX"),
+            {
+                "type": "quotedstringwrapper",
+                "braceDepth": 0,
+                "data": [{"type": "quotedstring", "braceDepth": 0, "data": ["Complex", " "]}, {
+                    "braceDepth": 0,
+                    "stringref": "quoted"
+                }, {"type": "quotedstring", "braceDepth": 0, "data": [" ", "string"]}]
+            }
+        );
+        assert.deepEqual(bib.entries$.comp4nion.getField("braced"),
+            {
+                "type": "bracedstringwrapper",
+                "braceDepth": 0,
+                "data": ["I", " ", "am", " ", "a", " ", "so-called", " ", {
+                    "type": "string",
+                    "braceDepth": 0,
+                    "data": ["\""]
+                }, "braced", " ", "string", {"type": "string", "braceDepth": 0, "data": ["\""]}]
+            }
+        );
+        assert.deepEqual(bib.entries$.comp4nion.getField("bracedCOMPLEX"),
+            {
+                "type": "bracedstringwrapper", "braceDepth": 0, "data": [
+                "I", " ", {
+                    "type": "braced", "braceDepth": 0, "data": [
+                        {
+                            "type": "braced", "braceDepth": 1, "data": [
+                            {"type": "string", "braceDepth": 2, "data": ["\\"]}, "am"
+                        ]
+                        }
+                    ]
+                },
+                " ", "a", " ",
+                {"type": "braced", "braceDepth": 0, "data": ["so-called"]},
+                " ",
+                {
+                    "type": "braced",
+                    "braceDepth": 0,
+                    "data": [
+                        {
+                            "type": "string",
+                            "braceDepth": 1,
+                            "data": ["\\"]
+                        },
+                        {
+                            "type": "string",
+                            "braceDepth": 1,
+                            "data": ["\""]
+                        }, "b"
+                    ]
+                },
+                "raced", " ", "string",
+                {
+                    "type": "braced",
+                    "braceDepth": 0,
+                    "data": [
+                        {
+                            "type": "string",
+                            "braceDepth": 1,
+                            "data": ["\\"]
+                        },
+                        {
+                            "type": "string",
+                            "braceDepth": 1,
+                            "data": ["\""]
+                        }
+                    ]
+                }, "."
+            ]
+            }
+        );
+        assert.deepEqual(bib.entries$.comp4nion.getField("number"),
+            {
+                "type": "quotedstringwrapper",
+                "braceDepth": 0,
+                "data": [{"type": "number", "braceDepth": 0, "data": [1993]}]
+            }
+        );
+        assert.deepEqual(bib.entries$.comp4nion.getField("naughtyNumber"),
+            {"type": "quotedstringwrapper", "braceDepth": 0, "data": [{"braceDepth": 0, "stringref": "a1993a"}]}
+        );
+        assert.deepEqual(bib.entries$.comp4nion.getField("naughtyString"),
+            {"type": "quotedstringwrapper", "braceDepth": 0, "data": [{"braceDepth": 0, "stringref": "abc"}]}
+        );
 
         // todo
     });
     /* todo implement
-    it("should process titles correctly", function () {
-          const bib = parseBibFile(`
-            This won’t work, since turning it to lower case will produce
-            The \latex companion, and LATEX won't accept this...
-            @article{lowercased, title = "The \LaTeX Companion"}
+     it("should process titles correctly", function () {
+     const bib = parseBibFile(`
+     This won’t work, since turning it to lower case will produce
+     The \latex companion, and LATEX won't accept this...
+     @article{lowercased, title = "The \LaTeX Companion"}
 
-            This ensures that switching to lower case will be
-            correct. However, applying purify$ gives The 
-            Companion. Thus sorting could be wrong;
-            @article{wrongsorting1, title = "The {\csname LaTeX\endcsname} {C}ompanion"}
+     This ensures that switching to lower case will be
+     correct. However, applying purify$ gives The
+     Companion. Thus sorting could be wrong;
+     @article{wrongsorting1, title = "The {\csname LaTeX\endcsname} {C}ompanion"}
 
-            In this case, { \LaTeX} is not a special character,
-            but a set of letters at depth 1. It won’t be modified by change.case$. However, purify$ will
-            leave both spaces, and produce The LaTeX Companion, which could result in wrong sorting;
-            @article{wrongsorting2, title = "The { \LaTeX} {C}ompanion"}
+     In this case, { \LaTeX} is not a special character,
+     but a set of letters at depth 1. It won’t be modified by change.case$. However, purify$ will
+     leave both spaces, and produce The LaTeX Companion, which could result in wrong sorting;
+     @article{wrongsorting2, title = "The { \LaTeX} {C}ompanion"}
 
 
-            @article{works1, title = "The{ \LaTeX} {C}ompanion"}
-            @article{works2, title = "The {{\LaTeX}} {C}ompanion"}
-            
-            For encoding an accent in a title, say É (in upper case) as in the French word École, we’ll write
-            {\’{E}}cole, {\’E}cole or {{\’E}}cole, depending on whether we want it to be turned to lower
-            case (the first two solutions) or not (the last one). purify$ will give the same result in the three
-            cases. However, it should be noticed that the third one is not a special character. If you ask BibTEX
-            to extract the first character of each string using text.prefix$, you’ll get {\’{E}} in the first case,
-            {\’E} in the second case and {{\}} in the third case.
-            
-            @article{ecoleLowercased1, title = "{\'{E}}cole"}
-            @article{ecoleLowercased2, title = "{\'E}cole"}
-            @article{ecoleUppercased, title = "{{\'E}}cole"}
-`);*/
-        /* todo implement
-    it("should process authors correctly", function () {
-          const bib = parseBibFile(`
-            The first point to notice is that two authors are separated with the keyword and. The format of the
-            names is the second important point: The last name first, then the first name, with a separating
-            comma. In fact, BibTEX understands other formats
+     @article{works1, title = "The{ \LaTeX} {C}ompanion"}
+     @article{works2, title = "The {{\LaTeX}} {C}ompanion"}
 
-            @article{authors, author = "Goossens, Michel and Mittelbach, Franck and Samarin, Alexander"}
-            
-            // TODO additional cases in http://tug.ctan.org/info/bibtex/tamethebeast/ttb_en.pdf
-`);*/
+     For encoding an accent in a title, say É (in upper case) as in the French word École, we’ll write
+     {\’{E}}cole, {\’E}cole or {{\’E}}cole, depending on whether we want it to be turned to lower
+     case (the first two solutions) or not (the last one). purify$ will give the same result in the three
+     cases. However, it should be noticed that the third one is not a special character. If you ask BibTEX
+     to extract the first character of each string using text.prefix$, you’ll get {\’{E}} in the first case,
+     {\’E} in the second case and {{\}} in the third case.
+
+     @article{ecoleLowercased1, title = "{\'{E}}cole"}
+     @article{ecoleLowercased2, title = "{\'E}cole"}
+     @article{ecoleUppercased, title = "{{\'E}}cole"}
+     `);*/
+    /* todo implement
+     it("should process authors correctly", function () {
+     const bib = parseBibFile(`
+     The first point to notice is that two authors are separated with the keyword and. The format of the
+     names is the second important point: The last name first, then the first name, with a separating
+     comma. In fact, BibTEX understands other formats
+
+     @article{authors, author = "Goossens, Michel and Mittelbach, Franck and Samarin, Alexander"}
+
+     // TODO additional cases in http://tug.ctan.org/info/bibtex/tamethebeast/ttb_en.pdf
+     `);*/
     // TODO crossref ; additional cases in http://tug.ctan.org/info/bibtex/tamethebeast/ttb_en.pdf
 
     // });
