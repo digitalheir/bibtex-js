@@ -5,7 +5,7 @@ import {grammar} from "../parser/ts-parser";
 import Lexer from "../lexer/Lexer";
 import {isArray} from "../util";
 import {isKeyVal} from "./KeyVal";
-import {ComplexString} from "./string/ComplexString";
+import {Stringy} from "./string/ComplexString";
 import {BibEntry, isBibEntry, parseEntryFields} from "./BibEntry";
 import {BibFileNode} from "./BibFileNode";
 import {BibComment, flattenPlainText, isBibComment} from "./BibComment";
@@ -42,7 +42,7 @@ export class BibFile {
     readonly preambles: Preamble[];
     readonly preamble$: string;
 
-    readonly strings: { [k: string]: ComplexString[] };
+    readonly strings: { [k: string]: Stringy[] };
 
 
     constructor(content: (NonBibComment | BibComment)[]) {
@@ -58,7 +58,7 @@ export class BibFile {
         });
         this.preamble$ = this.preambles.map(p => p.toString()).join("");
 
-        const strings: { [k: string]: ComplexString[] } = {};
+        const strings: { [k: string]: Stringy[] } = {};
         this.content.forEach(entry => {
                 if (isKeyVal(entry)) strings[entry.key] = entry.value;
             }

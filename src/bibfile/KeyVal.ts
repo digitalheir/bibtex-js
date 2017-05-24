@@ -1,8 +1,8 @@
-import {ComplexString, parseComplexStringOuter} from "./string/ComplexString";
+import {parseComplexStringOuter, Stringy} from "./string/ComplexString";
 
 export interface KeyVal {
     readonly key: string;
-    readonly value: ComplexString[];
+    readonly value: Stringy[];
 }
 
 export function isKeyVal(data: any): data is KeyVal {

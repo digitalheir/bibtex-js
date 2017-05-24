@@ -1,12 +1,12 @@
 import {KeyVal, isKeyVal, newKeyVal} from "./KeyVal";
 import {BibFileNode} from "./BibFileNode";
-import {ComplexString} from "./string/ComplexString";
+import {Stringy} from "./string/ComplexString";
 
 export class StringEntry extends BibFileNode {
     readonly key: string;
-    readonly value: ComplexString[];
+    readonly value: Stringy[];
 
-    public constructor(key: string, value: ComplexString[]) {
+    public constructor(key: string, value: Stringy[]) {
         super("string");
         this.key = key;
         this.value = value;
