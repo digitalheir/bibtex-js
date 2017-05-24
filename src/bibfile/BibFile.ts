@@ -13,7 +13,7 @@ import {isPreamble, Preamble} from "./BibPreamble";
 import {parseNode} from "./parseBibNode";
 
 
-export type NonBibComment = BibEntry | StringEntry | Preamble;
+export type NonBibComment = BibEntry | CommentEntry | StringEntry | Preamble;
 
 
 /**
