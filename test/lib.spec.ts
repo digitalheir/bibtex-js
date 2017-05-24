@@ -203,9 +203,10 @@ describe("parser", () => {
         // assert.equal(bibliography.strings.mittelbach.toUnicode(), "Mittelbach, Franck");
     });
     it("should parse preamble entries", function () {
-        const bib = parseBibFile(`     @preamble{ "\\makeatletter" }
-     @preamble{ "\\@ifundefined{url}{\\def\\url#1{\\texttt{#1}}}{}" }
-     @preamble{ "\\makeatother" }`);
+        const bib = parseBibFile(`@preamble{ "\\makeatletter" }
+@preamble{ "\\@ifundefined{url}{\\def\\url#1{\\texttt{#1}}}{}" }
+@preamble{ "\\makeatother" }
+`);
         assert.equal(bib.preamble$, "blablabla  123");
     });
 });
