@@ -16,7 +16,7 @@ export class StringEntry extends BibFileNode {
 export class ResolvedStringEntry extends StringEntry {
     readonly resolvedValue: Stringy[];
 
-    public constructor(key: string, value: Stringy[], resolvedValue: Stringy[]) {
+    public constructor(key: string, value: Stringy[], resolvedValue: ResolvedStringy[]) {
         super("string");
         this.key = key;
         this.value = value;
