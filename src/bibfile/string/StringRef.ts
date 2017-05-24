@@ -1,10 +1,13 @@
-export interface StringRef {
-    stringref: string;
+export class StringRef {
+    readonly stringref: string;
+    readonly braceDepth: number;
+
+    constructor(braceDepth: number, stringref: string) {
+        this.braceDepth = braceDepth;
+        this.stringref = stringref;
+    }
 }
 
-export function newStringRef(stringref: string) {
-    return {stringref};
-}
-export function isStringRef(stringref: any): stringref is StringRef {
+export function isStringRef(stringref: any): boolean {
     return typeof stringref.stringref === "string";
 }

@@ -1,21 +1,22 @@
-import {Stringy} from "./ComplexString";
-import {BibFileNode} from "../BibFileNode";
+import {BibStringComponent, BibStringData} from "../BibStringItem";
 
-export class QuotedString extends BibFileNode {
-    readonly data: Stringy[];
-
-    constructor(data: Stringy[]){
-        super("quotedstring");
-        this.data=data;
+export class QuotedString extends BibStringComponent {
+    constructor(braceDepth: number, data: BibStringData) {
+        super("quotedstring", braceDepth, data);
     }
 }
 
 
-export class OuterQuotedString extends BibFileNode {
-    readonly data: Stringy[];
-
-    constructor(data: Stringy[]){
-        super("quotedstringwrapper");
-        this.data=data;
+export class OuterQuotedString extends BibStringComponent {
+    constructor(data: BibStringData) {
+        super("quotedstringwrapper", 0, data);
     }
 }
+
+// export class DefiniteOuterQuotedString extends BibStringComponent {
+//     readonly data: DefiniteStringy[];
+//
+//     constructor(braceDepth: number, data: DefiniteStringy[]) {
+//         super("quotedstringwrapper", braceDepth, data);
+//     }
+// }

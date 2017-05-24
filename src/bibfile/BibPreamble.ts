@@ -1,13 +1,13 @@
-import {BibFileNode} from "./BibFileNode";
 import {flattenPlainText} from "./BibComment";
 import {flattenArray} from "../util";
 
-export class Preamble extends BibFileNode {
+export class Preamble {
+    readonly type: string;
     readonly data: string[];
     readonly string: string;
 
     constructor(data: string[]) {
-        super("preamble");
+        this.type = ("preamble");
         this.data = data;
         this.string = data.join("");
     }

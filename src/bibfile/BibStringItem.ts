@@ -1,5 +1,9 @@
-export class BibStringItem {
-    readonly data: BibStringItem[];
+import {StringRef} from "./string/StringRef";
+
+export type BibStringData = (BibStringComponent| string | number | StringRef)[];
+
+export class BibStringComponent {
+    readonly data: BibStringData;
     readonly type: string;
 
     /**
@@ -7,7 +11,7 @@ export class BibStringItem {
      */
     readonly braceDepth: number;
 
-    constructor(type: string, braceDepth: number, data: BibStringItem[]) {
+    constructor(type: string, braceDepth: number, data: BibStringData) {
         this.type = type;
         this.braceDepth = braceDepth;
         this.data = data;
@@ -16,24 +20,13 @@ export class BibStringItem {
 
 /**
  * A special character is a
-part of a field starting with a left brace being at brace depth 0 immediately followed with a backslash,
-and ending with the corresponding right brace. For instance, in the above example, there is no special
-character, since \LaTeX is at depth 2. It should be noticed that anything in a special character is
-considered as being at brace depth 0, even if it is placed between another pair of braces.
+ part of a field starting with a left brace being at brace depth 0 immediately followed with a backslash,
+ and ending with the corresponding right brace. For instance, in the above example, there is no special
+ character, since \LaTeX is at depth 2. It should be noticed that anything in a special character is
+ considered as being at brace depth 0, even if it is placed between another pair of braces.
  */
-export class SpecialCharacter extends BibStringItem {
-    constructor(data: BibStringItem[]) {
+export class SpecialCharacter extends BibStringComponent {
+    constructor(data: BibStringComponent[]) {
         super("specialCharacter", 0, data);
-    }
-}
-
-// TODO where2Heck put this?
-export function convert(obj: any, braceDepth: number) {
-    if(obj.type === "braced) {
-        if (braceDepth === 0 && isArray(obj.data) && obj.data[0] === "\\"){
-            return new SpecialCharacter(data);
-        }else{
-            return new BracedString(braceDepth, data);            
-        }
     }
 }

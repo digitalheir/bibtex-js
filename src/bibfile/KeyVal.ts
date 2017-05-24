@@ -1,8 +1,9 @@
-import {parseComplexStringOuter, Stringy} from "./string/ComplexString";
+
+import {FieldValue, parseFieldValue} from "./BibEntry";
 
 export interface KeyVal {
     readonly key: string;
-    readonly value: Stringy[];
+    readonly value: FieldValue;
 }
 
 export function isKeyVal(data: any): data is KeyVal {
@@ -14,7 +15,7 @@ export function newKeyVal(data: any): KeyVal {
     if (isKeyVal(data)) {
         return {
             key: data.key,
-            value: parseComplexStringOuter(data.value),
+            value: parseFieldValue(data.value),
         };
     } else {
         throw new Error("Was not a KeyVal: " + JSON.stringify(data));

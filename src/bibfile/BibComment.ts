@@ -1,12 +1,28 @@
 import {isArray, isString, mustBeString} from "../util";
-import {BibFileNode} from "./BibFileNode";
 
-export class BibComment extends BibFileNode {
+export class BibComment {
+    readonly type: string;
     readonly data: string[];
     readonly string: string;
 
     constructor(data: string[]){
-        super("comment");
+        this.type = "comment";
+        this.data = data;
+        this.string = data.join("");
+    }
+
+    toString() {
+        return this.string;
+    }
+}
+
+export class CommentEntry {
+    readonly type: string;
+    readonly data: string[];
+    readonly string: string;
+
+    constructor(type: string, data: string[]){
+        this.type = type;
         this.data = data;
         this.string = data.join("");
     }

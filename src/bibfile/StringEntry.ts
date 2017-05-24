@@ -1,28 +1,30 @@
 import {KeyVal, isKeyVal, newKeyVal} from "./KeyVal";
-import {BibFileNode} from "./BibFileNode";
-import {Stringy} from "./string/ComplexString";
+import {FieldValue} from "./BibEntry";
+import {isStringRef} from "./string/StringRef";
 
-export class StringEntry extends BibFileNode {
+export class StringEntry {
+    readonly type: string;
     readonly key: string;
-    readonly value: Stringy[];
+    readonly value: FieldValue;
 
-    public constructor(key: string, value: Stringy[]) {
-        super("string");
+    public constructor(key: string, value: FieldValue) {
+        this.type = "string";
         this.key = key;
         this.value = value;
     }
 }
 
-export class ResolvedStringEntry extends StringEntry {
-    readonly resolvedValue: Stringy[];
-
-    public constructor(key: string, value: Stringy[], resolvedValue: DefiniteStringy[]) {
-        super("string");
-        this.key = key;
-        this.value = value;
-        this.resolvedValue = resolvedValue;
-    }
-}
+// todo
+// export class ResolvedStringEntry extends StringEntry {
+//     readonly resolvedValue: Stringy[];
+//
+//     public constructor(key: string, value: Stringy[], resolvedValue: DefiniteStringy[]) {
+//         super("string");
+//         this.key = key;
+//         this.value = value;
+//         this.resolvedValue = resolvedValue;
+//     }
+// }
 
 function findKeyVal(data: any): KeyVal {
     if (isKeyVal(data)) {
@@ -35,12 +37,10 @@ function findKeyVal(data: any): KeyVal {
     }
 }
 
-function resolveStringObjects(
-                           seenBeforeStack: {[key: string]: boolean},
-                           compiledSoFar: {[key: string]: ResolvedStringEntry},
-                           rawStrings: {[key: string]: StringEntry},
-                           strObj: any
-    ) {
+function resolveStringObjects(seenBeforeStack: { [key: string]: boolean },
+                              compiledSoFar: { [key: string]: /*Resolved*/StringEntry },
+                              rawStrings: { [key: string]: StringEntry },
+                              strObj: any) {
     if (isStringRef(strObj)) {
         const refName = strObj.stringref;
         if (seenBeforeStack[refName])
@@ -50,46 +50,54 @@ function resolveStringObjects(
         if (!rawStrings[refName])
             throw new Error("Unresolved reference: " + JSON.stringify(strObj));
         //console.log("RESOLVE", refName);
-        compiledSoFar[refName] = resolveStringDeclarations(
-            Object.assign({}, seenBeforeStack, {[refName]: true}),
-            rawStrings[refName],
-            compiledSoFar,
-            rawStrings
-        );
+
+        // TODO
+        // compiledSoFar[refName] = resolveStringDeclarations(
+        //     Object.assign({}, seenBeforeStack, {[refName]: true}),
+        //     rawStrings[refName],
+        //     compiledSoFar,
+        //     rawStrings
+        // );
         return compiledSoFar[refName];
     }
     else
         return strObj;
 }
 
-function resolveStringDeclarations(referenceStack: {[key: string]: boolean},
-                                   wrapper: ParsedTokensWrapper,
-                                   compiledSoFar: {[key: string]: StringEntry},
-                                   rawStrings: Abbreviations) {
-    if (wrapper.type === "quotedstringwrapper") {
-        return new StringValue({
-            type: wrapper.type,
-            data: wrapper.data.map(obj => parseStringObject(
-                referenceStack,
-                compiledSoFar,
-                rawStrings,
-                obj))
-        });
-    }
-    else if (wrapper.type === "bracedstringwrapper")
-        return new StringValue(wrapper);
-    else
-        throw new Error("Unexpected object to resolve: " + JSON.stringify(wrapper));
-}
 
-export function resolveStringEntries(keyvals: {[key: string]: StringEntry): {[key: string]: ResolvedStringEntry}{
-    const refs: {[key: string]: ResolvedStringEntry} = {};
-    Object.keys(keyvals).forEach(key => {
-        if (!refs[key])
-            refs[key] = resolveStringDeclarations({}, keyvals[key], refs, keyvals);
-    }
-    return refs;
-}
+// todo
+// function resolveStringDeclarations(referenceStack: { [key: string]: boolean },
+//                                    wrapper: FieldValue,
+//                                    compiledSoFar: { [key: string]: StringEntry },
+//                                    rawStrings: Abbreviations) {
+//     if (isNumber(wrapper))
+//         return wrapper;
+//
+//     if (wrapper.type === "quotedstringwrapper") {
+//         return new StringValue({
+//             type: wrapper.type,
+//             data: wrapper.data.map(obj => parseStringObject(
+//                 referenceStack,
+//                 compiledSoFar,
+//                 rawStrings,
+//                 obj))
+//         });
+//     }
+//     else if (wrapper.type === "bracedstringwrapper")
+//         return new StringValue(wrapper);
+//     else
+//         throw new Error("Unexpected object to resolve: " + JSON.stringify(wrapper));
+// }
+
+//
+// export function resolveStringEntries(keyvals: { [key: string]: StringEntry): { [key: string]: ResolvedStringEntry } {
+//     const refs: { [key: string]: ResolvedStringEntry } = {};
+//     Object.keys(keyvals).forEach(key => {
+//         if (!refs[key])
+//             refs[key] = resolveStringDeclarations({}, keyvals[key], refs, keyvals);
+//     }
+//     return refs;
+// }
 
 export function newStringNode(data: any): StringEntry {
     const {key, value}: KeyVal = findKeyVal(data);

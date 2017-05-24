@@ -1,28 +1,27 @@
-import {Stringy} from "./ComplexString";
-import {BibFileNode} from "../BibFileNode";
+import {BibStringComponent, BibStringData} from "../BibStringItem";
 
-export interface BracedStringInterface {
-    type: "bracedstring" | "braced";
-    data: Stringy[];
-}
 
-export class BracedString extends BibFileNode implements BracedStringInterface {
+export class BracedString extends BibStringComponent {
     readonly type = "bracedstring";
-    readonly data: Stringy[];
 
-    constructor(data: Stringy[]) {
-        super("bracedstring");
-        this.data = data;
+    constructor(braceDepth: number, data: BibStringComponent[]) {
+        super("bracedstring", braceDepth, data);
+    }
+}
+export class OuterBracedString extends BibStringComponent {
+    readonly type = "bracedstringwrapper";
+
+    constructor(data: BibStringData) {
+        super("bracedstring", 0, data);
     }
 }
 
-// TODO extends 
-export class DefiniteBracedString extends BibFileNode implements BracedStringInterface {
-    readonly type = "bracedstring";
-    readonly data: DefiniteStringy[];
-
-    constructor(data: DefiniteStringy[]) {
-        super("bracedstring");
-        this.data = data;
-    }
-}
+// TODO extends?
+// export class DefiniteBracedString extends BibStringComponent {
+//     readonly type = "bracedstring";
+//     readonly data: DefiniteStringy[];
+//
+//     constructor(braceDepth: number, data: DefiniteStringy[]) {
+//         super("bracedstring", braceDepth, data);
+//     }
+// }

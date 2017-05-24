@@ -5,12 +5,10 @@ import {grammar} from "../parser/ts-parser";
 import Lexer from "../lexer/Lexer";
 import {isArray} from "../util";
 import {isKeyVal} from "./KeyVal";
-import {Stringy} from "./string/ComplexString";
-import {BibEntry, isBibEntry, parseEntryFields} from "./BibEntry";
-import {BibFileNode} from "./BibFileNode";
-import {BibComment, flattenPlainText, isBibComment} from "./BibComment";
+import {BibEntry, FieldValue, isBibEntry, parseEntryFields} from "./BibEntry";
+import {BibComment, CommentEntry, flattenPlainText, isBibComment} from "./BibComment";
 import {isPreamble, Preamble} from "./BibPreamble";
-import {parseNode} from "./parseBibNode";
+import {StringEntry} from "./StringEntry";
 
 
 export type NonBibComment = BibEntry | CommentEntry | StringEntry | Preamble;
@@ -44,7 +42,7 @@ export class BibFile {
     readonly preambles: Preamble[];
     readonly preamble$: string;
 
-    readonly strings: { [k: string]: Stringy[] };
+    readonly strings: { [k: string]: FieldValue };
 
 
     constructor(content: (NonBibComment | BibComment)[]) {
@@ -58,9 +56,9 @@ export class BibFile {
             if (isBibEntry(c)) return c; else throw new Error();
         });
         
-        const entryMap: { [k: string]: Stringy[] } = {};
-        this.entries.forEach(entry => {
-            const key = entry.id.toLowerCase();
+        const entryMap: { [k: string]: BibEntry } = {};
+        this.entries.forEach((entry: BibEntry) => {
+            const key = entry._id.toLowerCase();
             /**
             *BibTEX
             * will complain if two entries have the same internal key, even if they aren’t capitalized in the same
@@ -78,7 +76,7 @@ export class BibFile {
         });
         this.preamble$ = this.preambles.map(p => p.toString()).join("");
 
-        const strings: { [k: string]: Stringy[] } = {};
+        const strings: { [k: string]: FieldValue } = {};
         this.content.forEach(entry => {
                 if (isKeyVal(entry)) strings[entry.key] = entry.value;
             }
@@ -98,12 +96,12 @@ function parseEntry(entry: any): NonBibComment {
         case "object":
             let data = entry.data;
             if (typeof data["@type"] === "string") {
-                return {
-                    "@type": data["@type"],
-                    _id: data._id,
-                    fields: parseEntryFields(data.fields)
-                };
-            } else return parseNode(data);
+                return new BibEntry(data["@type"], data._id, parseEntryFields(data.fields));
+            }
+            // todo
+            // else
+            //     return parseNode(data);
+
         default:
             throw new Error("Expected object as data for entry");
     }

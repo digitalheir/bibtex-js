@@ -4,6 +4,7 @@ import * as nearley from "nearley";
 import {grammar} from "../src/parser/ts-parser";
 import Lexer from "../src/lexer/Lexer";
 import {parseBibFile} from "../src/bibfile/BibFile";
+import {OuterQuotedString, QuotedString} from "../src/bibfile/string/QuotedString";
 
 //TODO test crossref?
 
@@ -84,31 +85,40 @@ describe("field values", () => {
     it("should handle strings of all shapes", function () {
           const bib = parseBibFile(`@b00k{comp4nion,
                 quoted        = "Simple quoted string",
-                quotedComplex = "Complex " # " quoted "#" string",
+                quotedComplex = "Complex " # quoted #" string",
                 braced        = {I am a so-called "braced string"},
-                bracedComplex = {I {{\am}} a {so-called} {\"b}raced string{\"}.},
+                bracedComplex = {I {{\\am}} a {so-called} {\\"b}raced string{\\"}.},
                 number        = 1993 ,
-                naughtyNumber = 1993a,
-                naughtString  = abc
+                naughtyNumber = a1993a,
+                naughtyString = abc
             }`);
-        assert.deepEqual(
-            lexer1.readTokens(),
-            [
-                {"type": "ws", "string": "\n\t\n"},
-                {"type": "id", "string": "thisisallacommentof"},
-                "{",
-                "}",
-                {"type": "id", "string": "commentswitheverythingexceptan"},
-                "\"",
-                ",",
-                {"type": "ws", "string": " "},
-                {"type": "id", "string": "whichweca"},
-                123,
-                {"type": "id", "string": "nescapewitha"},
-                {"type": "number", "string": "0123"},
-                {"type": "ws", "string": "  "}
-            ]
-        );
+
+          assert.deepEqual(bib.entries$.comp4nion.getField("quoted"), new OuterQuotedString([
+              new QuotedString(0, [
+                  "Simple", " ", "quoted", " ", "string"
+              ])
+          ]));
+
+          assert.deepEqual(bib.entries$.comp4nion.getField("quotedCOMPLEX"),
+              {"type":"quotedstringwrapper","braceDepth":0,"data":[{"type":"quotedstring","braceDepth":0,"data":["Complex"," "]},{"braceDepth":0, "stringref": "quoted"},{"type":"quotedstring","braceDepth":0,"data":[" ","string"]}]}
+          );
+          assert.deepEqual(bib.entries$.comp4nion.getField("braced"),
+              {"type":"bracedstringwrapper","braceDepth":0,"data":["I"," ","am"," ","a"," ","so-called"," ",{"type":"string","braceDepth":0,"data":["\""]},"braced"," ","string",{"type":"string","braceDepth":0,"data":["\""]}]}
+          );
+          assert.deepEqual(bib.entries$.comp4nion.getField("bracedCOMPLEX"),
+              {"type":"bracedstringwrapper","braceDepth":0,"data":["I"," ",{"type":"braced","braceDepth":0,"data":[{"type":"braced","braceDepth":0,"data":[{"type":"string","braceDepth":0,"data":["\\"]},"am"]}]}," ","a"," ",{"type":"braced","braceDepth":0,"data":["so-called"]}," ",{"type":"braced","braceDepth":0,"data":[{"type":"string","braceDepth":0,"data":["\\"]},{"type":"string","braceDepth":0,"data":["\""]},"b"]},"raced"," ","string",{"type":"braced","braceDepth":0,"data":[{"type":"string","braceDepth":0,"data":["\\"]},{"type":"string","braceDepth":0,"data":["\""]}]},"."]}
+          );
+          assert.deepEqual(bib.entries$.comp4nion.getField("number"),
+              {"type":"quotedstringwrapper","braceDepth":0,"data":[{"type":"number","braceDepth":0,"data":[1993]}]}
+          );
+          assert.deepEqual(bib.entries$.comp4nion.getField("naughtyNumber"),
+              {"type":"quotedstringwrapper","braceDepth":0,"data":[{"braceDepth":0,"stringref":"a1993a"}]}
+          );
+          assert.deepEqual(bib.entries$.comp4nion.getField("naughtyString"),
+              {"type":"quotedstringwrapper","braceDepth":0,"data":[{"braceDepth":0,"stringref":"abc"}]}
+          );
+
+        // todo
     });
     /* todo implement
     it("should process titles correctly", function () {
@@ -154,8 +164,8 @@ describe("field values", () => {
             // TODO additional cases in http://tug.ctan.org/info/bibtex/tamethebeast/ttb_en.pdf
 `);*/
     // TODO crossref ; additional cases in http://tug.ctan.org/info/bibtex/tamethebeast/ttb_en.pdf
-    
-    });
+
+    // });
 });
 
 
