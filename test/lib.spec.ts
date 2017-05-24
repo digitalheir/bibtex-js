@@ -145,19 +145,19 @@ describe("parser", () => {
     });
 
     it("should parse bib entries", function () {
-        const bib = parseBibFile(" @  STRiNG   {  mittelbach = \"Mittelbach, Franck\" }" +
-            "some comment " +
-            "@b00k" +
-            "{ comp4nion  ," +
-            "    auTHor    = \"Goossens, jr, Mich{\\`e}l Frederik and \" # mittelbach # \" and \"#\"{ {   A}}le\"#\"xander de La Samarin \",\n" +
-            "    titLe     = \"The {{\\LaTeX}} {C}{\\\"o}mp{\\\"a}nion\"," +
-            "publisher     = \"Addison-Wesley\",\n" +
-            "yeaR=1993 ," +
-            "    Title     = {{Bib}\\TeX}," +
-            "    title     = {{Bib}\\TeX}," +
-            "    Title2    = \"{Bib}\\TeX\"," +
-            "    Title3    = \"{Bib}\" # \"\\TeX\"" +
-            "}");
+        const bib = parseBibFile(` @  STRiNG   {  mittelbach = "Mittelbach, Franck" }
+            some comment 
+            @b00k
+            { comp4nion  ,
+                auTHor    = "Goossens, jr, Mich{\\\`e}l Frederik and " # mittelbach # " and "#"{ {   A}}le"#"xander de La Samarin ",\n
+                titLe     = "The {{\\LaTeX}} {C}{\\"o}mp{\\"a}nion",
+            publisher     = "Addison-Wesley",
+            yeaR=1993 ,
+                Title     = {{Bib}\\TeX},
+                title     = {{Bib}\\TeX},
+                Title2    = "{Bib}\\TeX",
+                Title3    = "{Bib}" # "\\TeX"
+            }`);
 
         assert.equal(bib.content.length, 4);
 

@@ -1,6 +1,11 @@
 export function isString(data: any): data is string {
     return typeof data === "string";
 }
+
+export function isNumber(data: any): data is number {
+    return typeof data === "number";
+}
+
 export function mustBeString(str: any, o?: any): string {
     if (typeof str !== "string")
         throw new Error("Expected to be string: " + JSON.stringify(o ? o : str));
@@ -8,7 +13,7 @@ export function mustBeString(str: any, o?: any): string {
 }
 
 export function isArray(data: any): data is any[] {
-    return !!data && data.constructor === Array
+    return !!data && data.constructor === Array;
 }
 
 export function flattenArray(obj: any[]): any[] {

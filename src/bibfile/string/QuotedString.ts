@@ -1,6 +1,11 @@
 import {Stringy} from "./ComplexString";
+import {BibFileNode} from "../BibFileNode";
 
-export type QuotedString = {
-    type: "quotedstring";
-    data: Stringy[];
-};
+export class QuotedString extends BibFileNode {
+    readonly data: Stringy[];
+
+    constructor(data: Stringy[]){
+        super("quotedstring");
+        this.data=data;
+    }
+}

@@ -1,6 +1,6 @@
 import {BracedString} from "./BracedString";
 import {QuotedString} from "./QuotedString";
-import {mustBeString, isString, isArray} from "../../util";
+import {mustBeString, isString, isArray, isNumber} from "../../util";
 import {isStringRef, StringRef} from "./StringRef";
 import {WhitespaceString} from "./WhitespaceString";
 import {isWhitespace} from "../../lexer/WhitespaceToken";
@@ -8,7 +8,7 @@ import {isIdToken} from "../../lexer/IdToken";
 
 export type ComplexString = Stringy | Stringy[];
 
-export type Stringy = string | QuotedString | BracedString | WhitespaceString | StringRef ;
+export type Stringy = string | number | QuotedString | BracedString | WhitespaceString | StringRef ;
 
 function flatten(x: any[]): any[] {
     let flattened: any[] = [];
@@ -21,7 +21,7 @@ function flatten(x: any[]): any[] {
     return flattened;
 }
 
-export function parseComplexStringOuter(obj: any): ComplexString[] {
+export function parseComplexStringOuter(obj: any): Stringy[] {
     if (isString(obj)) return [obj];
 
     switch (mustBeString(obj.type)) {
@@ -38,6 +38,7 @@ export function parseComplexStringOuter(obj: any): ComplexString[] {
 
 export function parseStringy(obj: any): Stringy {
     if (isString(obj)) return obj;
+    if (isNumber(obj)) return obj;
 
     if (isStringRef(obj)) return obj;
     if (isWhitespace(obj)) return obj;
