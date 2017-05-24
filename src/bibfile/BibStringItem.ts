@@ -10,3 +10,9 @@ export class BibStringItem {
         this.braceDepth = braceDepth;
     }
 }
+
+export class SpecialCharacter extends BibStringItem {
+    constructor(type: string, braceDepth: number) {
+        super("specialCharacter", 0)
+    }
+}
