@@ -43,7 +43,14 @@ export function parseFieldValue(value: any): FieldValue {
 *
 * For numerical values, curly braces and double quotes can be omitted.
 */
-export type FieldValue = number | OuterQuotedString | OuterBracedString;
+export class FieldValue {
+
+    
+    constructor() {
+        
+
+    }
+} // number | OuterQuotedString | OuterBracedString;
 
 
 export type EntryFields = { [k: string]: FieldValue };
