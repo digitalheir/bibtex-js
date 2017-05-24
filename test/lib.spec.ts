@@ -81,7 +81,7 @@ describe("lexer", () => {
 
 
 describe("field values", () => {
-    it("should lex", function () {
+    it("should handle strings of all shapes", function () {
           const bib = parseBibFile(`@b00k{comp4nion,
                 quoted        = "Simple quoted string",
                 quotedComplex = "Complex " # " quoted "#" string",
@@ -109,6 +109,52 @@ describe("field values", () => {
                 {"type": "ws", "string": "  "}
             ]
         );
+    });
+    /* todo implement
+    it("should process titles correctly", function () {
+          const bib = parseBibFile(`
+            This won’t work, since turning it to lower case will produce
+            The \latex companion, and LATEX won't accept this...
+            @article{lowercased, title = "The \LaTeX Companion"}
+
+            This ensures that switching to lower case will be
+            correct. However, applying purify$ gives The 
+            Companion. Thus sorting could be wrong;
+            @article{wrongsorting1, title = "The {\csname LaTeX\endcsname} {C}ompanion"}
+
+            In this case, { \LaTeX} is not a special character,
+            but a set of letters at depth 1. It won’t be modified by change.case$. However, purify$ will
+            leave both spaces, and produce The LaTeX Companion, which could result in wrong sorting;
+            @article{wrongsorting2, title = "The { \LaTeX} {C}ompanion"}
+
+
+            @article{works1, title = "The{ \LaTeX} {C}ompanion"}
+            @article{works2, title = "The {{\LaTeX}} {C}ompanion"}
+            
+            For encoding an accent in a title, say É (in upper case) as in the French word École, we’ll write
+            {\’{E}}cole, {\’E}cole or {{\’E}}cole, depending on whether we want it to be turned to lower
+            case (the first two solutions) or not (the last one). purify$ will give the same result in the three
+            cases. However, it should be noticed that the third one is not a special character. If you ask BibTEX
+            to extract the first character of each string using text.prefix$, you’ll get {\’{E}} in the first case,
+            {\’E} in the second case and {{\}} in the third case.
+            
+            @article{ecoleLowercased1, title = "{\'{E}}cole"}
+            @article{ecoleLowercased2, title = "{\'E}cole"}
+            @article{ecoleUppercased, title = "{{\'E}}cole"}
+`);*/
+        /* todo implement
+    it("should process authors correctly", function () {
+          const bib = parseBibFile(`
+            The first point to notice is that two authors are separated with the keyword and. The format of the
+            names is the second important point: The last name first, then the first name, with a separating
+            comma. In fact, BibTEX understands other formats
+
+            @article{authors, author = "Goossens, Michel and Mittelbach, Franck and Samarin, Alexander"}
+            
+            // TODO additional cases in http://tug.ctan.org/info/bibtex/tamethebeast/ttb_en.pdf
+`);*/
+    // TODO crossref ; additional cases in http://tug.ctan.org/info/bibtex/tamethebeast/ttb_en.pdf
+    
     });
 });
 
