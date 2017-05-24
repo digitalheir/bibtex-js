@@ -22,14 +22,9 @@ export type NonBibComment = BibEntry | StringEntry | Preamble;
 export class BibFile {
     readonly content: (NonBibComment | BibComment)[];
     readonly comments: BibComment[];
-/**
-*BibTEX
-* will complain if two entries have the same internal key, even if they aren’t capitalized in the same
-* way. For instance, you cannot have two entries named Example and example.
-* In the same way, if you cite both example and Example, BibTEX will complain. Indeed, it would
-* have to include the same entry twice, which probably is not what you want;
-*/
-    readonly entries: NonBibComment[];
+
+    readonly entries: BibEntry[];
+    readonly entries$: {[key: string]: BibEntry};
 
     /**
      * Anything declared in a @preamble command will be concatenated and put in a variable
@@ -62,8 +57,21 @@ export class BibFile {
         this.entries = content.filter(c => isBibEntry(c)).map(c => {
             if (isBibEntry(c)) return c; else throw new Error();
         });
-        this.entries
         
+        const entryMap: { [k: string]: Stringy[] } = {};
+        this.entries.forEach(entry => {
+            const key = entry.id.toLowerCase();
+            /**
+            *BibTEX
+            * will complain if two entries have the same internal key, even if they aren’t capitalized in the same
+            * way. For instance, you cannot have two entries named Example and example.
+            * In the same way, if you cite both example and Example, BibTEX will complain. Indeed, it would
+            * have to include the same entry twice, which probably is not what you want;
+            */
+            if(!!entryMap[key]) throw new Error("Entry with id "+key+" was defined more than once");
+            entryMap[key] = entry;
+        });
+        this.entries$ = entryMap;
         
         this.preambles = content.filter(c => isPreamble(c)).map(c => {
             if (isPreamble(c)) return c; else throw new Error();
