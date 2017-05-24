@@ -8,7 +8,9 @@ import {isIdToken} from "../../lexer/IdToken";
 
 export type ComplexString = Stringy | Stringy[];
 
-export type Stringy = string | number | QuotedString | BracedString | WhitespaceString | StringRef ;
+export type DefiniteStringy = string | number | DefiniteQuotedString | DefiniteBracedString | WhitespaceString;
+
+export type Stringy = DefiniteStringy | QuotedString | BracedString | StringRef ;
 
 function flatten(x: any[]): any[] {
     let flattened: any[] = [];
