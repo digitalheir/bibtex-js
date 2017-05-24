@@ -105,18 +105,18 @@ describe("parser", () => {
     });
 
     it("should parse string entries", function () {
-        let bib = parseBibFile("leading comment" +
-            "@   STRiNG   {  mittelbach = \"Mittelbach, Franck\"  }" +
-            "@string{acab= a #_# c #_#\"are\" #_# b}" +
-            "@string{c = \"co\"#cc}" +
-            "@string{a = \"a\"#l#l}" +
-            "@string{_ = {{{{{ }}}}}}" +
-            "@string{l   =   {l}}    " +
-            "@string{cc ={mp{\\" + "\"" + "u}ters}}" +
-            "@string{b =  \"beautifu\"#l} "
+        let bib = parseBibFile(`leading comment
+            @   STRiNG   {  mittelbach = "Mittelbach, Franck"  }
+            @string{acab= a #_# c #_#"are" #_# b}
+            @string{c = "co"#cc}
+            @string{a = "a"#l#l}
+            @string{_ = {{{{{ }}}}}}
+            @string{l   =   {l}}    
+            @string{cc ={mp{\\"u}ters}}
+            @string{b =  "beautifu"#l} `
         );
         console.log(JSON.stringify(bib));
-        assert.equal(bib.content.length, 11);
+        assert.equal(bib.content.length, 17);
 
         // assert.equal(bib.entries[0]["data"].key, "mittelbach");
 
