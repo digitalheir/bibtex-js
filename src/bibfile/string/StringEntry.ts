@@ -1,6 +1,6 @@
-import {KeyVal, isKeyVal, newKeyVal} from "./KeyVal";
-import {FieldValue} from "./BibEntry";
-import {isStringRef} from "./string/StringRef";
+import {KeyVal, isKeyVal, newKeyVal} from "../KeyVal";
+import {FieldValue} from "../BibEntry";
+import {isStringRef} from "./StringRef";
 
 export class StringEntry {
     readonly type: string;

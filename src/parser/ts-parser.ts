@@ -1,76 +1,57 @@
-// Generated automatically by nearley
-// http://github.com/Hardmath123/nearley
-function id(d: any[]): any {
-    return d[0];
+function id(x) {
+    return x[0];
 }
-export interface NearleyGrammar {ParserRules: NearleyRule[]; ParserStart: string
-}
-export interface NearleyRule {name: string; symbols: NearleySymbol[]; postprocess?: (d: any[], loc?: number, reject?: {}) => any
-}
-export type NearleySymbol = any; // string | {literal:any} | {test:(token:any) => boolean};
 
-// export var grammar : NearleyGrammar = {
-//     Lexer: undefined,
-//     ParserRules: [
-//         {"name": "expression", "symbols": ["number", {"literal":"+"}, "number"]},
-//         {"name": "expression", "symbols": ["number", {"literal":"-"}, "number"]},
-//         {"name": "expression", "symbols": ["number", {"literal":"*"}, "number"]},
-//         {"name": "expression", "symbols": ["number", {"literal":"/"}, "number"]}
-//     ]
-//     , ParserStart: "expression"
-// };
-
-
-const isNumber = function (x: any) {
-    return x.constructor === Number || (typeof x == "object" && x.type === "number");
+const isNumber = function (x) {
+    return x.constructor === Number || (typeof x === "object" && x.type === "number");
 };
 const tok_id = {
-    test: function (x: any) {
+    test: function (x) {
         return typeof x === "object" && x.type === "id";
     }
 };
 const entry_type_bib = {
-    test: function (x: any) {
+    test: function (x) {
         return typeof x === "object" && x.type === "@bib";
     }
 };
 const entry_type_string = {
-    test: function (x: any) {
+    test: function (x) {
         return typeof x === "object" && x.type === "@string";
     }
 };
 const entry_type_preamble = {
-    test: function (x: any) {
+    test: function (x) {
         return typeof x === "object" && x.type === "@preamble";
     }
 };
 const entry_type_comment = {
-    test: function (x: any) {
+    test: function (x) {
         return typeof x === "object" && x.type === "@comment";
     }
 };
-const ws = {
-    test: function (x: any) {
+const ws: any = {
+    test: function (x) {
         return typeof x === "object" && x.type === "ws";
     }
 };
-const num = {test: isNumber};
-const pound = {literal: "#"};
-const eq = {literal: "="};
-const esc = {literal: "\\"};
+const num: any = {test: isNumber};
+const pound: any = {literal: "#"};
+const eq: any = {literal: "="};
+const esc: any = {literal: "\\"};
 const paren_l = {literal: "("};
 const paren_r = {literal: ")"};
 const brace_l = {literal: "{"};
 const brace_r = {literal: "}"};
 const quote_dbl = {literal: "\""};
-const comma = {literal: ","};
+const comma: any = {literal: ","};
 
 
-function addToObj(obj: any, keyval: any) {
+function addToObj(obj, keyval) {
     if (keyval.type !== "keyval") throw new Error("Expected a keyval object");
     const key = keyval.key.toLowerCase();
     if (obj.fields[key]) {
-        console.log("WARNING: field " + key + " was already defined on object " + obj._id + ". Ignoring this value.");
+        console.log("WARNING: field '" + key + "' was already defined on " + obj["@type"] + " object with id '" + obj._id + "'. Ignoring this value.");
         return;
     } else {
         obj.fields[key] = keyval.value;
@@ -78,15 +59,11 @@ function addToObj(obj: any, keyval: any) {
     }
 }
 
-function joinTokens(arr: any) {
-    const strs = [];
+function joinTokens(arr) {
+    const strs: any = [];
     for (let i = 0; i < arr.length; i++) {
         if (typeof arr[i] === "object") {
-            if (!arr[i].string)
-                throw new Error(
-                    "Expected token to have a string field called 'string' in object "
-                    + JSON.stringify(arr[i])
-                );
+            if (!arr[i].string) throw new Error("Expected token to have a string field called 'string' in object " + JSON.stringify(arr[i]));
             strs.push(arr[i].string);
         } else if (typeof arr[i] === "string" || typeof arr[i] === "number") {
             strs.push(arr[i]);
@@ -95,19 +72,19 @@ function joinTokens(arr: any) {
     return strs.join("");
 }
 
-export const grammar = {
+export const grammar: any = {
     Lexer: undefined,
     ParserRules: [
         {"name": "main$ebnf$1", "symbols": ["non_entry"], "postprocess": id},
         {
-            "name": "main$ebnf$1", "symbols": [], "postprocess": function (d: any) {
+            "name": "main$ebnf$1", "symbols": [], "postprocess": function (d) {
             return null;
         }
         },
         {"name": "main$ebnf$2", "symbols": []},
         {"name": "main$ebnf$2$subexpression$1$ebnf$1", "symbols": ["non_entry"], "postprocess": id},
         {
-            "name": "main$ebnf$2$subexpression$1$ebnf$1", "symbols": [], "postprocess": function (d: any) {
+            "name": "main$ebnf$2$subexpression$1$ebnf$1", "symbols": [], "postprocess": function (d) {
             return null;
         }
         },
@@ -115,15 +92,15 @@ export const grammar = {
         {
             "name": "main$ebnf$2",
             "symbols": ["main$ebnf$2", "main$ebnf$2$subexpression$1"],
-            "postprocess": function arrpush(d: any) {
+            "postprocess": function arrpush(d) {
                 return d[0].concat([d[1]]);
             }
         },
         {
             "name": "main",
             "symbols": ["main$ebnf$1", "main$ebnf$2"],
-            "postprocess": function (data: any, location: any, reject: any) {
-                const topLevelObjects = [];
+            "postprocess": function (data, location, reject) {
+                const topLevelObjects: any = [];
                 //console.log(JSON.stringify(data));
                 if (data[0])
                     topLevelObjects.push({type: "NON_ENTRY", data: data[0]});
@@ -140,7 +117,7 @@ export const grammar = {
         },
         {"name": "_$ebnf$1", "symbols": []},
         {
-            "name": "_$ebnf$1", "symbols": ["_$ebnf$1", ws], "postprocess": function arrpush(d: any) {
+            "name": "_$ebnf$1", "symbols": ["_$ebnf$1", ws], "postprocess": function arrpush(d) {
             return d[0].concat([d[1]]);
         }
         },
@@ -152,7 +129,7 @@ export const grammar = {
         {
             "name": "entry_decl",
             "symbols": ["entry_decl$subexpression$1"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 return data[0][0];
             }
         },
@@ -161,37 +138,39 @@ export const grammar = {
         {"name": "entry$subexpression$1", "symbols": ["preamble_entry"]},
         {"name": "entry$subexpression$1", "symbols": ["comment_entry"]},
         {
-            "name": "entry",
-            "symbols": ["entry$subexpression$1"],
-            "postprocess": function (data: any, location: any, reject: any) {
-                return data[0][0];
-            }
+            "name": "entry", "symbols": ["entry$subexpression$1"], "postprocess": function (data, location, reject) {
+            return data[0][0];
+        }
         },
-        {"name": "comment$ebnf$1", "symbols": []},
-        {"name": "comment$ebnf$1$subexpression$1", "symbols": ["entry_body_comment"]},
-        {"name": "comment$ebnf$1$subexpression$1", "symbols": ["non_bracket"]},
         {
-            "name": "comment$ebnf$1",
-            "symbols": ["comment$ebnf$1", "comment$ebnf$1$subexpression$1"],
-            "postprocess": function arrpush(d: any) {
+            "name": "comment", "symbols": ["main"], "postprocess": function (data, location, reject) {
+            return data[0];
+        }
+        },
+        {"name": "comment_liberal$ebnf$1", "symbols": []},
+        {"name": "comment_liberal$ebnf$1$subexpression$1", "symbols": [/./]},
+        {
+            "name": "comment_liberal$ebnf$1",
+            "symbols": ["comment_liberal$ebnf$1", "comment_liberal$ebnf$1$subexpression$1"],
+            "postprocess": function arrpush(d) {
                 return d[0].concat([d[1]]);
             }
         },
         {
-            "name": "comment",
-            "symbols": ["comment$ebnf$1"],
-            "postprocess": function (data: any, location: any, reject: any) {
-                const toeknz = [];
+            "name": "comment_liberal",
+            "symbols": ["comment_liberal$ebnf$1"],
+            "postprocess": function (data, location, reject) {
+                const toeknz: any = [];
                 for (let tk = 0; tk < data[0].length; tk++)
                     toeknz.push(data[0][tk][0]);
-                return data[0];
+                return toeknz;
             }
         },
         {"name": "entry_body_comment$subexpression$1$macrocall$2", "symbols": ["comment"]},
         {
             "name": "entry_body_comment$subexpression$1$macrocall$1",
             "symbols": [paren_l, "entry_body_comment$subexpression$1$macrocall$2", paren_r],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 return data[1];
             }
         },
@@ -200,7 +179,7 @@ export const grammar = {
         {
             "name": "entry_body_comment$subexpression$1$macrocall$3",
             "symbols": [brace_l, "entry_body_comment$subexpression$1$macrocall$4", brace_r],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 return data[1];
             }
         },
@@ -208,7 +187,7 @@ export const grammar = {
         {
             "name": "entry_body_comment",
             "symbols": ["entry_body_comment$subexpression$1"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 return data[0][0][0];
             }
         },
@@ -216,7 +195,7 @@ export const grammar = {
         {
             "name": "entry_body_string$subexpression$1$macrocall$1",
             "symbols": [paren_l, "_", "entry_body_string$subexpression$1$macrocall$2", "_", paren_r],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 return data[2];
             }
         },
@@ -225,7 +204,7 @@ export const grammar = {
         {
             "name": "entry_body_string$subexpression$1$macrocall$3",
             "symbols": [brace_l, "_", "entry_body_string$subexpression$1$macrocall$4", "_", brace_r],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 return data[2];
             }
         },
@@ -233,7 +212,7 @@ export const grammar = {
         {
             "name": "entry_body_string",
             "symbols": ["entry_body_string$subexpression$1"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 return data[0][0][0];
             }
         },
@@ -241,7 +220,7 @@ export const grammar = {
         {
             "name": "entry_body_bib$subexpression$1$macrocall$1",
             "symbols": [paren_l, "_", "entry_body_bib$subexpression$1$macrocall$2", "_", paren_r],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 return data[2];
             }
         },
@@ -250,7 +229,7 @@ export const grammar = {
         {
             "name": "entry_body_bib$subexpression$1$macrocall$3",
             "symbols": [brace_l, "_", "entry_body_bib$subexpression$1$macrocall$4", "_", brace_r],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 return data[2];
             }
         },
@@ -258,7 +237,7 @@ export const grammar = {
         {
             "name": "entry_body_bib",
             "symbols": ["entry_body_bib$subexpression$1"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 const obj = data[0][0][0];
                 return obj;
             }
@@ -268,39 +247,37 @@ export const grammar = {
         {
             "name": "bib_content$ebnf$1",
             "symbols": ["bib_content$ebnf$1", "bib_content$ebnf$1$subexpression$1"],
-            "postprocess": function arrpush(d: any) {
+            "postprocess": function arrpush(d) {
                 return d[0].concat([d[1]]);
             }
         },
         {"name": "bib_content$ebnf$2$subexpression$1", "symbols": ["_", comma]},
         {"name": "bib_content$ebnf$2", "symbols": ["bib_content$ebnf$2$subexpression$1"], "postprocess": id},
         {
-            "name": "bib_content$ebnf$2", "symbols": [], "postprocess": function (d: any) {
+            "name": "bib_content$ebnf$2", "symbols": [], "postprocess": function (d) {
             return null;
         }
         },
         {
             "name": "bib_content",
             "symbols": ["key_string", "_", comma, "_", "bib_content$ebnf$1", "keyval", "bib_content$ebnf$2"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 const obj: any = {
                     _id: data[0],
                     fields: []
                 };
-                const keyvals: any = data[4];
+                const keyvals = data[4];
                 for (let kv = 0; kv < keyvals.length; kv++) {
-                    let keyval: any = keyvals[kv];
-                    obj.fields.push(keyval[0]);
+                    obj.fields.push(keyvals[kv][0]);
                 }
-                let datum = data[5];
-                obj.fields.push(datum);
+                obj.fields.push(data[5]);
                 return obj;
             }
         },
         {
             "name": "bib_entry",
             "symbols": [entry_type_bib, "_", "entry_body_bib"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 const obj: any = {
                     _id: data[2]._id
                 };
@@ -317,28 +294,28 @@ export const grammar = {
         {
             "name": "string_entry",
             "symbols": [entry_type_string, "_", "entry_body_string"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 return {type: "string", data: data[2]};
             }
         },
         {
             "name": "preamble_entry",
             "symbols": [entry_type_preamble, "_", "entry_body_comment"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 return {type: "preamble", data: data[2]};
             }
         },
         {
             "name": "comment_entry",
             "symbols": [entry_type_comment, "_", "entry_body_comment"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 return {type: "comment", data: data[2]};
             }
         },
         {
             "name": "keyval",
             "symbols": ["key_string", "_", eq, "_", "value_string"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 return {type: "keyval", key: data[0], value: data[4]};
             }
         },
@@ -348,15 +325,15 @@ export const grammar = {
         {
             "name": "braced_string$ebnf$1",
             "symbols": ["braced_string$ebnf$1", "braced_string$ebnf$1$subexpression$1"],
-            "postprocess": function arrpush(d: any) {
+            "postprocess": function arrpush(d) {
                 return d[0].concat([d[1]]);
             }
         },
         {
             "name": "braced_string",
             "symbols": [brace_l, "braced_string$ebnf$1", brace_r],
-            "postprocess": function (data: any, location: any, reject: any) {
-                const tkz = [];
+            "postprocess": function (data, location, reject) {
+                const tkz: any = [];
                 for (let i in data[1]) tkz.push(data[1][i][0]);
                 return {type: "braced", data: tkz};
             }
@@ -369,15 +346,15 @@ export const grammar = {
         {
             "name": "quoted_string$ebnf$1",
             "symbols": ["quoted_string$ebnf$1", "quoted_string$ebnf$1$subexpression$1"],
-            "postprocess": function arrpush(d: any) {
+            "postprocess": function arrpush(d) {
                 return d[0].concat([d[1]]);
             }
         },
         {
             "name": "quoted_string",
             "symbols": [quote_dbl, "quoted_string$ebnf$1", quote_dbl],
-            "postprocess": function (data: any, location: any, reject: any) {
-                const tks = [];
+            "postprocess": function (data, location, reject) {
+                const tks: any = [];
                 for (let i in data[1]) tks.push(data[1][i][0]);
                 return {type: "quotedstring", data: tks};
             }
@@ -401,16 +378,14 @@ export const grammar = {
         {
             "name": "key_string$ebnf$1",
             "symbols": ["key_string$ebnf$1", "stringreftoken"],
-            "postprocess": function arrpush(d: any) {
+            "postprocess": function arrpush(d) {
                 return d[0].concat([d[1]]);
             }
         },
         {
-            "name": "key_string",
-            "symbols": ["key_string$ebnf$1"],
-            "postprocess": function (data: any, location: any, reject: any) {
-                return joinTokens(data[0]).toLowerCase();
-            }
+            "name": "key_string", "symbols": ["key_string$ebnf$1"], "postprocess": function (data, location, reject) {
+            return joinTokens(data[0]).toLowerCase();
+        }
         },
         {"name": "value_string$subexpression$1$ebnf$1", "symbols": []},
         {
@@ -420,7 +395,7 @@ export const grammar = {
         {
             "name": "value_string$subexpression$1$ebnf$1",
             "symbols": ["value_string$subexpression$1$ebnf$1", "value_string$subexpression$1$ebnf$1$subexpression$1"],
-            "postprocess": function arrpush(d: any) {
+            "postprocess": function arrpush(d) {
                 return d[0].concat([d[1]]);
             }
         },
@@ -432,12 +407,12 @@ export const grammar = {
         {
             "name": "value_string",
             "symbols": ["value_string$subexpression$1"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 //console.log("DATA",JSON.stringify(data));
                 const match = data[0];
-                if (match.length == 2) {
+                if (match.length === 2) {
                     // quoted string
-                    const tokenz = [];
+                    const tokenz: any = [];
                     tokenz.push(match[0]);
                     for (let i = 0; i < match[1].length; i++) tokenz.push(match[1][i][3]);
                     return {type: "quotedstringwrapper", data: tokenz};
@@ -453,7 +428,7 @@ export const grammar = {
         {
             "name": "quoted_string_or_ref",
             "symbols": ["quoted_string_or_ref$subexpression$1"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 //console.log(data);
                 if (data[0][0].type === "quotedstring") return data[0][0];
                 else {
@@ -465,7 +440,7 @@ export const grammar = {
         {
             "name": "string_ref$subexpression$1$ebnf$1",
             "symbols": ["string_ref$subexpression$1$ebnf$1", "stringreftoken"],
-            "postprocess": function arrpush(d: any) {
+            "postprocess": function arrpush(d) {
                 return d[0].concat([d[1]]);
             }
         },
@@ -476,7 +451,7 @@ export const grammar = {
         {
             "name": "string_ref",
             "symbols": ["string_ref$subexpression$1"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 const str = data[0][0] + joinTokens(data[0][1]);
                 return {stringref: str};
             }
@@ -493,12 +468,13 @@ export const grammar = {
         {
             "name": "stringreftoken",
             "symbols": ["stringreftoken$subexpression$1"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 if (typeof data[0][0] === "object") {
-                    if (!data[0][0].string)throw new Error("Expected " + data[0] + "to have a 'string' field");
+                    if (!data[0][0].string) throw new Error("Expected " + data[0] + "to have a 'string' field");
                     return data[0][0].string;
                 } else {
-                    if ((!(typeof data[0][0] === "string" || typeof data[0][0] === "number")))throw new Error("Expected " + data[0][0] + " to be a string");
+                    if ((!(typeof data[0][0] === "string" || typeof data[0][0] === "number")))
+                        throw new Error("Expected " + data[0][0] + " to be a string");
                     return data[0][0];
                 }
             }
@@ -514,12 +490,13 @@ export const grammar = {
         {
             "name": "stringreftoken_n_num",
             "symbols": ["stringreftoken_n_num$subexpression$1"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 if (typeof data[0][0] === "object") {
-                    if (!data[0][0].string)throw new Error("Expected " + data[0] + "to have a 'string' field");
+                    if (!data[0][0].string) throw new Error("Expected " + data[0] + "to have a 'string' field");
                     return data[0][0].string;
                 } else {
-                    if ((!(typeof data[0][0] === "string" || typeof data[0][0] === "number")))throw new Error("Expected " + data[0][0] + " to be a string");
+                    if ((!(typeof data[0][0] === "string" || typeof data[0][0] === "number")))
+                        throw new Error("Expected " + data[0][0] + " to be a string");
                     return data[0][0];
                 }
             }
@@ -541,7 +518,7 @@ export const grammar = {
         {
             "name": "non_brace",
             "symbols": ["non_brace$subexpression$1"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 return data[0][0];
             }
         },
@@ -560,7 +537,7 @@ export const grammar = {
         {
             "name": "non_bracket",
             "symbols": ["non_bracket$subexpression$1"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 return data[0][0];
             }
         },
@@ -576,39 +553,33 @@ export const grammar = {
         {
             "name": "non_entry$ebnf$1",
             "symbols": ["non_entry$ebnf$1", "non_entry$ebnf$1$subexpression$2"],
-            "postprocess": function arrpush(d: any) {
+            "postprocess": function arrpush(d) {
                 return d[0].concat([d[1]]);
             }
         },
         {
-            "name": "non_entry",
-            "symbols": ["non_entry$ebnf$1"],
-            "postprocess": function (data: any, location: any, reject: any) {
-                //console.log("non_entry",data);
-                const tokens = [];
-                for (let Ti = 0; Ti < data[0].length; Ti++) tokens.push(data[0][Ti][0]);
-                return tokens;
-            }
+            "name": "non_entry", "symbols": ["non_entry$ebnf$1"], "postprocess": function (data, location, reject) {
+            //console.log("non_entry",data);
+            const tokens: any = [];
+            for (let Ti = 0; Ti < data[0].length; Ti++) tokens.push(data[0][Ti][0]);
+            return tokens;
+        }
         },
         {
-            "name": "escaped_escape",
-            "symbols": [esc, esc],
-            "postprocess": function (data: any, location: any, reject: any) {
-                return "\\";
-            }
+            "name": "escaped_escape", "symbols": [esc, esc], "postprocess": function (data, location, reject) {
+            return "\\";
+        }
         },
         {
-            "name": "escaped_entry",
-            "symbols": [esc, "entry_decl"],
-            "postprocess": function (data: any, location: any, reject: any) {
-                return data[1];
-            }
+            "name": "escaped_entry", "symbols": [esc, "entry_decl"], "postprocess": function (data, location, reject) {
+            return {type: "escapedEntry", data: data[1]};
+        }
         },
         {
             "name": "escaped_non_esc_outside_entry",
             "symbols": [esc, "non_esc_outside_entry"],
-            "postprocess": function (data: any, location: any, reject: any) {
-                return "\\" + data[1];
+            "postprocess": function (data, location, reject) {
+                return data; // ["\\", data[1]];
             }
         },
         {"name": "non_esc_outside_entry$subexpression$1", "symbols": [tok_id]},
@@ -625,7 +596,7 @@ export const grammar = {
         {
             "name": "non_esc_outside_entry",
             "symbols": ["non_esc_outside_entry$subexpression$1"],
-            "postprocess": function (data: any, location: any, reject: any) {
+            "postprocess": function (data, location, reject) {
                 //console.log("ooutside_entry",data[0][0]);
                 return data[0][0];
             }
@@ -633,4 +604,3 @@ export const grammar = {
     ]
     , ParserStart: "main"
 };
-

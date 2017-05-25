@@ -8,7 +8,7 @@ import {isKeyVal} from "./KeyVal";
 import {BibEntry, FieldValue, isBibEntry, parseEntryFields} from "./BibEntry";
 import {BibComment, CommentEntry, flattenPlainText, isBibComment} from "./BibComment";
 import {isPreamble, Preamble, newPreambleNode} from "./BibPreamble";
-import {newStringNode, StringEntry} from "./StringEntry";
+import {newStringNode, StringEntry} from "./string/StringEntry";
 
 
 export type NonBibComment = BibEntry | CommentEntry | StringEntry | Preamble;
@@ -60,7 +60,7 @@ export class BibFile {
         this.entries.forEach((entry: BibEntry) => {
             const key = entry._id.toLowerCase();
             /**
-             *BibTEX
+             * BibTEX
              * will complain if two entries have the same internal key, even if they aren’t capitalized in the same
              * way. For instance, you cannot have two entries named Example and example.
              * In the same way, if you cite both example and Example, BibTEX will complain. Indeed, it would
@@ -74,7 +74,7 @@ export class BibFile {
         this.preambles = content.filter(c => isPreamble(c)).map(c => {
             if (isPreamble(c)) return c; else throw new Error();
         });
-        this.preamble$ = this.preambles.map(p => p.toString()).join("");
+        this.preamble$ = this.preambles.map(p => p.toString()).join("\n");
 
         const strings: { [k: string]: FieldValue } = {};
         this.content.forEach(entry => {
@@ -82,6 +82,10 @@ export class BibFile {
             }
         );
         this.strings = strings;
+    }
+
+    getEntry(id: string): BibEntry | undefined {
+        return this.entries$[id.toLowerCase()];
     }
 }
 
@@ -119,24 +123,24 @@ function parseEntry(entry: any): NonBibComment {
     }
 }
 
+export const parseBibEntriesAndNonEntries = function (parse: any): (BibComment | NonBibComment)[] {
+    return parse.map((entity: any) => {
+        switch (entity.type) {
+            case "NON_ENTRY":
+                return (parseNonEntry(entity));
+            case "ENTRY":
+                return (parseEntry(entity));
+            default:
+                throw new Error("Expected ENTRY or NON_ENTRY");
+        }
+    });
+};
+
 export function parseBibFile(input: string): BibFile {
     const p = new nearley.Parser(grammar.ParserRules, grammar.ParserStart);
     p.feed(new Lexer(input).readTokens());
     const res = p.results;
     const parse = res[0];
 
-    let bibFile: (BibComment | NonBibComment)[] = [];
-    parse.forEach((entity: any) => {
-        switch (entity.type) {
-            case "NON_ENTRY":
-                bibFile.push(parseNonEntry(entity));
-                break;
-            case "ENTRY":
-                bibFile.push(parseEntry(entity));
-                break;
-            default:
-                throw new Error("Expected ENTRY or NON_ENTRY");
-        }
-    });
-    return new BibFile(bibFile);
+    return new BibFile(parseBibEntriesAndNonEntries(parse));
 }

@@ -3,6 +3,7 @@ import {OuterBracedString} from "./string/BracedString";
 import {flatten, isArray, isNumber, isString, mustBeArray, mustBeString} from "../util";
 import {BibStringComponent} from "./BibStringItem";
 import {isStringRef, StringRef} from "./string/StringRef";
+import {isNum} from "../lexer/NumericToken";
 
 export class BibEntry {
     readonly type: string;
@@ -41,7 +42,7 @@ export class BibEntry {
         this.title$ = "";
     }
 
-    getField(key: string) {
+    getField(key: string): FieldValue | undefined {
         return this.fields[key.toLowerCase()];
     }
 }
@@ -58,7 +59,7 @@ export function parseEntryFields(fields: any): EntryFields {
 
 export function parseStringComponent(braceDepth: number, obj: any): BibStringComponent | string | number | StringRef {
     if (isNumber(obj) || isString(obj))
-        return new BibStringComponent(typeof obj, braceDepth, [obj]);
+        return /*new BibStringComponent(typeof obj, braceDepth, [*/obj/*])*/;
 
     if (isStringRef(obj))
         return new StringRef(0, obj.stringref);
@@ -68,6 +69,7 @@ export function parseStringComponent(braceDepth: number, obj: any): BibStringCom
     switch (mustBeString(obj.type, obj)) {
         case "id":
         case "ws":
+        case "number":
             return mustBeString(obj.string);
         case "bracedstring":
         case "braced":
@@ -107,11 +109,16 @@ export function parseFieldValue(value: any): FieldValue {
     if (isNumber(value)) {
         return value;
     }
+    let data = mustBeArray(value.data);
     switch (value.type) {
         case "quotedstringwrapper":
-            return new OuterQuotedString(mustBeArray(value.data).map(e => parseStringComponent(0, e)));
+            if(data.length === 1 && isNumber(data[0]))
+                // A single number is in a quoted string wrapper because the parser considered it part of a concatenated string
+                return data[0];
+
+            return new OuterQuotedString(data.map(e => parseStringComponent(0, e)));
         case "bracedstringwrapper":
-            return new OuterBracedString(mustBeArray(value.data).map(e => parseStringComponent(0, e)));
+            return new OuterBracedString(data.map(e => parseStringComponent(0, e)));
         default:
             throw new Error("Unexpected value: " + JSON.stringify(value));
     }

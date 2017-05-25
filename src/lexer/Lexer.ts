@@ -18,7 +18,7 @@ export default class Lexer {
     getStringUntilNonEscapedChar(terminalRegex: RegExp | string): string {
         // if (typeof terminalRegex === 'string') {
         // }
-        const chars = [];
+        const chars: string[] = [];
         for (let i = this.pos; i < this.len + 1; i++) {
             this.pos = i;
             if (this.str.charAt(i) == '\\' && this.str.charAt(i + 1).match(terminalRegex)) {
@@ -31,7 +31,6 @@ export default class Lexer {
         }
         return chars.join("");
     }
-
     readTokens(): Token[] {
         const tokens: Token[] = [];
         let nextToken;
@@ -70,7 +69,7 @@ export default class Lexer {
 
     private eatIdString(): IdToken {
         // id
-        let chars = [];
+        let chars: string[] = [];
         const pos2 = this.pos;
         for (let i = pos2; i < this.len + 1; i++) {
             this.pos = i;

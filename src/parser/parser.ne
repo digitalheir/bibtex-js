@@ -27,7 +27,7 @@
 # Text that is enclosed in braces is marked not to be touched by any formating instructions. For instance, when a style defines the title to become depicted using only lowercase, italic letters, the enclosed part will be left untouched. "An Introduction To {BibTeX}" would become ,,an introduction to the BibTeX'' when such a style is applied. Nested braces are ignored.
 
 @{%
-var isNumber = function(x) {return x.constructor === Number || (typeof x== "object"&&x.type === "number")};
+var isNumber = function(x) {return x.constructor === Number || (typeof x === "object"&&x.type === "number")};
 var tok_id              = {test: function(x) {return typeof x === "object" && x.type === "id"; }}
 var entry_type_bib      = {test: function(x) {return typeof x === "object" && x.type === "@bib"; }}
 var entry_type_string   = {test: function(x) {return typeof x === "object" && x.type === "@string"; }}
@@ -62,7 +62,7 @@ function joinTokens(arr){
     var strs = [];
     for(var i=0;i<arr.length;i++){
       if(typeof arr[i] === "object"){
-        if(!arr[i].string) throw new Error("Expected token to have a string field called "string" in object "+JSON.stringify(arr[i]));
+        if(!arr[i].string) throw new Error("Expected token to have a string field called 'string' in object "+JSON.stringify(arr[i]));
         strs.push(arr[i].string);
       } else if(typeof arr[i] === "string" || typeof arr[i] === "number"){
         strs.push(arr[i]);
@@ -122,13 +122,26 @@ entry              -> (bib_entry | string_entry | preamble_entry | comment_entry
 # ^ this suggests that opening and closing brackets within the comment MUST be closed, and the comment ends on the first ending bracket
 #   that balances with the opening bracket
 #
-comment                    -> (entry_body_comment|non_bracket):*         {% function (data, location, reject) {
+comment                    -> main         {%
+                                                    function (data, location, reject) {
+                                                      return data;
+                                                    }
+                                                    %}
+comment_liberal            -> (.):*                                        {%
+                                                                            function (data, location, reject) {
                                                                               var toeknz=[];
                                                                               for(var tk=0; tk < data[0].length; tk++)
                                                                                 toeknz.push(data[0][tk][0]);
-                                                                              return data[0];
+                                                                              return toeknz;
                                                                             } %}
-entry_body_comment         -> (parenthesized[comment] | braced[comment]) {% function (data, location, reject) { return data[0][0][0]; } %}
+
+entry_body_comment         -> (parenthesized[comment] | braced[comment])
+{%
+  function (data, location, reject) {
+    return data[0][0][0];
+  }
+%}
+
 entry_body_string          -> (parenthesizedPadded[keyval] | bracedPadded[keyval]) {% function (data, location, reject) { return data[0][0][0]; } %}
 entry_body_bib             -> (parenthesizedPadded[bib_content] | bracedPadded[bib_content]) {% function (data, location, reject) {
                                                                                                 var obj = data[0][0][0];
@@ -212,7 +225,7 @@ value_string       ->  (quoted_string_or_ref (_ %pound _ quoted_string_or_ref):*
                       {% function (data, location, reject) {
                              //console.log("DATA",JSON.stringify(data));
                              var match = data[0];
-                             if(match.length == 2){
+                             if(match.length === 2){
                               // quoted string
                               var tokenz = [];
                               tokenz.push(match[0]);
@@ -236,8 +249,30 @@ string_ref         -> (stringreftoken_n_num stringreftoken:*)
                       {% function (data, location, reject) { var str = data[0][0]+joinTokens(data[0][1]); return {stringref: str}; } %}
 
 # Non-white non-brace, non-comma
-stringreftoken       -> (%esc | %paren_l | %paren_r | %tok_id | %num  | %entry_type_bib | %entry_type_string | %entry_type_preamble | %entry_type_comment) {% function (data, location, reject) { if(typeof data[0][0] === "object") {if(!data[0][0].string)throw new Error("Expected "+data[0]+"to have a "string" field");return data[0][0].string;} else {if((!(typeof data[0][0] === "string"||typeof data[0][0] === "number")))throw new Error("Expected "+data[0][0]+" to be a string");return data[0][0]; }} %}
-stringreftoken_n_num -> (%esc | %paren_l | %paren_r | %tok_id |         %entry_type_bib | %entry_type_string | %entry_type_preamble | %entry_type_comment) {% function (data, location, reject) { if(typeof data[0][0] === "object") {if(!data[0][0].string)throw new Error("Expected "+data[0]+"to have a "string" field");return data[0][0].string;} else {if((!(typeof data[0][0] === "string"||typeof data[0][0] === "number")))throw new Error("Expected "+data[0][0]+" to be a string");return data[0][0]; }} %}
+stringreftoken       -> (%esc | %paren_l | %paren_r | %tok_id | %num  | %entry_type_bib | %entry_type_string | %entry_type_preamble | %entry_type_comment)
+{%
+   function (data, location, reject) {
+     if(typeof data[0][0] === "object") {
+       if(!data[0][0].string) throw new Error("Expected "+data[0]+"to have a 'string' field");
+       return data[0][0].string;
+       } else {
+         if((!(typeof data[0][0] === "string"||typeof data[0][0] === "number")))
+           throw new Error("Expected "+data[0][0]+" to be a string");return data[0][0];
+       }
+   }
+%}
+stringreftoken_n_num -> (%esc | %paren_l | %paren_r | %tok_id |         %entry_type_bib | %entry_type_string | %entry_type_preamble | %entry_type_comment)
+{%
+   function (data, location, reject) {
+     if(typeof data[0][0] === "object") {
+       if(!data[0][0].string) throw new Error("Expected "+data[0]+"to have a 'string' field");
+       return data[0][0].string;
+       } else {
+         if((!(typeof data[0][0] === "string"||typeof data[0][0] === "number")))
+           throw new Error("Expected "+data[0][0]+" to be a string");return data[0][0];
+       }
+   }
+%}
 non_brace            -> (%esc | %paren_l | %paren_r | %tok_id | %quote_dbl | %ws | %num | %comma | %entry_type_bib | %entry_type_string | %entry_type_preamble | %entry_type_comment | %pound | %eq)
 {% function (data, location, reject) {
   return data[0][0];
@@ -262,7 +297,7 @@ non_entry           -> (escaped_entry | escaped_escape | escaped_non_esc_outside
 %}
 escaped_escape        -> %esc %esc {% function (data, location, reject) { return '\\'; } %}
 escaped_entry         -> %esc entry_decl
-                         {% function (data, location, reject) { return data[1]; } %}
+                         {% function (data, location, reject) { return {type: "escapedEntry", data: data[1] }; } %}
 escaped_non_esc_outside_entry -> %esc non_esc_outside_entry
                          {% function (data, location, reject) { return '\\' + data[1]; } %}
 non_esc_outside_entry -> (%tok_id |

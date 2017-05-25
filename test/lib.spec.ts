@@ -5,6 +5,8 @@ import {grammar} from "../src/parser/ts-parser";
 import Lexer from "../src/lexer/Lexer";
 import {parseBibFile} from "../src/bibfile/BibFile";
 import {isOuterQuotedString, OuterQuotedString, QuotedString} from "../src/bibfile/string/QuotedString";
+import {mustBeArray, mustBeDefined} from "../src/util";
+import {BibEntry, FieldValue} from "../src/bibfile/BibEntry";
 
 //TODO test crossref?
 
@@ -86,10 +88,10 @@ describe("field values", () => {
         const bib = parseBibFile(`@b00k{comp4nion,
                 quoted        = "Simple quoted string",
                 quotedComplex = "Complex " # quoted #" string",
-                braced        = {I am a so-called "braced string"},
+                braced        = {I am a so-called "braced string09 11"},
                 bracedComplex = {I {{\\am}} a {so-called} {\\"b}raced string{\\"}.},
-                number        = 1993 ,
-                naughtyNumber = a1993a,
+                number        = 911 ,
+                naughtyNumber = a911a,
                 naughtyString = abc
             }`);
 
@@ -113,79 +115,31 @@ describe("field values", () => {
             {
                 "type": "bracedstringwrapper",
                 "braceDepth": 0,
-                "data": ["I", " ", "am", " ", "a", " ", "so-called", " ", {
-                    "type": "string",
-                    "braceDepth": 0,
-                    "data": ["\""]
-                }, "braced", " ", "string", {"type": "string", "braceDepth": 0, "data": ["\""]}]
+                "data": [
+                    "I", " ", "am", " ", "a", " ", "so-called", " ",
+                    "\"", "braced", " ", "string", "09", " ", 11, "\""
+                ]
             }
         );
-        assert.deepEqual(bib.entries$.comp4nion.getField("bracedCOMPLEX"),
-            {
-                "type": "bracedstringwrapper", "braceDepth": 0, "data": [
-                "I", " ", {
-                    "type": "braced", "braceDepth": 0, "data": [
-                        {
-                            "type": "braced", "braceDepth": 1, "data": [
-                            {"type": "string", "braceDepth": 2, "data": ["\\"]}, "am"
-                        ]
-                        }
-                    ]
-                },
-                " ", "a", " ",
-                {"type": "braced", "braceDepth": 0, "data": ["so-called"]},
-                " ",
-                {
-                    "type": "braced",
-                    "braceDepth": 0,
-                    "data": [
-                        {
-                            "type": "string",
-                            "braceDepth": 1,
-                            "data": ["\\"]
-                        },
-                        {
-                            "type": "string",
-                            "braceDepth": 1,
-                            "data": ["\""]
-                        }, "b"
-                    ]
-                },
-                "raced", " ", "string",
-                {
-                    "type": "braced",
-                    "braceDepth": 0,
-                    "data": [
-                        {
-                            "type": "string",
-                            "braceDepth": 1,
-                            "data": ["\\"]
-                        },
-                        {
-                            "type": "string",
-                            "braceDepth": 1,
-                            "data": ["\""]
-                        }
-                    ]
-                }, "."
-            ]
-            }
-        );
-        assert.deepEqual(bib.entries$.comp4nion.getField("number"),
-            {
-                "type": "quotedstringwrapper",
-                "braceDepth": 0,
-                "data": [{"type": "number", "braceDepth": 0, "data": [1993]}]
-            }
-        );
-        assert.deepEqual(bib.entries$.comp4nion.getField("naughtyNumber"),
-            {"type": "quotedstringwrapper", "braceDepth": 0, "data": [{"braceDepth": 0, "stringref": "a1993a"}]}
-        );
-        assert.deepEqual(bib.entries$.comp4nion.getField("naughtyString"),
-            {"type": "quotedstringwrapper", "braceDepth": 0, "data": [{"braceDepth": 0, "stringref": "abc"}]}
-        );
+        const bracedComplex: any = bib.entries$.comp4nion.getField("bracedCOMPLEX");
+        assert.deepEqual(bracedComplex.type, "bracedstringwrapper");
+        const bracedComplexData = bracedComplex.data;
+        const bracedComplexDatum0: any = bracedComplexData[0];
+        const bracedComplexDatum2: any = bracedComplexData[2];
+        assert.deepEqual(bracedComplexDatum0, "I");
+        const bracedComplexDatum2Data: any = bracedComplexDatum2.data;
+        const bracedComplexDatum2Datum0: any = bracedComplexDatum2Data[0];
+        assert.deepEqual(bracedComplexDatum2Datum0.braceDepth, 1);
 
-        // todo
+        const numberField = bib.entries$.comp4nion.getField("number");
+        assert.equal(numberField, 911);
+
+        const naughtyNumber: any = mustBeDefined(bib.entries$.comp4nion.getField("naughtyNumber"));
+        const t: any = naughtyNumber["type"];
+        const nnData: any[] = mustBeArray(naughtyNumber["data"]);
+
+        assert.equal(t, "quotedstringwrapper");
+        assert.equal(nnData[0]["stringref"], "a911a");
     });
     /* todo implement
      it("should process titles correctly", function () {
@@ -282,7 +236,7 @@ describe("parser", () => {
             assert.equal(thirdDatum.stringref, "_");
             const fourthDatum: any = acab.data[4];
             assert.equal(fourthDatum["type"], "quotedstring");
-        }else
+        } else
             assert.fail(isOuterQuotedString(acab), true);
         // TODO assert some stuff
         // assert.deepEqual(bib.strings._, [
@@ -323,13 +277,17 @@ describe("parser", () => {
         // let bibliography = new Bibliography(parse);
         // bibliography.entries.comp4nion.fields.author._authors.forEach((author) => {
         // });
-        // assert.equal(bibliography.strings.mittelbach.toUnicode(), "Mittelbach, Franck");
+        let entry: BibEntry = mustBeDefined(bib.getEntry("Comp4nion"));
+        assert.equal(mustBeDefined(entry.getField("author")).toString(), "Mittelbach, Franck");
     });
+
     it("should parse preamble entries", function () {
-        const bib = parseBibFile(`@preamble{ "\\makeatletter" }
-@preamble{ "\\@ifundefined{url}{\\def\\url#1{\\texttt{#1}}}{}" }
-@preamble{ "\\makeatother" }
+        const bib = parseBibFile(`@preamble{ "\\@ifundefined{url}{\\def\\url#1{\\texttt{#1}}}{}" }
+                                  @preamble{ "\\makeatletter" }
+                                  @preamble{ "\\makeatother" }
 `);
-        assert.equal(bib.preamble$, "blablabla  123");
+        assert.equal(bib.preamble$, ` "\\@ifundefined{url}{\\def\\url#1{\\texttt{#1}}}{}" 
+ "\\makeatletter" 
+ "\\makeatother" `);
     });
 });
