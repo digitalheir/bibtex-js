@@ -21,7 +21,7 @@ export default class Lexer {
         const chars: string[] = [];
         for (let i = this.pos; i < this.len + 1; i++) {
             this.pos = i;
-            if (this.str.charAt(i) == '\\' && this.str.charAt(i + 1).match(terminalRegex)) {
+            if (this.str.charAt(i) == "\\" && this.str.charAt(i + 1).match(terminalRegex)) {
                 i++;
                 this.pos = i;
             } else if (this.str.charAt(i).match(terminalRegex)) {
@@ -43,7 +43,7 @@ export default class Lexer {
         if (this.pos >= this.str.length)
             return undefined;
 
-        let currentChar: string = this.str.charAt(this.pos);
+        const currentChar: string = this.str.charAt(this.pos);
 
         if (isSingleWhiteSpaceCharacter(currentChar))
             return this.eatWhiteSpace();
@@ -69,7 +69,7 @@ export default class Lexer {
 
     private eatIdString(): IdToken {
         // id
-        let chars: string[] = [];
+        const chars: string[] = [];
         const pos2 = this.pos;
         for (let i = pos2; i < this.len + 1; i++) {
             this.pos = i;
@@ -78,7 +78,7 @@ export default class Lexer {
             const charAtI = this.str.charAt(i);
             if (!isIdChar(charAtI)) {
                 break;
-                //else if (charAtI == '\\' && (this.str.charAt(i + 1) == '\\' || isSpecialChar(this.str.charAt(i + 1)))) {
+                // else if (charAtI == '\\' && (this.str.charAt(i + 1) == '\\' || isSpecialChar(this.str.charAt(i + 1)))) {
                 //  i++;
                 //  this.pos = i;
                 //  chars.push(this.str.charAt(i));

@@ -1,10 +1,12 @@
-var webpack = require('webpack'),
+const webpack = require('webpack'),
     path = require('path'),
     yargs = require('yargs');
 
-var VERSION = require('./version').default;
 
-var libraryName = 'bibtex-parser',
+const VERSION = "0.2.0";
+
+
+const libraryName = "bibtex-parser",
     plugins = [
         new webpack.LoaderOptionsPlugin({
             options: {
@@ -14,27 +16,20 @@ var libraryName = 'bibtex-parser',
                 }
             }
         })
-    ],
-    outputFile;
+    ];
 
-if (yargs.argv.p) {
-    //plugins.push(new webpack.optimize.UglifyJsPlugin({ minimize: true }));
-    outputFile = libraryName + '.' + VERSION + '.min.js';
-} else {
-    outputFile = libraryName + '.' + VERSION + '.js';
-}
+console.log(libraryName + "." + VERSION + ".min.js");
 
-var config = {
-    entry: [
-        __dirname + '/src/index.ts'
-    ],
+const config = {
+    entry: {
+        umd: __dirname + '/src/index.ts'
+    },
     devtool: 'source-map',
     output: {
-        path: path.join(__dirname, '/'),
-        filename: outputFile,
-        library: libraryName,
+        filename: "index.js",
+        path: __dirname + '/',
         libraryTarget: 'umd',
-        umdNamedDefine: true
+        library: "rechtspraak"
     },
     module: {
         rules: [
@@ -46,7 +41,10 @@ var config = {
             },
             {
                 test: /\.tsx?$/,
-                loader: 'awesome-typescript-loader',
+                loader: [
+                    'babel-loader?presets[]=es2015',
+                    'awesome-typescript-loader'
+                ],
                 exclude: /node_modules/
             }
         ]

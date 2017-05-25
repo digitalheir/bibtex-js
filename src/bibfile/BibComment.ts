@@ -1,4 +1,4 @@
-import {flatten, isArray, isString, mustBeString} from "../util";
+import {flattenMyArray, isArray, isString, mustBeString} from "../util";
 
 export class BibComment {
     readonly type: string;
@@ -45,5 +45,5 @@ const flattenO = (wrapper: any): string => isString(wrapper) ? wrapper
 ;
 
 export function flattenPlainText(data: any[]): string[] {
-    return flatten(data).map(flattenO);
+    return flattenMyArray(data).map(flattenO);
 }

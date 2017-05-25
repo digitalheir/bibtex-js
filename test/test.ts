@@ -1,15 +1,16 @@
-import {expect} from "chai";
 import "mocha";
+
+import {expect} from "chai";
 import Lexer from "../src/lexer/Lexer";
 import {parseBibFile} from "../src/bibfile/BibFile";
 import {isOuterQuotedString, OuterQuotedString, QuotedString} from "../src/bibfile/string/QuotedString";
 import {isString, mustBeArray, mustBeDefined} from "../src/util";
 import {BibEntry} from "../src/bibfile/BibEntry";
 
-//TODO test crossref?
+// TODO test crossref?
 
-//it('should resolve string references like we expect', function () {
-//const stringVals = StringValue.resolveStrings(
+// it('should resolve string references like we expect', function () {
+// const stringVals = StringValue.resolveStrings(
 //  {
 //    "mittelbach": {
 //      "type": "quotedstringwrapper",
@@ -50,9 +51,9 @@ import {BibEntry} from "../src/bibfile/BibEntry";
 //      "data": [{"type": "quotedstring", "data": [[[{"type": "id", "string": "beautifu"}]]]}, {"stringref": "l"}]
 //    }
 //  }
-//);
-//console.log(JSON.stringify(withoutRefs));
-//});
+// );
+// console.log(JSON.stringify(withoutRefs));
+// });
 
 describe("lexer", () => {
     it("should lex", function () {
@@ -216,13 +217,13 @@ describe("parser", () => {
         expect(thrown).to.equal(true);
     });
     it("should parse string entries", function () {
-        let bib = parseBibFile(`leading comment
+        const bib = parseBibFile(`leading comment
             @   STRiNG   {  mittelbach = "Mittelbach, Franck"  }
             @string{acab= a #_# c #_#"are" #_# b}
             @string{c = "co"#cc}
             @string{a = "a"#l#l}
             @string{_ = {{{{{ }}}}}}
-            @string{l   =   {l}}    
+            @string{l   =   {l}}
             @string{cc ={mp{\\"u}ters}}
             @string{b =  "beautifu"#l} `
         );
@@ -251,7 +252,7 @@ describe("parser", () => {
 
     it("should parse bib entries", function () {
         const bib = parseBibFile(` @  STRiNG   {  mittelbach = "Mittelbach, Franck" }
-            some comment 
+            some comment
             @b00k
             { comp4nion  ,
                 auTHor    = "Goossens, jr, Mich{\\\`e}l Frederik and " # mittelbach # " and "#"{ {   A}}le"#"xander de La Samarin ",\n
@@ -272,7 +273,7 @@ describe("parser", () => {
         // let bibliography = new Bibliography(parse);
         // bibliography.entries.comp4nion.fields.author._authors.forEach((author) => {
         // });
-        let entry: BibEntry = mustBeDefined(bib.getEntry("Comp4nion"));
+        const entry: BibEntry = mustBeDefined(bib.getEntry("Comp4nion"));
         expect(mustBeDefined(entry.getField("author"))).to.not.be.null;
     });
 
@@ -281,8 +282,8 @@ describe("parser", () => {
                                   @preamble{ "\\makeatletter" }
                                   @preamble{ "\\makeatother" }
 `);
-        expect(bib.preamble$, ` "\\@ifundefined{url}{\\def\\url#1{\\texttt{#1}}}{}" 
- "\\makeatletter" 
+        expect(bib.preamble$, ` "\\@ifundefined{url}{\\def\\url#1{\\texttt{#1}}}{}"
+ "\\makeatletter"
  "\\makeatother" `);
     });
 });

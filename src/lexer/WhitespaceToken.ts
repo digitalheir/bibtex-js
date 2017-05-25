@@ -9,13 +9,14 @@ export function newWhitespace(string: string): WhitespaceToken {
     };
 }
 
+//noinspection JSUnusedGlobalSymbols
 export function isWhitespace(token: any): token is WhitespaceToken {
     return typeof token.string === "string" && token.type === WS;
 }
 
 
 export interface WhitespaceToken extends TypedToken {
-    type: "ws"
+    type: "ws";
 }
 
 export const singleWhitespaces = {

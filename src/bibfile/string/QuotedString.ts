@@ -1,5 +1,4 @@
-import {BibStringComponent, BibStringData, resolveStringReferences} from "./BibStringItem";
-import {FieldValue} from "../BibEntry";
+import {BibStringComponent, BibStringData} from "./BibStringItem";
 
 export class QuotedString extends BibStringComponent {
     constructor(braceDepth: number, data: BibStringData) {

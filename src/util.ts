@@ -13,7 +13,7 @@ export function mustBeString(str: any, o?: any): string {
 }
 
 export function mustBeDefined<T>(t?: T, o?: any): T {
-    if (t === undefined || t === null)
+    if (t === undefined)
         throw new Error("Expected to be defined: " + JSON.stringify(o ? o : t));
     return t;
 }
@@ -27,17 +27,22 @@ export function isArray(data: any): data is any[] {
     return !!data && data.constructor === Array;
 }
 
-export function flattenArray(obj: any[]): any[] {
-    return flatten(obj);
-}
-
-export function flatten(x: any[]): any[] {
-    let flattened: any[] = [];
-    x.forEach((el: any) => {
-        if (isArray(el)) {
-            flattened = flattened.concat(flatten(el));
-        } else
-            flattened.push(el);
-    });
-    return flattened;
-}
+export const flattenMyArray = function (arr: any[], result?: any[]): any[] {
+    if (!result) result = [];
+    for (let i = 0, length = arr.length; i < length; i++) {
+        const value: any = arr[i];
+        if (Array.isArray(value)) {
+            for (let i = 0, length = value.length; i < length; i++) {
+                const value2: any = value[i];
+                if (Array.isArray(value2)) {
+                    flattenMyArray(value2, result);
+                } else {
+                    result.push(value2);
+                }
+            }
+        } else {
+            result.push(value);
+        }
+    }
+    return result;
+};

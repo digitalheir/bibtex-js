@@ -3,11 +3,11 @@ node_modules/
 *.tgz
 
 /src/
-test/
+/test/
 gulpfile.js
 testrun.ts
 webpack.config.js
-tsconfig.json
+/tsconfig.json
 /tslint.json
 /typings.json
 typings

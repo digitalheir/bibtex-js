@@ -8,7 +8,7 @@ export interface KeyVal {
 
 export function isKeyVal(data: any): data is KeyVal {
     return typeof data.key === "string"
-        && data.value !== undefined
+        && data.value !== undefined;
 }
 
 export function newKeyVal(data: any): KeyVal {

@@ -1,4 +1,4 @@
-export const NUMBER = "number";
+// export const NUMBER = "number";
 
 import {TypedToken} from "./Token";
 
@@ -10,7 +10,7 @@ export function newNumber(string: string): NumberToken {
 }
 
 export interface NumberToken extends TypedToken {
-    type: "number"
+    type: "number";
 }
 
 export const numericChars = {

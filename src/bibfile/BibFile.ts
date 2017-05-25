@@ -81,13 +81,16 @@ export class BibFile {
 
         const strings: { [k: string]: FieldValue } = {};
         this.content.forEach(entry => {
-                if (isKeyVal(entry)) strings[entry.key] = entry.value;
+                if (isKeyVal(entry)) {
+                    if (!!strings[entry.key])
+                        throw new Error("String with id " + entry.key + " was defined more than once");
+                    strings[entry.key] = entry.value;
+                }
             }
         );
         this.strings = strings;
         this.strings$ = resolveStrings(strings);
 
-        console.log("Parsefd")
     }
 
     getEntry(id: string): BibEntry | undefined {
@@ -104,12 +107,12 @@ function parseNonEntry(nonEntry: any): BibComment {
 function parseEntry(entry: any): NonBibComment {
     switch (typeof entry) {
         case "object":
-            let data = entry.data;
+            const data = entry.data;
             if (typeof data["@type"] === "string") {
                 return new BibEntry(data["@type"], data._id, parseEntryFields(data.fields));
             }
 
-            let type = mustBeString(data.type);
+            const type = mustBeString(data.type);
             switch (type) {
                 case "string":
                     return newStringNode(data);

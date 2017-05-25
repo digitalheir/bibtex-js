@@ -1,6 +1,6 @@
 import {OuterQuotedString, QuotedString} from "./string/QuotedString";
 import {BracedString, OuterBracedString} from "./string/BracedString";
-import {flatten, isArray, isNumber, isString, mustBeArray, mustBeString} from "../util";
+import {flattenMyArray, isArray, isNumber, isString, mustBeArray, mustBeString} from "../util";
 import {BibStringComponent} from "./string/BibStringItem";
 import {isStringRef, StringRef} from "./string/StringRef";
 
@@ -75,12 +75,12 @@ export function parseStringComponent(braceDepth: number, obj: any): BibStringCom
             if (!isArray(obj.data)) {
                 throw new Error("Expect array for data: " + JSON.stringify(obj));
             }
-            return new BracedString(braceDepth, flatten(obj.data).map(e => parseStringComponent(braceDepth+1, e)));
+            return new BracedString(braceDepth, flattenMyArray(obj.data).map(e => parseStringComponent(braceDepth + 1, e)));
         case "quotedstring":
             if (!isArray(obj.data)) {
                 throw new Error("Expect array for data: " + JSON.stringify(obj));
             }
-            const flattened = flatten(obj.data);
+            const flattened = flattenMyArray(obj.data);
             return new QuotedString(braceDepth, flattened.map(e => parseStringComponent(braceDepth, e)));
         default:
             throw new Error("Unexpected complex string type: " + obj.type);
@@ -107,10 +107,10 @@ export function parseFieldValue(value: any): FieldValue {
     if (isNumber(value)) {
         return value;
     }
-    let data = mustBeArray(value.data);
+    const data = mustBeArray(value.data);
     switch (value.type) {
         case "quotedstringwrapper":
-            if(data.length === 1 && isNumber(data[0]))
+            if (data.length === 1 && isNumber(data[0]))
                 // A single number is in a quoted string wrapper because the parser considered it part of a concatenated string
                 return data[0];
 
