@@ -1,4 +1,5 @@
-import {BibStringComponent, BibStringData} from "../BibStringItem";
+import {BibStringComponent, BibStringData, resolveStringReferences} from "./BibStringItem";
+import {FieldValue} from "../BibEntry";
 
 export class QuotedString extends BibStringComponent {
     constructor(braceDepth: number, data: BibStringData) {
@@ -15,6 +16,10 @@ export class OuterQuotedString extends BibStringComponent {
 
 export function isOuterQuotedString(x: any): x is OuterQuotedString {
     return x.type === "quotedstringwrapper";
+}
+
+export function isQuotedString(x: any): x is OuterQuotedString {
+    return x.type === "quotedstring";
 }
 
 // export class DefiniteOuterQuotedString extends BibStringComponent {

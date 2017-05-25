@@ -8,7 +8,7 @@ import {isKeyVal} from "./KeyVal";
 import {BibEntry, FieldValue, isBibEntry, parseEntryFields} from "./BibEntry";
 import {BibComment, CommentEntry, flattenPlainText, isBibComment} from "./BibComment";
 import {isPreamble, Preamble, newPreambleNode} from "./BibPreamble";
-import {newStringNode, StringEntry} from "./string/StringEntry";
+import {newStringNode, resolveStrings, StringEntry} from "./string/StringEntry";
 
 
 export type NonBibComment = BibEntry | CommentEntry | StringEntry | Preamble;
@@ -43,6 +43,10 @@ export class BibFile {
     readonly preamble$: string;
 
     readonly strings: { [k: string]: FieldValue };
+    /**
+     * `strings`, but with all references resolved
+     */
+    readonly strings$: { [k: string]: FieldValue };
 
 
     constructor(content: (NonBibComment | BibComment)[]) {
@@ -60,11 +64,10 @@ export class BibFile {
         this.entries.forEach((entry: BibEntry) => {
             const key = entry._id.toLowerCase();
             /**
-             * BibTEX
-             * will complain if two entries have the same internal key, even if they aren’t capitalized in the same
+             * BibTEX will complain if two entries have the same internal key, even if they aren’t capitalized in the same
              * way. For instance, you cannot have two entries named Example and example.
              * In the same way, if you cite both example and Example, BibTEX will complain. Indeed, it would
-             * have to include the same entry twice, which probably is not what you want;
+             * have to include the same entry twice, which probably is not what you want
              */
             if (!!entryMap[key]) throw new Error("Entry with id " + key + " was defined more than once");
             entryMap[key] = entry;
@@ -82,6 +85,9 @@ export class BibFile {
             }
         );
         this.strings = strings;
+        this.strings$ = resolveStrings(strings);
+
+        console.log("Parsefd")
     }
 
     getEntry(id: string): BibEntry | undefined {

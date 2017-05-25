@@ -1,9 +1,8 @@
-import {OuterQuotedString} from "./string/QuotedString";
-import {OuterBracedString} from "./string/BracedString";
+import {OuterQuotedString, QuotedString} from "./string/QuotedString";
+import {BracedString, OuterBracedString} from "./string/BracedString";
 import {flatten, isArray, isNumber, isString, mustBeArray, mustBeString} from "../util";
-import {BibStringComponent} from "./BibStringItem";
+import {BibStringComponent} from "./string/BibStringItem";
 import {isStringRef, StringRef} from "./string/StringRef";
-import {isNum} from "../lexer/NumericToken";
 
 export class BibEntry {
     readonly type: string;
@@ -76,14 +75,13 @@ export function parseStringComponent(braceDepth: number, obj: any): BibStringCom
             if (!isArray(obj.data)) {
                 throw new Error("Expect array for data: " + JSON.stringify(obj));
             }
-            return new BibStringComponent(obj.type, braceDepth, flatten(obj.data).map(e => parseStringComponent(braceDepth+1, e)));
-// TODO
+            return new BracedString(braceDepth, flatten(obj.data).map(e => parseStringComponent(braceDepth+1, e)));
         case "quotedstring":
             if (!isArray(obj.data)) {
                 throw new Error("Expect array for data: " + JSON.stringify(obj));
             }
             const flattened = flatten(obj.data);
-            return new BibStringComponent(obj.type, braceDepth, flattened.map(e => parseStringComponent(braceDepth, e)));
+            return new QuotedString(braceDepth, flattened.map(e => parseStringComponent(braceDepth, e)));
         default:
             throw new Error("Unexpected complex string type: " + obj.type);
     }

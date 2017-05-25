@@ -1,16 +1,12 @@
-import * as assert from "assert";
+import {expect} from "chai";
 import "mocha";
-import * as nearley from "nearley";
-import {grammar} from "../src/parser/ts-parser";
 import Lexer from "../src/lexer/Lexer";
 import {parseBibFile} from "../src/bibfile/BibFile";
 import {isOuterQuotedString, OuterQuotedString, QuotedString} from "../src/bibfile/string/QuotedString";
-import {mustBeArray, mustBeDefined} from "../src/util";
-import {BibEntry, FieldValue} from "../src/bibfile/BibEntry";
+import {isString, mustBeArray, mustBeDefined} from "../src/util";
+import {BibEntry} from "../src/bibfile/BibEntry";
 
 //TODO test crossref?
-
-const COMMENT_PART = "\n\t\nthisisallacommentof{}commentswitheverythingexceptan\", whichweca123nescapewitha0123  ";
 
 //it('should resolve string references like we expect', function () {
 //const stringVals = StringValue.resolveStrings(
@@ -60,10 +56,10 @@ const COMMENT_PART = "\n\t\nthisisallacommentof{}commentswitheverythingexceptan\
 
 describe("lexer", () => {
     it("should lex", function () {
-        const lexer1 = new Lexer(COMMENT_PART);
-        assert.deepEqual(
-            lexer1.readTokens(),
-            [
+        const lexer1 = new Lexer("\n\t\nthisisallacommentof{}commentswitheverythingexceptan\", whichweca123nescapewitha0123  ");
+        expect(
+            lexer1.readTokens()
+        ).to.deep.equal([
                 {"type": "ws", "string": "\n\t\n"},
                 {"type": "id", "string": "thisisallacommentof"},
                 "{",
@@ -95,13 +91,13 @@ describe("field values", () => {
                 naughtyString = abc
             }`);
 
-        assert.deepEqual(bib.entries$.comp4nion.getField("quoted"), new OuterQuotedString([
+        expect(bib.entries$.comp4nion.getField("quoted")).to.deep.equal(new OuterQuotedString([
             new QuotedString(0, [
                 "Simple", " ", "quoted", " ", "string"
             ])
         ]));
 
-        assert.deepEqual(bib.entries$.comp4nion.getField("quotedCOMPLEX"),
+        expect(bib.entries$.comp4nion.getField("quotedCOMPLEX")).to.deep.equal(
             {
                 "type": "quotedstringwrapper",
                 "braceDepth": 0,
@@ -111,7 +107,7 @@ describe("field values", () => {
                 }, {"type": "quotedstring", "braceDepth": 0, "data": [" ", "string"]}]
             }
         );
-        assert.deepEqual(bib.entries$.comp4nion.getField("braced"),
+        expect(bib.entries$.comp4nion.getField("braced")).to.deep.equal(
             {
                 "type": "bracedstringwrapper",
                 "braceDepth": 0,
@@ -122,24 +118,24 @@ describe("field values", () => {
             }
         );
         const bracedComplex: any = bib.entries$.comp4nion.getField("bracedCOMPLEX");
-        assert.deepEqual(bracedComplex.type, "bracedstringwrapper");
+        expect(bracedComplex.type).to.equal("bracedstringwrapper");
         const bracedComplexData = bracedComplex.data;
         const bracedComplexDatum0: any = bracedComplexData[0];
         const bracedComplexDatum2: any = bracedComplexData[2];
-        assert.deepEqual(bracedComplexDatum0, "I");
+        expect(bracedComplexDatum0).to.equal("I");
         const bracedComplexDatum2Data: any = bracedComplexDatum2.data;
         const bracedComplexDatum2Datum0: any = bracedComplexDatum2Data[0];
-        assert.deepEqual(bracedComplexDatum2Datum0.braceDepth, 1);
+        expect(bracedComplexDatum2Datum0.braceDepth).to.equal(1);
 
         const numberField = bib.entries$.comp4nion.getField("number");
-        assert.equal(numberField, 911);
+        expect(numberField).to.equal(911);
 
         const naughtyNumber: any = mustBeDefined(bib.entries$.comp4nion.getField("naughtyNumber"));
         const t: any = naughtyNumber["type"];
         const nnData: any[] = mustBeArray(naughtyNumber["data"]);
 
-        assert.equal(t, "quotedstringwrapper");
-        assert.equal(nnData[0]["stringref"], "a911a");
+        expect(t).to.equal("quotedstringwrapper");
+        expect(nnData[0]["stringref"]).to.equal("a911a");
     });
     /* todo implement
      it("should process titles correctly", function () {
@@ -192,28 +188,33 @@ describe("field values", () => {
 
 describe("parser", () => {
     it("should parse comments", function () {
-        // const p = new nearley.Parser(grammar.ParserRules, grammar.ParserStart);
-        // p.feed(new Lexer(COMMENT_PART).readTokens());
-        // const res = p.results;
-        // //for (var i = 0; i < res.length; i++) console.log(i, JSON.stringify(res[i]));
-        // assert.equal(res.length, 1);
-        // const parse = res[0];
-
-        const bib = parseBibFile(COMMENT_PART);
+        const bib = parseBibFile("\n\t\nthisisallacommentof{}commentswitheverythingexceptan\", whichweca123nescapewitha0123  ");
         console.log(JSON.stringify(bib));
-        assert.equal(bib.entries.length, 0);
-        assert.equal(bib.comments.length, 1);
-        assert.equal(bib.content.length, 1);
+        expect(bib.entries.length).to.equal(0);
+        expect(bib.comments.length).to.equal(1);
+        expect(bib.content.length).to.equal(1);
         const firstComment = bib.comments[0].data;
-        assert.equal(firstComment[0], "\n\t\n");
-        assert.equal(firstComment[9], 123);
-        assert.equal(firstComment[11], "0123");
+        expect(firstComment[0]).to.equal("\n\t\n");
+        expect(firstComment[9]).to.equal("123");
+        expect(firstComment[11]).to.equal("0123");
     });
 
     it("should parse empty", function () {
-        assert.equal(parseBibFile("").content.length, 0);
+        expect(parseBibFile("").content.length).to.equal(0);
     });
 
+    it("should throw for cyclic string entries", function () {
+        let thrown = false;
+        try {
+            parseBibFile(
+                `@string{c = "a"#b}
+        @string{b = "b"#a}`
+            );
+        } catch (e) {
+            thrown = true;
+        }
+        expect(thrown).to.equal(true);
+    });
     it("should parse string entries", function () {
         let bib = parseBibFile(`leading comment
             @   STRiNG   {  mittelbach = "Mittelbach, Franck"  }
@@ -225,33 +226,27 @@ describe("parser", () => {
             @string{cc ={mp{\\"u}ters}}
             @string{b =  "beautifu"#l} `
         );
-        console.log(JSON.stringify(bib));
-        assert.equal(bib.content.length, 17);
+        expect(bib.content.length).to.equal(17);
 
-        // assert.equal(bib.entries[0]["data"].key, "mittelbach");
+        // expect(bib.entries[0]["data"].key).to.equal("mittelbach");
 
         const acab = bib.strings.acab;
         if (isOuterQuotedString(acab)) {
             const thirdDatum: any = acab.data[3];
-            assert.equal(thirdDatum.stringref, "_");
+            expect(thirdDatum.stringref).to.equal("_");
             const fourthDatum: any = acab.data[4];
-            assert.equal(fourthDatum["type"], "quotedstring");
+            expect(fourthDatum["type"]).to.equal("quotedstring");
         } else
             assert.fail(isOuterQuotedString(acab), true);
-        // TODO assert some stuff
-        // assert.deepEqual(bib.strings._, [
-        //     {
-        //         "data": [{
-        //             "data": [{
-        //                 "data": [{
-        //                     "data": [{
-        //                         "string": " ", "type": "ws"
-        //                     }], "type": "braced"
-        //                 }], "type": "braced"
-        //             }], "type": "braced"
-        //         }], "type": "braced"
-        //     }
-        // ]);
+
+        const acab$ = bib.strings$.acab;
+        if (isOuterQuotedString(acab$)) {
+            const thirdDatum: any = acab$.data[3];
+            expect(thirdDatum.type).to.equal("bracedstringwrapper");
+            const fourthDatum: any = acab$.data[4];
+            expect(fourthDatum["type"]).to.equal("quotedstring");
+        } else
+            assert.fail(isOuterQuotedString(acab$), true);
     });
 
     it("should parse bib entries", function () {
@@ -269,7 +264,7 @@ describe("parser", () => {
                 Title3    = "{Bib}" # "\\TeX"
             }`);
 
-        assert.equal(bib.content.length, 4);
+        expect(bib.content.length).to.equal(4);
 
         console.log(JSON.stringify(bib.content));
 
@@ -278,7 +273,7 @@ describe("parser", () => {
         // bibliography.entries.comp4nion.fields.author._authors.forEach((author) => {
         // });
         let entry: BibEntry = mustBeDefined(bib.getEntry("Comp4nion"));
-        assert.equal(mustBeDefined(entry.getField("author")).toString(), "Mittelbach, Franck");
+        expect(mustBeDefined(entry.getField("author"))).to.not.be.null;
     });
 
     it("should parse preamble entries", function () {
@@ -286,7 +281,7 @@ describe("parser", () => {
                                   @preamble{ "\\makeatletter" }
                                   @preamble{ "\\makeatother" }
 `);
-        assert.equal(bib.preamble$, ` "\\@ifundefined{url}{\\def\\url#1{\\texttt{#1}}}{}" 
+        expect(bib.preamble$, ` "\\@ifundefined{url}{\\def\\url#1{\\texttt{#1}}}{}" 
  "\\makeatletter" 
  "\\makeatother" `);
     });

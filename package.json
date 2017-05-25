@@ -24,7 +24,8 @@
     "ts-node": "^3.0.4",
     "tslint": "^5.3.2",
     "typescript": "^2.3.3",
-    "webpack": "^2.3.3"
+    "webpack": "^2.3.3",
+    "yargs": "latest"
   },
   "scripts": {
     "build": "npm run clean && npm run build:min",

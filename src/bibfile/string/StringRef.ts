@@ -8,6 +8,6 @@ export class StringRef {
     }
 }
 
-export function isStringRef(stringref: any): boolean {
+export function isStringRef(stringref: any): stringref is StringRef {
     return typeof stringref.stringref === "string";
 }

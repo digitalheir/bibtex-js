@@ -1,19 +1,23 @@
-import {BibStringComponent, BibStringData} from "../BibStringItem";
-
+import {BibStringComponent, BibStringData} from "./BibStringItem";
 
 export class BracedString extends BibStringComponent {
-    readonly type = "bracedstring";
-
-    constructor(braceDepth: number, data: BibStringComponent[]) {
+    constructor(braceDepth: number, data: BibStringData) {
         super("bracedstring", braceDepth, data);
     }
+
 }
 export class OuterBracedString extends BibStringComponent {
-    readonly type = "bracedstringwrapper";
-
     constructor(data: BibStringData) {
-        super("bracedstring", 0, data);
+        super("bracedstringwrapper", 0, data);
     }
+}
+
+export function isOuterBracedString(x: any): x is OuterBracedString {
+    return x.type === "bracedstringwrapper";
+}
+
+export function isBracedString(x: any): x is BracedString {
+    return x.type === "bracedstring";
 }
 
 // TODO extends?
