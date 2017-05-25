@@ -1,7 +1,7 @@
 {
-  "name": "bibtex-parser",
-  "version": "0.1.0",
-  "description": "For parsing a BiBTeX file into JSON",
+  "name": "bibtex",
+  "version": "0.2.1",
+  "description": "For parsing a BiBTeX file in pure Javascript / Typescript",
   "main": "index.js",
   "types": "index.d.ts",
   "repository": "git@github.com:digitalheir/tex-string-handler.git",
