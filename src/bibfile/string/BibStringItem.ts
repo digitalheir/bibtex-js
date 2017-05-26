@@ -45,6 +45,14 @@ export interface ContiguousSimpleString = {
     data: (number | string)[];
 }
 
+export function isContiguousSimpleString(x:any): x is ContiguousSimpleString {
+    return c.type === "ContiguousSimpleString" && isArray(x.data);
+}
+
+export function joinContiguousSimpleStrings(x: ContiguousSimpleString): string {
+    return x.data.join("");
+}
+
 // TODO
 // /**
 //  * A special character is a
