@@ -6,7 +6,9 @@ import {parseBibFile} from "../src/bibfile/BibFile";
 import {isOuterQuotedString, OuterQuotedString, QuotedString} from "../src/bibfile/string/QuotedString";
 import {isNumber, isString, mustBeArray, mustBeDefined} from "../src/util";
 import {BibEntry, EntryFields, FieldValue} from "../src/bibfile/entry/BibEntry";
-import {flattenQuotedStrings} from "../src/bibfile/entry/Authors";
+import {determineAuthorNames$, flattenQuotedStrings} from "../src/bibfile/entry/Authors";
+import {BibStringData} from "../src/bibfile/string/BibStringItem";
+import {BracedString} from "../src/bibfile/string/BracedString";
 
 // TODO test crossref?
 
@@ -138,6 +140,42 @@ describe("field values", () => {
 
         expect(t).to.equal("quotedstringwrapper");
         expect(nnData[0]["stringref"]).to.equal("a911a");
+    });
+
+    it("should tease apart author names", function () {
+        function qs(data: BibStringData): QuotedString {
+            return new QuotedString(0, data);
+        }
+        function bs(data: BibStringData): QuotedString {
+            return new BracedString(0, data);
+        }
+
+        expect(determineAuthorNames$(new OuterQuotedString([1]))).to.deep.equal([["1"]]);
+        expect(determineAuthorNames$(new OuterQuotedString(
+            [1, qs([" a"]), "n", "d", qs([" "]), bs(["\\", "two"])]
+        ))).to.deep.equal([["1"], ["", {
+            "braceDepth": 0,
+            "data": [
+                "\\",
+                "two"
+            ],
+            "isSpecialCharacter": true,
+            "type": "bracedstring"
+        }]]);
+    });
+
+    it("should determine author names", function () {
+        const bib = parseBibFile(` @  STRiNG   {  mittelbach = "Mittelbach, Franck" }
+            some comment
+            @b00k
+            { comp4nion  ,
+                auTHor    = "Goossens, jr, Mich{\\\`e}l Frederik and " # mittelbach # " and "#"{ {   A}}le"#"xander de La Samarin ",\n
+            }`);
+
+        const book: BibEntry = mustBeDefined(bib.getEntry("COMP4NION"));
+        console.log(
+            mustBeDefined(book.getAuthors()).authors$
+        );
     });
 
     it("should flatten quoted strings", function () {

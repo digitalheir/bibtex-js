@@ -1,6 +1,7 @@
 import {StringRef} from "./StringRef";
 import {BracedString, OuterBracedString} from "./BracedString";
 import {OuterQuotedString, QuotedString} from "./QuotedString";
+import {isArray} from "../../util";
 
 
 export type BibStringDatum = (
@@ -40,13 +41,13 @@ export function isBibStringComponent(x: any): x is BibStringComponent {
     return typeof x.braceDepth === "number" && typeof x.type === "string";
 }
 
-export interface ContiguousSimpleString = {
+export interface ContiguousSimpleString {
     type: "ContiguousSimpleString";
     data: (number | string)[];
 }
 
-export function isContiguousSimpleString(x:any): x is ContiguousSimpleString {
-    return c.type === "ContiguousSimpleString" && isArray(x.data);
+export function isContiguousSimpleString(x: any): x is ContiguousSimpleString {
+    return x.type === "ContiguousSimpleString" && isArray(x.data);
 }
 
 export function joinContiguousSimpleStrings(x: ContiguousSimpleString): string {

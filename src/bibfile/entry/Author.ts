@@ -1,3 +1,39 @@
+import {BibStringData} from "../string/BibStringItem";
+
+function word2string(obj) {
+    if (typeof obj === "string") return obj;
+    else if (obj.type == "braced") return word2string(obj.data);
+    else if (obj.unicode) return obj.unicode;
+    else if (obj.string) return obj.string;
+    else if (obj.constructor == Array) return obj.map(word2string).join("");
+    else throw new Error("? " + JSON.stringify(obj));
+}
+
+export default class AuthorName {
+    readonly firstNames: BibStringData;
+    readonly initials: BibStringData;
+    readonly vons: BibStringData;
+    readonly lastNames: BibStringData;
+    readonly jrs: BibStringData;
+
+    readonly id: string;
+
+    /**
+     * @param firstNames Array of word objects
+     * @param vons Array of word objects
+     * @param lastNames Array of word objects
+     * @param jrs Array of word objects
+     */
+    constructor(firstNames: BibStringData, vons: BibStringData, lastNames: BibStringData, jrs: BibStringData) {
+        this.firstNames = firstNames.map(flattenToString);
+        this.initials = firstNames.map(getFirstLetter);
+        this.vons = vons.map(flattenToString);
+        this.lastNames = lastNames.map(flattenToString);
+        this.jrs = jrs.map(flattenToString);
+
+        this.id = this.firstNames.join("-") + "-" + this.vons.join("-") + "-" + this.lastNames.join("-") + "-" + this.jrs.join("-");
+    }
+}
 function isPartOfName(char) {
     return (char == "," || char.match(/\s/));
 }
@@ -75,6 +111,7 @@ function getSubStringAsArray(tokens, startIncl, endExcl) {
     }
     return arr;
 }
+
 function vonLastJrFirst(authorTokens) {
     let commaPos = -1;
     for (let i = 0; i < authorTokens.length; i++)
@@ -119,23 +156,24 @@ function vonLastJrFirst(authorTokens) {
  *
  * The format to be considered is obtained by counting the number of commas in the name. Here are
  * the characteristics of these formats:
- * @param authorRaw
  */
-function parseAuthor(authorRaw: ParsedTokensWrapper[]): string {
-    const commaCount = authorRaw.reduce((prev, cur) => {
+function parseAuthor(normalizedFieldValue: BibStringData): string {
+
+    const commaCount = normalizedFieldValue.reduce((prev, cur) => {
             return prev + (cur.type == "," ? 1 : 0);
         }, 0
     );
+
     // console.log(commaCount,JSON.stringify(authorRaw));
     switch (commaCount) {
         case 0:
-            return firstVonLast(authorRaw);
+            return firstVonLast(normalizedFieldValue);
         case 1:
-            return vonLastFirst(authorRaw);
+            return vonLastFirst(normalizedFieldValue);
         case 2:
-            return vonLastJrFirst(authorRaw);
+            return vonLastJrFirst(normalizedFieldValue);
         default:
-            throw new Error("Could not parse author name: found " + commaCount + " commas in " + JSON.stringify(authorRaw));
+            throw new Error("Could not parse author name: found " + commaCount + " commas in " + JSON.stringify(normalizedFieldValue));
     }
 }
 

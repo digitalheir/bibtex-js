@@ -3,12 +3,13 @@ import {BracedString, OuterBracedString} from "../string/BracedString";
 import {flattenMyArray, isArray, isNumber, isString, mustBeArray, mustBeString} from "../../util";
 import {BibOuterStringComponent, BibStringComponent} from "../string/BibStringItem";
 import {isStringRef, StringRef} from "../string/StringRef";
-import {Authors} from "./Authors";
+import {Authors, mustBeAuthors} from "./Authors";
 import {
     findError, hasMandatoryFields, KnownField, MandatoryFields,
     mandatoryFields
 } from "./mandatory-and-optional-fields";
 import {resolveStringReference} from "../string/StringEntry";
+import {getFile} from "ts-node/dist";
 
 export class BibEntry {
     readonly type: string;
@@ -46,7 +47,6 @@ export class BibEntry {
         this._id = id;
 
         this.fields = fields;
-        // this.fields$ = processEntry(fields);
 
 
         // TODO implement; see above
@@ -56,6 +56,12 @@ export class BibEntry {
 
     getField(key: string): FieldValue | undefined {
         return this.fields[key.toLowerCase()];
+    }
+
+    getAuthors(): Authors | undefined {
+        const field = this.fields["author"];
+        if (field === undefined) return field;
+        return mustBeAuthors(field);
     }
 }
 
@@ -149,7 +155,9 @@ export function parseFieldValue(value: any): FieldValue {
 export type FieldValue = number | BibOuterStringComponent;
 
 
-export type EntryFields = { [k: string]: FieldValue };
+export interface EntryFields {
+    [k: string]: FieldValue;
+}
 
 export function isBibEntry(x: any): x is BibEntry {
     return typeof x["type"] === "string"
