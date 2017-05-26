@@ -12,6 +12,12 @@ export class Authors extends BibOuterStringComponent {
 
         // todo
 
+        const normalizedString = globContiguousStrings(
+            flattenQuotedStrings(data.data)
+        ).map(e => isContiguousSimpleString(e) ? joinContiguousSimpleStrings(e): e);
+        
+        
+        
         // if (!isNumber(data)) {
         //     this.authors = parseAuthors(data.data);
         // }
