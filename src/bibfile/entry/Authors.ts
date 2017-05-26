@@ -15,18 +15,8 @@ export class Authors extends BibOuterStringComponent {
         const normalizedString = globContiguousStrings(
             flattenQuotedStrings(data.data)
         ).map(e => isContiguousSimpleString(e) ? joinContiguousSimpleStrings(e): e);
-        
-        
-        
-        // if (!isNumber(data)) {
-        //     this.authors = parseAuthors(data.data);
-        // }
-
-        // const authorz = splitOn(fieldValue.data, (o: any) => );
-        // data.forEach((el, i) =>
-        // if (el === "and") {
-        //     console.log(i);
-        // });
+        const authorNames: BibStringData[] = splitOnAnd(normalizedString);
+        this.authors$ = authorNames.map(name => new Author(name));
     }
 }
 
@@ -97,6 +87,27 @@ function globContiguousStrings(data: BibStringData): BibStringData {
         }
       }
     }
+}
+
+export function splitOnAnd(data: BibStringData): BibStringData {
+    const splitted: BibStringData[] = [];
+    
+    let buffer: BibStringData = [];
+    for(const datum of data) {
+        if(isString(datum)) {
+            const authors: string[] = datum.split(/\s+and\s+/g);
+            buffer.push(authors[0]);
+            
+            for(let i=1; i < authors.length; i++) {
+                splitted.push(buffer);
+                buffer = [authors[i]];
+            }
+        }else{
+            buffer.push(datum);
+        }
+    }
+    
+    return splitted;
 }
 
 function parseAuthors(data: BibOuterStringComponent): Author[] {
