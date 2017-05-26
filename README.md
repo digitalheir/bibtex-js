@@ -6,7 +6,7 @@ Written in Typescript, compiled to ES5 Javascript (with typings provided).
 
 This module literally just parses a BibTex file and processes it **as far as BibTeX goes**. It doesn't process TeX command (i.e., `{\"o}` is not translated to `ö`). If you want to actually work with a bibliography, look for [Bibliography.js](https://github.com/digitalheir/bibliography-js).
 
-Not all internal BibTeX functions are implemented, simply because I don't need them personally. Most notably [sorting entries](https://github.com/digitalheir/bibtex-js/issues/1) is still an open issue because BibTeX has a little complicated algorithm which required a function that "purifies" field values.  
+Not all internal BibTeX functions are implemented, simply because I don't need them personally. Most notably [sorting entries](https://github.com/digitalheir/bibtex-js/issues/1) is still an open issue because BibTeX has a little complicated algorithm which required a function that "purifies" field values, which for example makes `{\ss}` equivalent to `ss` but makes `ä` come after `z`. I am unsure if that is actually what anyone wants in modern days, though. A modern approach would be to use Unicode collation and then sort.
 
 Pull requests and issues are welcome.
 
