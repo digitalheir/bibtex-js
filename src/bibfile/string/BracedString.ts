@@ -1,6 +1,14 @@
 import {BibOuterStringComponent, BibStringComponent, BibStringData} from "./BibStringItem";
 
 export class BracedString extends BibStringComponent {
+
+    /**
+     * A special character is a
+     * part of a field starting with a left brace being at brace depth 0 immediately followed with a backslash,
+     * and ending with the corresponding right brace. 
+     * It should be noticed that anything in a special character is
+     * considered as being at brace depth 0, even if it is placed between another pair of braces.
+     */
     readonly isSpecialCharacter: boolean;
     
     constructor(braceDepth: number, data: BibStringData) {
