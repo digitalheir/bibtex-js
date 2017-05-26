@@ -1,5 +1,5 @@
 import {KeyVal, isKeyVal, newKeyVal} from "../KeyVal";
-import {FieldValue} from "../BibEntry";
+import {FieldValue} from "../entry/BibEntry";
 import {BibStringComponent, BibStringData, isBibStringComponent} from "./BibStringItem";
 import {isStringRef, StringRef} from "./StringRef";
 import {isOuterQuotedString, isQuotedString, OuterQuotedString, QuotedString} from "./QuotedString";

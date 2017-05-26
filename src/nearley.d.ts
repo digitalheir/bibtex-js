@@ -9,6 +9,7 @@ declare module "nearley" {
 }
 
 declare module "assert" {
+    //noinspection JSUnusedGlobalSymbols
     export class AssertionError implements Error {
         name: string;
         message: string;
@@ -36,14 +37,14 @@ declare module "assert" {
 
     export function notStrictEqual(actual: any, expected: any, message?: string): void;
 
-    export var throws: {
+    export const throws: {
         (block: Function, message?: string): void;
         (block: Function, error: Function, message?: string): void;
         (block: Function, error: RegExp, message?: string): void;
         (block: Function, error: (err: any) => boolean, message?: string): void;
     };
 
-    export var doesNotThrow: {
+    export const doesNotThrow: {
         (block: Function, message?: string): void;
         (block: Function, error: Function, message?: string): void;
         (block: Function, error: RegExp, message?: string): void;

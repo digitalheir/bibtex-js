@@ -3,7 +3,14 @@ import {BracedString, OuterBracedString} from "./BracedString";
 import {OuterQuotedString, QuotedString} from "./QuotedString";
 
 
-export type BibStringDatum = (BracedString | QuotedString | OuterQuotedString | OuterBracedString | string | number | StringRef);
+export type BibStringDatum = (
+    BracedString
+    | QuotedString
+    | OuterQuotedString
+    | OuterBracedString
+    | string
+    | number
+    | StringRef);
 export type BibStringData = BibStringDatum[];
 
 export class BibStringComponent {
@@ -22,6 +29,11 @@ export class BibStringComponent {
     }
 
 
+}
+export class BibOuterStringComponent extends BibStringComponent {
+    constructor(type: string, data: BibStringData) {
+        super(type, 0, data);
+    }
 }
 
 export function isBibStringComponent(x: any): x is BibStringComponent {

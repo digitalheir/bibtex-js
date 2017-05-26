@@ -1,13 +1,22 @@
-import {OuterQuotedString, QuotedString} from "./string/QuotedString";
-import {BracedString, OuterBracedString} from "./string/BracedString";
-import {flattenMyArray, isArray, isNumber, isString, mustBeArray, mustBeString} from "../util";
-import {BibStringComponent} from "./string/BibStringItem";
-import {isStringRef, StringRef} from "./string/StringRef";
+import {OuterQuotedString, QuotedString} from "../string/QuotedString";
+import {BracedString, OuterBracedString} from "../string/BracedString";
+import {flattenMyArray, isArray, isNumber, isString, mustBeArray, mustBeString} from "../../util";
+import {BibOuterStringComponent, BibStringComponent} from "../string/BibStringItem";
+import {isStringRef, StringRef} from "../string/StringRef";
+import {Authors} from "./Authors";
+import {
+    findError, hasMandatoryFields, KnownField, MandatoryFields,
+    mandatoryFields
+} from "./mandatory-and-optional-fields";
+import {resolveStringReference} from "../string/StringEntry";
 
 export class BibEntry {
     readonly type: string;
     readonly _id: string;
+
     readonly fields: EntryFields;
+    readonly fields$: EntryFields;
+
     /**
      * When sorting, BibTEX computes a string, named
      sort.key$, for each entry. The sort.key$ string is an (often long) string defining the order
@@ -35,7 +44,11 @@ export class BibEntry {
     constructor(type: string, id: string, fields: EntryFields) {
         this.type = type;
         this._id = id;
+
         this.fields = fields;
+        // this.fields$ = processEntry(fields);
+
+
         // TODO implement; see above
         this.sortkey$ = "";
         this.title$ = "";
@@ -46,11 +59,14 @@ export class BibEntry {
     }
 }
 
-
 export function parseEntryFields(fields: any): EntryFields {
     const fieldz: EntryFields = {};
     Object.keys(fields).forEach(key => {
-        fieldz[key] = parseFieldValue(fields[key]);
+        switch (key) {
+            default:
+                fieldz[key] = parseFieldValue(fields[key]);
+                break;
+        }
     });
     return fieldz;
 }
@@ -111,7 +127,7 @@ export function parseFieldValue(value: any): FieldValue {
     switch (value.type) {
         case "quotedstringwrapper":
             if (data.length === 1 && isNumber(data[0]))
-                // A single number is in a quoted string wrapper because the parser considered it part of a concatenated string
+            // A single number is in a quoted string wrapper because the parser considered it part of a concatenated string
                 return data[0];
 
             return new OuterQuotedString(data.map(e => parseStringComponent(0, e)));
@@ -130,7 +146,7 @@ export function parseFieldValue(value: any): FieldValue {
  *
  * For numerical values, curly braces and double quotes can be omitted.
  */
-export type FieldValue = number | OuterQuotedString | OuterBracedString;
+export type FieldValue = number | BibOuterStringComponent;
 
 
 export type EntryFields = { [k: string]: FieldValue };
@@ -139,4 +155,40 @@ export function isBibEntry(x: any): x is BibEntry {
     return typeof x["type"] === "string"
         && typeof x["_id"] === "string"
         && !!x["fields"];
+}
+
+export function processEntry(entry: BibEntry, strings$: { [p: string]: FieldValue }) {
+    if (hasMandatoryFields(entry.type))
+        mandatoryFields[entry.type]
+            .map(e => findError(entry, e))
+            .forEach(e => {
+                if (!!e) console.warn(e.message);
+            })
+        ;
+
+    const fieldz: EntryFields = {};
+
+    const fields$ = entry.fields;
+
+    Object.keys(entry.fields).forEach((key: string) => {
+        const field$ = resolveStringReference({}, strings$, strings$, fields$[key]);
+        switch (key) {
+            case "author":
+                fieldz[key] = new Authors(field$);
+                break;
+            case "title":
+                fieldz[key] = field$;
+                break;
+            default:
+                fieldz[key] = field$;
+                break;
+        }
+    });
+
+
+    return new BibEntry(
+        entry.type,
+        entry._id,
+        fieldz
+    );
 }

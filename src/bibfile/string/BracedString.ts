@@ -1,4 +1,4 @@
-import {BibStringComponent, BibStringData} from "./BibStringItem";
+import {BibOuterStringComponent, BibStringComponent, BibStringData} from "./BibStringItem";
 
 export class BracedString extends BibStringComponent {
     constructor(braceDepth: number, data: BibStringData) {
@@ -6,9 +6,9 @@ export class BracedString extends BibStringComponent {
     }
 
 }
-export class OuterBracedString extends BibStringComponent {
+export class OuterBracedString extends BibOuterStringComponent {
     constructor(data: BibStringData) {
-        super("bracedstringwrapper", 0, data);
+        super("bracedstringwrapper", data);
     }
 }
 

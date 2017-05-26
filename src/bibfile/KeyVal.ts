@@ -1,5 +1,5 @@
 
-import {FieldValue, parseFieldValue} from "./BibEntry";
+import {FieldValue, parseFieldValue} from "./entry/BibEntry";
 
 export interface KeyVal {
     readonly key: string;

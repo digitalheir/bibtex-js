@@ -5,14 +5,13 @@ import {grammar} from "../parser/ts-parser";
 import Lexer from "../lexer/Lexer";
 import {isArray, mustBeString} from "../util";
 import {isKeyVal} from "./KeyVal";
-import {BibEntry, FieldValue, isBibEntry, parseEntryFields} from "./BibEntry";
+import {BibEntry, FieldValue, isBibEntry, parseEntryFields, processEntry} from "./entry/BibEntry";
 import {BibComment, CommentEntry, flattenPlainText, isBibComment} from "./BibComment";
 import {isPreamble, Preamble, newPreambleNode} from "./BibPreamble";
 import {newStringNode, resolveStrings, StringEntry} from "./string/StringEntry";
 
 
 export type NonBibComment = BibEntry | CommentEntry | StringEntry | Preamble;
-
 
 /**
  * A bibfile is a sequence of entries, with comments interspersed
@@ -21,7 +20,7 @@ export class BibFile {
     readonly content: (NonBibComment | BibComment)[];
     readonly comments: BibComment[];
 
-    readonly entries: BibEntry[];
+    readonly entries_raw: BibEntry[];
     readonly entries$: { [key: string]: BibEntry };
 
     /**
@@ -39,10 +38,10 @@ export class BibFile {
      Please note that you should never define style settings in the @preamble of a bibliography database,
      since it would be applied to any bibliography built from this database.
      */
-    readonly preambles: Preamble[];
+    readonly preambles_raw: Preamble[];
     readonly preamble$: string;
 
-    readonly strings: { [k: string]: FieldValue };
+    readonly strings_raw: { [k: string]: FieldValue };
     /**
      * `strings`, but with all references resolved
      */
@@ -56,28 +55,11 @@ export class BibFile {
         });
 
 
-        this.entries = content.filter(c => isBibEntry(c)).map(c => {
-            if (isBibEntry(c)) return c; else throw new Error();
-        });
 
-        const entryMap: { [k: string]: BibEntry } = {};
-        this.entries.forEach((entry: BibEntry) => {
-            const key = entry._id.toLowerCase();
-            /**
-             * BibTEX will complain if two entries have the same internal key, even if they aren’t capitalized in the same
-             * way. For instance, you cannot have two entries named Example and example.
-             * In the same way, if you cite both example and Example, BibTEX will complain. Indeed, it would
-             * have to include the same entry twice, which probably is not what you want
-             */
-            if (!!entryMap[key]) throw new Error("Entry with id " + key + " was defined more than once");
-            entryMap[key] = entry;
-        });
-        this.entries$ = entryMap;
-
-        this.preambles = content.filter(c => isPreamble(c)).map(c => {
+        this.preambles_raw = content.filter(c => isPreamble(c)).map(c => {
             if (isPreamble(c)) return c; else throw new Error();
         });
-        this.preamble$ = this.preambles.map(p => p.toString()).join("\n");
+        this.preamble$ = this.preambles_raw.map(p => p.toString()).join("\n");
 
         const strings: { [k: string]: FieldValue } = {};
         this.content.forEach(entry => {
@@ -88,9 +70,28 @@ export class BibFile {
                 }
             }
         );
-        this.strings = strings;
+
+        this.strings_raw = strings;
         this.strings$ = resolveStrings(strings);
 
+        this.entries_raw = content.filter(c => isBibEntry(c)).map(c => {
+            if (isBibEntry(c)) return c;
+            else throw new Error();
+        });
+
+        const entryMap: { [k: string]: BibEntry } = {};
+        this.entries_raw.forEach((entry: BibEntry) => {
+            const key = entry._id.toLowerCase();
+            /**
+             * BibTEX will complain if two entries have the same internal key, even if they aren’t capitalized in the same
+             * way. For instance, you cannot have two entries named Example and example.
+             * In the same way, if you cite both example and Example, BibTEX will complain. Indeed, it would
+             * have to include the same entry twice, which probably is not what you want
+             */
+            if (!!entryMap[key]) throw new Error("Entry with id " + key + " was defined more than once");
+            entryMap[key] = processEntry(entry, this.strings$);
+        });
+        this.entries$ = entryMap;
     }
 
     getEntry(id: string): BibEntry | undefined {
@@ -109,7 +110,11 @@ function parseEntry(entry: any): NonBibComment {
         case "object":
             const data = entry.data;
             if (typeof data["@type"] === "string") {
-                return new BibEntry(data["@type"], data._id, parseEntryFields(data.fields));
+                return new BibEntry(
+                    data["@type"],
+                    data._id,
+                    parseEntryFields(data.fields)
+                );
             }
 
             const type = mustBeString(data.type);

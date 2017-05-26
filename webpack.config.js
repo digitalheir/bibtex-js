@@ -3,7 +3,7 @@ const webpack = require('webpack'),
     yargs = require('yargs');
 
 
-const VERSION = "0.2.0";
+const VERSION = "0.2.2";
 
 
 const libraryName = "bibtex-parser",

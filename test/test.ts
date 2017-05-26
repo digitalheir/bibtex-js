@@ -4,8 +4,9 @@ import {expect} from "chai";
 import Lexer from "../src/lexer/Lexer";
 import {parseBibFile} from "../src/bibfile/BibFile";
 import {isOuterQuotedString, OuterQuotedString, QuotedString} from "../src/bibfile/string/QuotedString";
-import {isString, mustBeArray, mustBeDefined} from "../src/util";
-import {BibEntry} from "../src/bibfile/BibEntry";
+import {isNumber, isString, mustBeArray, mustBeDefined} from "../src/util";
+import {BibEntry, EntryFields, FieldValue} from "../src/bibfile/entry/BibEntry";
+import {flattenQuotedStrings} from "../src/bibfile/entry/Authors";
 
 // TODO test crossref?
 
@@ -138,6 +139,30 @@ describe("field values", () => {
         expect(t).to.equal("quotedstringwrapper");
         expect(nnData[0]["stringref"]).to.equal("a911a");
     });
+
+    it("should flatten quoted strings", function () {
+        const bib = parseBibFile(`
+            @string { quoted = "QUO" # "TED" }
+            @string { braced = {"quoted"} }
+            @a{b,
+                bracedComplex = {I {{\\am}} {\\"a} "so-"called"" braced string{\\"}.},
+                quotedComplex = "and I {"} am a {"} " # quoted # " or "#braced#"string ",
+                number        = 911,
+            }`);
+        // stringref     = abc
+        const a: BibEntry = bib.entries$.b;
+        const fields$: EntryFields = a.fields;
+        const bracedcomplex: FieldValue = fields$.bracedcomplex;
+        if (isNumber(bracedcomplex)) throw Error();
+        console.log(flattenQuotedStrings(bracedcomplex.data, true));
+
+        const quotedComplex: FieldValue = fields$.quotedcomplex;
+        if (isNumber(quotedComplex)) throw Error();
+        console.log(flattenQuotedStrings(quotedComplex.data, true));
+
+        const nineEleven: FieldValue = fields$.number;
+        expect(nineEleven).to.equal(911);
+    });
     /* todo implement
      it("should process titles correctly", function () {
      const bib = parseBibFile(`
@@ -191,7 +216,7 @@ describe("parser", () => {
     it("should parse comments", function () {
         const bib = parseBibFile("\n\t\nthisisallacommentof{}commentswitheverythingexceptan\", whichweca123nescapewitha0123  ");
         console.log(JSON.stringify(bib));
-        expect(bib.entries.length).to.equal(0);
+        expect(bib.entries_raw.length).to.equal(0);
         expect(bib.comments.length).to.equal(1);
         expect(bib.content.length).to.equal(1);
         const firstComment = bib.comments[0].data;
@@ -231,7 +256,7 @@ describe("parser", () => {
 
         // expect(bib.entries[0]["data"].key).to.equal("mittelbach");
 
-        const acab = bib.strings.acab;
+        const acab = bib.strings_raw.acab;
         if (isOuterQuotedString(acab)) {
             const thirdDatum: any = acab.data[3];
             expect(thirdDatum.stringref).to.equal("_");

@@ -1,10 +1,12 @@
 # bibtex-js 
 
-Library for parsing BibTeX .bib files 📚. Provided as pure ES5 Javascript with Typescript typings included.
+Library for parsing BibTeX .bib files, based mostly on the excellent guide to BibTeX, [Tame the BeaST](http://tug.ctan.org/info/bibtex/tamethebeast/ttb_en.pdf). 
 
-This module literally just parses a BibTex file and processes it **as far as BibTeX go**. It doesn't process TeX command (i.e., `{\"o}` is not translated to `ö`). If you want to actually work with a bibliography, look for [Bibliography.js](https://github.com/digitalheir/bibliography-js).
+Written in Typescript, compiled to ES5 Javascript (with typings provided).
 
-Also, many internal BibTeX functions are not implemented yet, simply because I don't need them personally. Pull requests are welcome.
+This module literally just parses a BibTex file and processes it **as far as BibTeX goes**. It doesn't process TeX command (i.e., `{\"o}` is not translated to `ö`). If you want to actually work with a bibliography, look for [Bibliography.js](https://github.com/digitalheir/bibliography-js).
+
+Not all internal BibTeX functions are implemented, simply because I don't need them personally. Pull requests and issues are welcome.
 
 ## Usage
 
@@ -29,7 +31,7 @@ const bibFile = parseBibFile(`
 console.log(
     // Keys are case-insensitive
     bibFile.getEntry("MUT2011").getField("TITLE")
-); // Some complicated string
+); // Prints some complicated string
 ```
 
 ## License
