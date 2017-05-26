@@ -40,7 +40,10 @@ export function isBibStringComponent(x: any): x is BibStringComponent {
     return typeof x.braceDepth === "number" && typeof x.type === "string";
 }
 
-export type ContiguousSimpleString = (number | string)[];
+export interface ContiguousSimpleString = {
+    type: "ContiguousSimpleString";
+    data: (number | string)[];
+}
 
 // TODO
 // /**
