@@ -65,6 +65,34 @@ function flattenQuotedString(data: BibStringDatum, hideQuotes?: boolean): BibStr
         throw new Error();
 }
 
+function globContiguousStrings(data: BibStringData): BibStringData {
+    const result: BibStringData = [];
+    for (const element of data) {
+      if(isString(element) || isNumber(element)){
+         if(result.length <= 0)
+             result.push(
+                 {
+                    type: "ContiguousSimpleString",
+                    data: [element]
+                }
+             );
+         else {
+             const lastElement = result
+             (if(isContiguousSimpleString(lastElement)){
+                 lastElement.data.push(element);
+             }else{
+                 result.push(
+                     {
+                        type: "ContiguousSimpleString",
+                        data: [element]
+                      }
+                  );
+             }
+        }
+      }
+    }
+}
+
 function parseAuthors(data: BibOuterStringComponent): Author[] {
     const authors: Author[] = [];
     data.data;
