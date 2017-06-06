@@ -14,13 +14,13 @@
   },
   "license": "LGPL-3.0",
   "author": {
-    "name" : "TeXnous team",
+    "name": "TeXnous team",
     "email": "team@texnous.org",
     "url": "http://texnous.org"
   },
   "contributors": [
     {
-      "name" : "Kirill Chuvilin",
+      "name": "Kirill Chuvilin",
       "email": "k.chuvilin@texnous.org"
     }
   ],
@@ -28,6 +28,7 @@
   "repository": "bitbucket:texnous/latex-parser",
   "devDependencies": {
     "babel-cli": "^6.14.0",
-    "babel-preset-es2015": "^6.14.0"
+    "babel-preset-es2015": "^6.14.0",
+    "typescript": "^2.3.4"
   }
 }

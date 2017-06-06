@@ -23,20 +23,13 @@
 /**@module */
 
 
-/**
- * @namespace Latex
- * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
- */
-module.exports = {};
-
-
 
 /**
  * LaTeX lexeme
  * @enum {string}
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-module.exports['Lexeme'] = {
+export const Lexeme = {
   BINARY_OPERATOR:     'BINARY_OPERATOR',     // mathematical binary operator
   BRACKETS:            'BRACKETS',            // logical brackets
   CELL_SEPARATOR:      'CELL_SEPARATOR',      // table cell separator
@@ -71,14 +64,14 @@ module.exports['Lexeme'] = {
   WORD:                'WORD',                // sequence of letters
   WRAPPER:             'WRAPPER'              // wrapper for something
 };
-
+export type Lexeme = keyof typeof Lexeme;
 
 /**
  * LaTeX modes
  * @enum {string}
  * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
  */
-const Mode = module.exports['Mode'] = {
+export const modes = {
   LIST:     'LIST',    // list of items
   MATH:     'MATH',    // mathematical expressionLatex
   PICTURE:  'PICTURE', // picture
@@ -87,40 +80,53 @@ const Mode = module.exports['Mode'] = {
   VERTICAL: 'VERTICAL' // vertical spacing
 };
 
+export type Mode = keyof typeof modes;
 
+export function isMode(x: any): x is Mode {
+  return modes.hasOwnProperty(x);
+}
+
+export function mustBeMode(x: any): Mode {
+  if(!isMode(x)) throw new Error();
+  return x;
+}
+
+export type ModeStates = {[mode: string]: boolean};
 /**
  * LaTeX state encapsulation
  * @class
  * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
  */
-const State = module.exports['State'] = class {
-  //noinspection JSUnusedGlobalSymbols
+export class State {
+  private modeStates_: ModeStates;
+
+
   /**
    * Constructor
    * @param {!Object.<Mode,boolean>=} opt_initialModeStates the initial mode states
    * @constructor
    * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
    */
-  constructor(opt_initialModeStates) {
+  constructor(opt_initialModeStates: ModeStates = {}) {
     Object.defineProperty(this, 'modeStates_', { value: { }, enumerable: false });
+
+    this.modeStates_[modes.LIST]     = false;
+
+    this.modeStates_[modes.MATH]     = false;
+
+    this.modeStates_[modes.PICTURE]  = false;
+
+    this.modeStates_[modes.TABLE]    = false;
+
+    this.modeStates_[modes.TEXT]     = true;
     //noinspection JSUnresolvedVariable
-    this.modeStates_[Mode.LIST]     = false;
-    //noinspection JSUnresolvedVariable
-    this.modeStates_[Mode.MATH]     = false;
-    //noinspection JSUnresolvedVariable
-    this.modeStates_[Mode.PICTURE]  = false;
-    //noinspection JSUnresolvedVariable
-    this.modeStates_[Mode.TABLE]    = false;
-    //noinspection JSUnresolvedVariable
-    this.modeStates_[Mode.TEXT]     = true;
-    //noinspection JSUnresolvedVariable
-    this.modeStates_[Mode.VERTICAL] = false;
+    this.modeStates_[modes.VERTICAL] = false;
     // update the mode states
     if (opt_initialModeStates !== undefined) this.update(opt_initialModeStates);
   }
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Create a copy of this state.
    * @return {!State} the created copy
@@ -137,12 +143,12 @@ const State = module.exports['State'] = class {
    * @param {!Object.<Mode,boolean>} modeStates the states for modes
    * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
    */
-  update(modeStates) {
+  update(modeStates: ModeStates) {
     if (!(modeStates instanceof Object))
       throw new TypeError('"modeStates" isn\'t an Object instance');
     for (let modeKey in modeStates) { // for all the given modes
       //noinspection JSUnfilteredForInLoop
-      let mode = Mode[modeKey]; // verify the mode key
+      let mode = modes[mustBeMode(modeKey)]; // verify the mode key
       if (mode === undefined) // if the mode is unknown
         throw new TypeError('"modeStates[' + modeKey + ']" isn\'t a Latex.Mode option');
       //noinspection JSUnfilteredForInLoop,JSUnresolvedVariable
@@ -151,19 +157,19 @@ const State = module.exports['State'] = class {
   }
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Test the state with mode states
    * @param {!Object.<Mode,boolean>} modeStates the states for modes
    * @return {boolean} true if the state fits the modes, false otherwise
    * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
    */
-  test(modeStates) {
+  test(modeStates: ModeStates) {
     if (!(modeStates instanceof Object))
       throw new TypeError('"modeStates" isn\'t an Object instance');
     for (let modeKey in modeStates) { // for all the given modes
       //noinspection JSUnfilteredForInLoop
-      let mode = Mode[modeKey]; // verify the mode key
+      let mode = modes[mustBeMode(modeKey)]; // verify the mode key
       if (mode === undefined) // if the mode is unknown
         throw new TypeError('"modeStates[' + modeKey + ']" isn\'t a Latex.Mode option');
       // exit if the mode has different states
@@ -181,11 +187,11 @@ const State = module.exports['State'] = class {
  * @enum {string}
  * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
  */
-const Directive = module.exports['Directive'] = {
+export const Directive = {
   BEGIN: 'BEGIN', // begin something
   END:   'END'    // end something
 };
-
+export type Directive = keyof typeof Directive;
 
 
 /**
@@ -193,7 +199,8 @@ const Directive = module.exports['Directive'] = {
  * @const {string}
  * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
  */
-var GROUP = module.exports['GROUP'] = 'GROUP';
+export const GROUP = 'GROUP';
+export type GROUP = 'GROUP';
 
 
 
@@ -204,8 +211,18 @@ var GROUP = module.exports['GROUP'] = 'GROUP';
  * @property {Mode|GROUP} operand - The operand or null if there is no an operand
  * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
  */
+export interface OperationProperties {
+  directive: Directive;
+  operand: Mode|GROUP;
+}
+export function isOperationProperties(x: any): x is OperationProperties {
+  return x && x.hasOwnProperty("directive") && x.hasOwnProperty("operand");
+}
 
-
+export function mustBeOperationProperties(x: any): OperationProperties {
+  if(!isOperationProperties(x)) throw new Error();
+  return x;
+}
 
 /**
  * LaTeX operation encapsulation
@@ -214,14 +231,17 @@ var GROUP = module.exports['GROUP'] = 'GROUP';
  * @property {Mode|GROUP} operand - The operand or null if there is no an operand
  * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
  */
-const Operation = module.exports['Operation'] = class {
-  //noinspection JSUnusedGlobalSymbols
+export class Operation {
+  directive: Directive;
+  operand: Mode | GROUP;
+
+
   /**
    * Constructor
    * @param {!OperationProperties=} opt_initialProperties the initial property values
    * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
    */
-  constructor(opt_initialProperties) {
+  constructor(opt_initialProperties?: OperationProperties) {
     // do nothing if the initial properties aren't defined
     if (opt_initialProperties === undefined) return;
     if (!(opt_initialProperties instanceof Object))
@@ -236,21 +256,21 @@ const Operation = module.exports['Operation'] = class {
       Object.defineProperty(this, 'operand', { value: GROUP, enumerable: true });
       break;
     default:
-      let mode = Mode[opt_initialProperties.operand]; // validate the operand as a mode
+      let mode = modes[opt_initialProperties.operand]; // validate the operand as a mode
       if (!mode) throw new TypeError('"initialProperties.operand" isn\'t an Latex.Mode option');
       // store the operand
       Object.defineProperty(this, 'operand', { value: mode, enumerable: true });
     }
   };
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Compare this operation with the other
    * @param {!Operation} other the operation to compare with
    * @return {boolean} True if the operations are equal false otherwise
    * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
    */
-  equals(other) {
+  equals(other: any) {
     if (!(other instanceof Operation)) return false; // type test
     return this.directive === other.directive && this.operand === other.operand;
   };

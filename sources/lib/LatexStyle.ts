@@ -18,40 +18,51 @@
  * 02111-1307, USA.
  */
 
-'use strict';
-
 /**@module */
 
 
-const testProperties = require('./Utils').testProperties; // object property testing function
-/**
- * General LaTeX definitions
- * @property Lexeme
- * @property Mode
- * @property OperationProperties
- */
-const Latex = require('./Latex');
+import {isNumber, testProperties} from './Utils'; // object property testing function
 
+import {
+  Lexeme, Mode, modes, mustBeMode, mustBeOperationProperties, Operation, OperationProperties,
+  State
+} from './Latex';
+
+
+function isArray(x: any): x is any[] {
+  return x.constructor === Array
+}
+
+function mustBeArray(x: any): any[] {
+  if(!isArray(x))throw new Error();
+  return x;
+}
+
+/**
+ * LaTeX style package properties
+ * @interface PackageProperties
+ * @property {(!Array.<!SymbolProperties>|undefined)} symbols - The symbols of the package in the priority descending order
+ * @property {(!Array.<!CommandProperties>|undefined)} commands - The commands of the package in the priority descending order
+ * @property {(!Array.<!EnvironmentProperties>|undefined)} environments - The environments of the package
+ * @author Kirill Chuvilin <k.chuvilin@texnous.org>
+ */
+export interface PackageProperties {
+  symbols?: SymbolProperties[];
+  commands?: CommandProperties[];
+  environments?: EnvironmentProperties[];
+}
 
 /**
  * LaTeX style collection
  * @class
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-module.exports = class {
-  /**
-   * LaTeX style package properties
-   * @interface PackageProperties
-   * @property {(!Array.<!SymbolProperties>|undefined)} symbols -
-   *           The symbols of the package in the priority descending order
-   * @property {(!Array.<!CommandProperties>|undefined)} commands -
-   *           The commands of the package in the priority descending order
-   * @property {(!Array.<!EnvironmentProperties>|undefined)} environments -
-   *           The environments of the package
-   * @author Kirill Chuvilin <k.chuvilin@texnous.org>
-   */
+export default class LatexStyle {
+  private environments_: {[name: string]: EnvironmentAndPackage[]};
+  private commands_: {[name: string]: CommandAndPackage[]};
+  private symbols_: {[name: string]: SymbolAndPackage[]};
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Constructor
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
@@ -62,41 +73,44 @@ module.exports = class {
      * @private {!Object.<string,!Array.<!Symbol>>}
      * @name symbols_
      */
-    Object.defineProperty(this, 'symbols_', { value: {} });
+    this.symbols_ = {};
     /**
      * The commands by the name in the priority increasing order
      * @private {!Object.<string,!Array.<!Command>>}
      * @name commands_
      */
-    Object.defineProperty(this, 'commands_', { value: {} });
+    this.commands_ = {};
     /**
      * The environments by the name in the priority increasing order
      * @private {!Object.<string,!Array.<!Environment>>}
      * @name environments_
      */
-    Object.defineProperty(this, 'environments_', { value: {} });
+    this.environments_ = {};
   };
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Load a package with style definitions
    * @param {string} packageName the name of the style package
    * @param {PackageProperties} stylePackage the style package
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  loadPackage(packageName, stylePackage) {
+  loadPackage(packageName: string, stylePackage: PackageProperties) {
     if (stylePackage.symbols !== undefined) { // if the symbol descriptions are defined
       if (!(stylePackage.symbols instanceof Array))
         throw new TypeError('"stylePackage.symbols" isn\'t an Array');
       // for all the symbol descriptions
       for (let iSymbol = stylePackage.symbols.length - 1; iSymbol >= 0; --iSymbol) {
-        let symbol = new Symbol(stylePackage.symbols[iSymbol]); // the symbol description
+        let symbol: Symbol = new Symbol(stylePackage.symbols[iSymbol]); // the symbol description
         if (symbol.pattern) { // if the symbol has a pattern
           let symbolPatternFirstChar = symbol.pattern[0]; // the first char of the pattern
           // the symbols with the same pattern first char
-          (this.symbols_[symbolPatternFirstChar] || (this.symbols_[symbolPatternFirstChar] = []))
-            .push({ symbol, packageName }); // store the symbol and the package name
+          if(!this.symbols_.hasOwnProperty(symbolPatternFirstChar))
+            this.symbols_[symbolPatternFirstChar] = [];
+          let symbols: SymbolAndPackage[] = this.symbols_[symbolPatternFirstChar];
+
+          symbols.push({ symbol, packageName }); // store the symbol and the package name
         }
       }
     }
@@ -120,29 +134,34 @@ module.exports = class {
       for (let iEnvironment = stylePackage.environments.length - 1; iEnvironment >= 0;
            --iEnvironment) {
         // the environment description
-        let environment = new Environment(stylePackage.environments[iEnvironment]);
-        if (environment.name) { // if the environment has a name
+        let environment: Environment = new Environment(stylePackage.environments[iEnvironment]);
+        const envName: string = environment.name;
+        if (envName) { // if the environment has a name
           // the environments with the same name
-          (this.environments_[environment.name] || (this.environments_[environment.name] = []))
-            .push({ environment, packageName }); // store the environment and the package name
+          let storedEnv = this.environments_[envName];
+          if(storedEnv === undefined) {
+            storedEnv = [];
+            this.environments_[envName] = storedEnv;
+          }
+          storedEnv.push({ environment, packageName }); // store the environment and the package name
         }
       }
     }
   };
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Unload a package with style definitions
    * @param {string} packageName the name of the style package
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  unloadPackage(packageName) {
+  unloadPackage(packageName: string) {
     // for all the symbol pattern first chars
     for (let symbolPatternFirstChar in this.symbols_)
       if (this.symbols_.hasOwnProperty(symbolPatternFirstChar)) {
         // the filtered symbols with the same pattern first char
-        let filteredSymbols = this.symbols_[symbolPatternFirstChar].filter(styleItem => {
+        let filteredSymbols = mustBeArray(this.symbols_[symbolPatternFirstChar]).filter(styleItem => {
           return styleItem.packageName !== packageName;
         });
         // if there are still some symbols with the same pattern first char
@@ -156,7 +175,7 @@ module.exports = class {
     // for all the command names
     for (let commandName in this.commands_) if (this.commands_.hasOwnProperty(commandName)) {
       // the filtered commands with the same name
-      let filteredCommands = this.commands_[commandName].filter(styleItem => {
+      let filteredCommands = mustBeArray(this.commands_[commandName]).filter(styleItem => {
         return styleItem.packageName !== packageName;
       });
       if (filteredCommands.length) { // if there are still some commands with the same name
@@ -169,7 +188,7 @@ module.exports = class {
     for (let environmentName in this.environments_)
       if (this.environments_.hasOwnProperty(environmentName)) {
         // the filtered environments with the same name
-        let filteredEnvironments = this.environments_[environmentName].filter(styleItem => {
+        let filteredEnvironments = mustBeArray(this.environments_[environmentName]).filter(styleItem => {
           return styleItem.packageName !== packageName;
         });
         // if there are still some environments with the same name
@@ -183,22 +202,22 @@ module.exports = class {
   };
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Get symbols
-   * @param {!Latex.State} state the state that the symbols must match to
+   * @param {!State} state the state that the symbols must match to
    * @param {string} patternFirstChar the first char of the symbol parameter pattern
    * @return {!Array.<!Symbol>} the list of symbols in the priority descending order
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  symbols(state, patternFirstChar) {
-    if (!(state instanceof Latex.State))
-      throw new SyntaxError('"state" isn\'t a Latex.State instance');
+  symbols(state: State, patternFirstChar: string) {
+    if (!(state instanceof State))
+      throw new SyntaxError('"state" isn\'t a State instance');
     // all the symbols with the defined first pattern char
     let symbols = this.symbols_[patternFirstChar];
     if (symbols === undefined) return []; // return empty list if there are no such symbols
     let filteredSymbols = []; // the list of the symbols matching to the state
-    for (let iSymbol = symbols.length - 1; iSymbol >= 0; --iSymbol) { // for all the symbols
+    for (let iSymbol = mustBeArray(symbols).length - 1; iSymbol >= 0; --iSymbol) { // for all the symbols
       let symbol = symbols[iSymbol].symbol; // the symbol
       // store the symbol if it matches to the state
       //noinspection JSUnresolvedFunction
@@ -206,23 +225,23 @@ module.exports = class {
     }
     return filteredSymbols;
   };
-  
-  
-  //noinspection JSUnusedGlobalSymbols
+
+
+
   /**
    * Get commands
-   * @param {!Latex.State} state the state that the commands must match to
+   * @param {!State} state the state that the commands must match to
    * @param {!string} name the name of the command
    * @return {Array.<Command>} the list of commands in the priority descending order
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  commands(state, name) {
-    if (!(state instanceof Latex.State))
-      throw new SyntaxError('"state" isn\'t a Latex.State instance');
+  commands(state: State, name: string): Command[] {
+    if (!(state instanceof State))
+      throw new SyntaxError('"state" isn\'t a State instance');
     let commands = this.commands_[name]; // all the commands with the defined name
     if (!commands) return []; // return empty list if there are no such commands
     let filteredCommands = []; // the list of the commands matching to the state
-    for (let iCommand = commands.length - 1; iCommand >= 0; --iCommand) { // for all the commands
+    for (let iCommand = mustBeArray(commands).length - 1; iCommand >= 0; --iCommand) { // for all the commands
       let command = commands[iCommand].command; // the command
       // store the command if it matches to the state
       //noinspection JSUnresolvedFunction
@@ -232,57 +251,56 @@ module.exports = class {
   };
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Get environments
-   * @param {!Latex.State} state the state that the environments must match to
+   * @param {!State} state the state that the environments must match to
    * @param {!string} name the name of the environment
    * @return {Array.<Environment>} the list of environments in the priority descending order
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  environments(state, name) {
-    if (!(state instanceof Latex.State)) throw new SyntaxError('state isn\'t Latex.State instance');
-    let environments = this.environments_[name]; // all the environments with the defined name
+  environments(state: State, name: string): EnvironmentAndPackage[] {
+    if (!(state instanceof State)) throw new SyntaxError('state isn\'t State instance');
+    let environments: EnvironmentAndPackage[] = this.environments_[name]; // all the environments with the defined name
     if (!environments) return []; // return empty list if there are no such environments
-    let filteredEnvironments = []; // the list of the environments matching to the state
-    // for all the environments
-    for (let iEnvironment = environments.length - 1; iEnvironment >= 0; --iEnvironment) {
-      let environment = environments[iEnvironment].environment; // the environment
-      // store the environment if it matches to the state
-      //noinspection JSUnresolvedFunction
-      if (state.test(environment.modes)) filteredEnvironments.push(environment);
-    }
-    return filteredEnvironments;
+
+    // store the environment if it matches to the state
+    return mustBeArray(environments)
+      .filter(env => state.test(env.modes));
   };
 };
-
 
 
 /**
  * LaTeX style item properties
  * @interface ItemProperties
- * @property {(Latex.Lexeme|null|undefined)} lexeme - The logical lexeme
- * @property {(!Object.<Latex.Mode, boolean>|undefined)} modes -
+ * @property {(Lexeme|null|undefined)} lexeme - The logical lexeme
+ * @property {(!Object.<Mode, boolean>|undefined)} modes -
  *           The modes where the item is defined or not
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-
+export interface ItemProperties {
+  lexeme?: Lexeme|null;
+  modes?: {[mode: string]: boolean};
+}
 
 
 /**
  * LaTeX style item encapsulation
  * @class
- * @property {(Latex.Lexeme|null)} lexeme - The logical lexeme
- * @property {!Object.<Latex.Mode, boolean>} modes - The modes where the item is defined or not
+ * @property {(Lexeme|null)} lexeme - The logical lexeme
+ * @property {!Object.<Mode, boolean>} modes - The modes where the item is defined or not
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-const Item = class {
-  //noinspection JSUnusedGlobalSymbols
+export class Item {
+  lexeme?: Lexeme;
+  modes: {[mode: string]: boolean};
+
   /**
    * Constructor.
    * @param {!ItemProperties=} opt_initialProperties the initial property values
    */
-  constructor (opt_initialProperties) {
+  constructor (opt_initialProperties: ItemProperties = {}) {
     // do nothing if there are no initial properties
     if (opt_initialProperties === undefined) return;
     if (!(opt_initialProperties instanceof Object))
@@ -291,21 +309,20 @@ const Item = class {
     case undefined: break; // do nothing if no lexeme defined
     case null: break; // do nothing if the default lexeme defined
     default:
-      let lexeme = Latex.Lexeme[opt_initialProperties.lexeme]; // verify the lexeme
+      let lexeme = Lexeme[opt_initialProperties.lexeme]; // verify the lexeme
       if (lexeme === undefined)
-        throw new TypeError('"initialProperties.lexeme" isn\'t a Latex.Lexeme option');
+        throw new TypeError('"initialProperties.lexeme" isn\'t a Lexeme option');
       Object.defineProperty(this, 'lexeme', { value: lexeme });
     }
     if (opt_initialProperties.modes !== undefined) {// if the mode states are set
       if (!(opt_initialProperties.modes instanceof Object))
         throw new TypeError('"initialProperties.modes" isn\'t an Object instance');
       Object.defineProperty(this, 'modes', { value: { } }); // create the mode state storage
-      for (let modeKey in opt_initialProperties.modes) { // for all the given modes
-        //noinspection JSUnfilteredForInLoop
-        let mode = Latex.Mode[modeKey]; // verify the mode key
+      for (let modeKey in opt_initialProperties.modes) { // for all the given modes // TODO better loop
+        let mode: Mode = mustBeMode(modeKey); // verify the mode key
         if (mode === undefined) // if the mode is unknown
           throw new TypeError('"initialProperties.modes[' + modeKey +
-            ']" isn\'t a Latex.Mode option');
+            ']" isn\'t a Mode option');
         // store the mode state
         //noinspection JSUnfilteredForInLoop
         Object.defineProperty(this.modes, mode, {
@@ -323,10 +340,10 @@ const Item = class {
    * @return {boolean} true if the items are equal, false otherwise
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  equals(other) {
+  equals(other: any) {
     if (!(other instanceof Item)) return false;
     return this.lexeme === other.lexeme &&
-      testProperties(this.modes, other.modes, Latex.Mode, false);
+      testProperties(this.modes, other.modes, modes, false);
   }
 };
 Object.defineProperties(Item.prototype, { // default property values
@@ -340,28 +357,41 @@ Object.defineProperties(Item.prototype, { // default property values
  * LaTeX symbol or command parameter properties
  * @interface ParameterProperties
  * @extends ItemProperties
- * @property {(!Array.<!Latex.Operation|!Latex.OperationProperties>|undefined)} operations -
+ * @property {(!Array.<!Operation|!OperationProperties>|undefined)} operations -
  *           The LaTeX operations that are performed before the parameter
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
+export interface ParameterProperties extends ItemProperties {
+  operations?: (Operation | OperationProperties)[];
+}
 
+export function isParameterProperties(x: any): x is ParameterProperties {
+  return true; // todo fields are all optional
+}
 
+export function mustBeParameterProperties(x: any): ParameterProperties {
+  if(!isParameterProperties) throw new Error();
+  return x;
+}
 
 /**
  * LaTeX symbol or command parameter encapsulation
  * @class
  * @extends Item
- * @property {!Array.<!Latex.Operation>} operations -
+ * @property {!Array.<!Operation>} operations -
  *           The LaTeX operations that are performed before this parameter
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-const Parameter = module.exports['Parameter'] = class extends Item {
-  //noinspection JSUnusedGlobalSymbols
+export class Parameter extends Item {
+  //noinspection JSMismatchedCollectionQueryUpdate TODO
+  private operations_: Operation[];
+
+
   /**
    * Constructor
    * @param {!ParameterProperties=} opt_initialProperties the initial property values
    */
-  constructor(opt_initialProperties) {
+  constructor(opt_initialProperties: ParameterProperties = {}) {
     super(opt_initialProperties); // the superclass constructor
     // do nothing if there are no initial properties
     if (opt_initialProperties === undefined) return;
@@ -369,22 +399,22 @@ const Parameter = module.exports['Parameter'] = class extends Item {
       if (!(opt_initialProperties.operations instanceof Array))
         throw new TypeError('"initialProperties.operations" isn\'t an Array instance');
       Object.defineProperty(this, 'operations_', { // generate and store the operations list
-        value: opt_initialProperties.operations.map(operation => new Latex.Operation(operation))
+        value: opt_initialProperties.operations.map(operation => new Operation(operation))
       });
     }
   }
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Get the LaTeX operations that are performed before this parameter
-   * @return {!Array.<!Latex.Operation>} the operation list
+   * @return {!Array.<!Operation>} the operation list
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get operations() { return this.operations_.slice() }
+  get operations(): Operation[] { return this.operations_.slice() }
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Compare this parameter with the other one
    * @param {?Parameter} other the parameter to compare with
@@ -392,13 +422,13 @@ const Parameter = module.exports['Parameter'] = class extends Item {
    * @override
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  equals(other) {
+  equals(other: any) {
     if (!(other instanceof Parameter)) return false; // type test
     if (!super.equals(other)) return false; // superclass test
-    //noinspection JSUnresolvedVariable
+
     if (this.operations_.length !== other.operations_.length) return false;
     // test all the operations
-    //noinspection JSUnresolvedVariable,JSUnresolvedFunction
+
     return this.operations_.every((operation, iOperation) =>
       operation.equals(other.operations_[iOperation]));
   }
@@ -416,23 +446,30 @@ Object.defineProperties(Parameter.prototype, { // default property values
  * LaTeX symbol properties
  * @interface SymbolProperties
  * @extends ItemProperties
- * @property {(!Array.<!Latex.Operation|!Latex.OperationProperties>|undefined)} operations -
- *           The LaTeX operations that
- * @property {(!Array.<!Parameter|!ParameterProperties>|undefined)} parameters -
- *           The parameters description list
+ * @property {(!Array.<!Operation|!OperationProperties>|undefined)} operations - The LaTeX operations that
+ * @property {(!Array.<!Parameter|!ParameterProperties>|undefined)} parameters - The parameters description list
  * @property {(string|undefined)} pattern - The LaTeX input pattern
  * @property {(string|undefined)} html - The HTML output pattern
  * are performed after the symbol
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
+export interface SymbolProperties extends ItemProperties {
+  operations?: (Operation|OperationProperties)[];
+  parameters?: (Parameter|ParameterProperties)[];
+  pattern?: string;
+  html?: string;
+}
 
-
+export interface SymbolAndPackage {
+  symbol: Symbol;
+  packageName: string;
+}
 
 /**
  * LaTeX symbol encapsulation
  * @class
  * @extends Item
- * @property {!Array.<!Latex.Operation>} operations -
+ * @property {!Array.<!Operation>} operations -
  *           The LaTeX operations that are performed after this symbol
  * @property {!Array.<!Parameter>} parameters - The parameters description list
  * @property {!Array.<null|string|number>} patternComponents - The LaTeX input pattern components
@@ -440,13 +477,22 @@ Object.defineProperties(Parameter.prototype, { // default property values
  * @property {string} html - The HTML output pattern
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-const Symbol = module.exports['Symbol'] = class extends Item {
-  //noinspection JSUnusedGlobalSymbols
+export class Symbol extends Item {
+  //noinspection JSMismatchedCollectionQueryUpdate // TODO
+  private operations_: Operation[];
+  //noinspection JSMismatchedCollectionQueryUpdate // TODO
+  private parameters_: Parameter[];
+  //noinspection JSMismatchedCollectionQueryUpdate // TODO
+  private patternComponents_: (null|string|number)[];
+
+  html: string;
+
+
   /**
    * Constructor
    * @param {!SymbolProperties=} opt_initialProperties the initial property values
    */
-  constructor(opt_initialProperties) {
+  constructor(opt_initialProperties: SymbolProperties = {}) {
     super(opt_initialProperties); // the superclass constructor
     // do nothing if there are no initial properties
     if (opt_initialProperties === undefined) return;
@@ -454,14 +500,14 @@ const Symbol = module.exports['Symbol'] = class extends Item {
       if (!(opt_initialProperties.operations instanceof Array))
         throw new TypeError('"initialProperties.operations" isn\'t an Array instance');
       Object.defineProperty(this, 'operations_', { // generate and store the operations list
-        value: opt_initialProperties.operations.map(operation => new Latex.Operation(operation))
+        value: opt_initialProperties.operations.map(operation => new Operation(mustBeOperationProperties(operation)))
       });
     }
     if (opt_initialProperties.parameters !== undefined) { // if the parameters list is set
       if (!(opt_initialProperties.parameters instanceof Array))
         throw new TypeError('"initialProperties.parameters" isn\'t an Array instance');
       Object.defineProperty(this, 'parameters_', { // generate and store the parameters list
-        value: opt_initialProperties.parameters.map(parameter => new Parameter(parameter))
+        value: opt_initialProperties.parameters.map(parameter => new Parameter(mustBeParameterProperties(parameter)))
       });
     }
     if (opt_initialProperties.pattern !== undefined) { // if the LaTeX pattern is set
@@ -470,8 +516,8 @@ const Symbol = module.exports['Symbol'] = class extends Item {
       // try to parse the pattern
       let patternComponents = opt_initialProperties.pattern.match(/([ \t]+|#\d+|[^ \t#]+)/g);
       if (patternComponents !== null) { // if there is a non-trivial pattern
-        Object.defineProperty(this, 'patternComponents_', { // store the pattern components
-          value: patternComponents.map(patternPart => {
+        this.patternComponents_ = // store the pattern components
+          patternComponents.map(patternPart => {
             switch (patternPart[0]) {
             case ' ': case '\t': // if a space part
               return null; // null is a mark for spaces
@@ -486,8 +532,7 @@ const Symbol = module.exports['Symbol'] = class extends Item {
             default: // raw pattern part
               return patternPart;
             }
-          })
-        });
+          });
       }
     }
     if (opt_initialProperties.html !== undefined) { // if the LaTeX pattern is set
@@ -498,36 +543,28 @@ const Symbol = module.exports['Symbol'] = class extends Item {
     }
   };
 
-
-  //noinspection JSUnusedGlobalSymbols
   /**
    * Get the LaTeX operations that are performed after this symbol
-   * @return {!Array.<!Latex.Operation>} the operation list
+   * @return {!Array.<!Operation>} the operation list
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get operations () { return this.operations_.slice() }
+  get operations (): Operation[] { return this.operations_.slice() }
 
-
-  //noinspection JSUnusedGlobalSymbols
   /**
    * Get the parameters description list
    * @return {!Array.<!Latex.Parameter>} the parameter list
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get parameters () { return this.parameters_.slice() }
+  get parameters (): Parameter[] { return this.parameters_.slice() }
 
-
-  //noinspection JSUnusedGlobalSymbols
   /**
    * Get the parameter description
    * @param {number} parameterIndex the index of the parameter
    * @return {?Latex.Parameter} the parameter or null if there is no parameter with such an index
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  parameter(parameterIndex) { return this.parameters_[parameterIndex] || null }
+  parameter(parameterIndex: number): Parameter | undefined { return this.parameters_[parameterIndex] || undefined }
 
-
-  //noinspection JSUnusedGlobalSymbols
   /**
    * Get the pattern components
    * @return {!Array.<!Latex.Parameter>} the pattern component list
@@ -536,7 +573,7 @@ const Symbol = module.exports['Symbol'] = class extends Item {
   get patternComponents () { return this.patternComponents_.slice() }
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Get the pattern
    * @return {string} the LaTeX input pattern
@@ -544,8 +581,10 @@ const Symbol = module.exports['Symbol'] = class extends Item {
    */
   get pattern () {
     return this.patternComponents_.map(patternComponent => {
+      if(isNumber(patternComponent)){
+        return '#' + (patternComponent + 1);
+      }
       switch (typeof patternComponent) {
-      case 'number': return '#' + (patternComponent + 1);
       case 'string': return patternComponent;
       default: return ' ';
       }
@@ -559,20 +598,20 @@ const Symbol = module.exports['Symbol'] = class extends Item {
    * @override
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  equals(other) {
+  equals(other: any): boolean {
     if (!(other instanceof Symbol)) return false; // type test
     if (!super.equals(other)) return false; // superclass test
-    //noinspection JSUnresolvedVariable
+
     if (this.operations_.length !== other.operations_.length) return false;
     // test all the operations
-    //noinspection JSUnresolvedVariable,JSUnresolvedFunction
+
     if (!this.operations_.every((operation, iOperation) =>
         operation.equals(other.operations_[iOperation])))
       return false;
-    //noinspection JSUnresolvedVariable
+
     if (this.parameters_.length !== other.parameters_.length) return false;
     // test all the parameters
-    //noinspection JSUnresolvedVariable,JSUnresolvedFunction
+
     if (!this.parameters_.every((parameter, iParameter) =>
         parameter.equals(other.parameters_[iParameter])))
       return false;
@@ -601,8 +640,14 @@ Object.defineProperties(Symbol.prototype, { // default property values
  * @property {(string|undefined)} name - The command name (a sequence of letters and optional star)
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
+export interface CommandProperties extends SymbolProperties {
+  name?: string;
+}
 
-
+export interface CommandAndPackage {
+  command: Command;
+  packageName: string;
+}
 
 /**
  * LaTeX command encapsulation
@@ -611,13 +656,15 @@ Object.defineProperties(Symbol.prototype, { // default property values
  * @property {string} name - The command name (a sequence of letters and optional star)
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-const Command = module.exports['Command'] = class extends Symbol {
-  //noinspection JSUnusedGlobalSymbols
+export class Command extends Symbol {
+  name: string;
+
+
   /**
    * Constructor
    * @param {!CommandProperties=} opt_initialProperties the initial property values
    */
-  constructor(opt_initialProperties) {
+  constructor(opt_initialProperties: CommandProperties = {}) {
     super(opt_initialProperties); // the superclass constructor
     // do nothing if there are no initial properties
     if (opt_initialProperties === undefined) return;
@@ -630,7 +677,7 @@ const Command = module.exports['Command'] = class extends Symbol {
   };
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Compare this command with the other one
    * @param {?Command} other the command to compare with
@@ -638,7 +685,7 @@ const Command = module.exports['Command'] = class extends Symbol {
    * @override
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  equals(other) {
+  equals(other: any) {
     if (!(other instanceof Command)) return false; // type test
     if (!super.equals(other)) return false; // superclass test
     return this.name === other.name;
@@ -647,7 +694,13 @@ const Command = module.exports['Command'] = class extends Symbol {
 Object.defineProperties(Command.prototype, { // default property values
   name: {value: '', enumerable: true } // empty name
 });
-
+export function isCommand(c: any): c is Command {
+  return c instanceof Command;
+}
+export function mustBeCommand(c: any): Command {
+  if(!isCommand(c)) throw new Error();
+  return c;
+}
 
 
 /**
@@ -657,8 +710,14 @@ Object.defineProperties(Command.prototype, { // default property values
  * @property {(string|undefined)} name - The command name (a sequence of letters and optional star)
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
+export interface EnvironmentProperties extends ItemProperties {
+  name?: string;
+}
 
-
+export interface EnvironmentAndPackage {
+  environment: Environment;
+  packageName?: string;
+}
 
 /**
  * LaTeX environment encapsulation
@@ -667,13 +726,15 @@ Object.defineProperties(Command.prototype, { // default property values
  * @property {string} name - The environment name (a sequence of letters and optional star)
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-const Environment = module.exports['Environment'] = class extends Item {
-  //noinspection JSUnusedGlobalSymbols
+export class Environment extends Item {
+  name: string;
+
+
   /**
    * Constructor
    * @param {!EnvironmentProperties=} opt_initialProperties the initial property values
    */
-  constructor(opt_initialProperties) {
+  constructor(opt_initialProperties: EnvironmentProperties = {}) {
     super(opt_initialProperties); // the superclass constructor
     // do nothing if there are no initial properties
     if (opt_initialProperties === undefined) return;
@@ -686,7 +747,7 @@ const Environment = module.exports['Environment'] = class extends Item {
   };
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Compare this environment with the other one
    * @param {?Environment} other the environment to compare with
@@ -694,7 +755,7 @@ const Environment = module.exports['Environment'] = class extends Item {
    * @override
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  equals(other) {
+  equals(other: any) {
     if (!(other instanceof Environment)) return false; // type test
     if (!super.equals(other)) return false; // superclass test
     return this.name === other.name;
@@ -703,3 +764,6 @@ const Environment = module.exports['Environment'] = class extends Item {
 Object.defineProperties(Environment.prototype, { // default property values
   name: {value: '', enumerable: true } // empty name
 });
+export function isEnvironment(x: any): x is Environment {
+  return x instanceof Environment;
+}

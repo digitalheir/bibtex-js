@@ -18,28 +18,18 @@
  * 02111-1307, USA.
  */
 
-'use strict';
+export type StringMap = {[s:string]:string};
 
-/**@module */
+export type TargetObject = any;
+export type ValuesObject = any;
 
+export type OptKeys = StringMap | string[];
 
-/**
- * Extend a class with another one.
- * @param {!function} target the class to extend
- * @param {!function=} opt_superclass the class to extend with
- * @author Kirill Chuvilin <k.chuvilin@texnous.org>
- */
-module.exports['extend'] = function (target, opt_superclass) {
-  if (typeof target !== 'function') throw new SyntaxError('target isn\'t a function');
-  if (opt_superclass !== undefined) { // if the superclass is defined
-    if (typeof opt_superclass !== 'function') throw new SyntaxError('superclass isn\'t a function');
-    target['prototype'] = Object.create(opt_superclass['prototype']);
-    target['prototype'].constructor = target; // return the original constructor
-    target.superclass = opt_superclass['prototype'];
-  }
-};
-
-
+export interface OptAttributes {
+  writable: boolean;
+  enumerable: boolean;
+  configurable: boolean;
+}
 /**
  * Update object properties by property values
  * @param {!Object} target the object to copy properties to
@@ -51,7 +41,10 @@ module.exports['extend'] = function (target, opt_superclass) {
  *        property attributes, { writable: true, enumerable: true, configurable: true } by default
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-module.exports['updateProperties'] = function (target, values, opt_keys, opt_attributes) {
+export function updateProperties(target: TargetObject,
+                                 values: ValuesObject,
+                                 opt_keys: OptKeys,
+                                 opt_attributes: OptAttributes) {
   if (!(target instanceof Object)) throw new TypeError('"target" isn\'t an Object instance');
   if (values === undefined) return; // do noting is the sources is undefined
   if (!(values instanceof Object)) throw new TypeError('"properties" isn\'t an Object instance');
@@ -105,7 +98,10 @@ module.exports['updateProperties'] = function (target, values, opt_keys, opt_att
  * @return {boolean} true if all the defined properties are the same false otherwise
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-module.exports['testProperties'] = function (target, values, opt_keys, opt_skipUndefined) {
+export function testProperties(target: TargetObject,
+                               values: ValuesObject,
+                               opt_keys: OptKeys,
+                               opt_skipUndefined: boolean = true) {
   if (!(target instanceof Object)) throw new TypeError('"target" isn\'t an Object instance');
   if (values === undefined) return true; // do noting is the sources is undefined
   if (!(values instanceof Object)) throw new TypeError('"properties" isn\'t an Object instance');
@@ -133,3 +129,17 @@ module.exports['testProperties'] = function (target, values, opt_keys, opt_skipU
   }
   return true; // return true if all the defined properties are the same
 };
+
+
+export function isNumber(x: any): x is number {
+  return typeof x === "number"
+}
+
+export function isString(x: any): x is string {
+  return typeof x === "string"
+}
+
+export function mustNotBeUndefined<T>(x?: T): T {
+  if(!x) throw new Error();
+  return x;
+}

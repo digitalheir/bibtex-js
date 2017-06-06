@@ -18,18 +18,9 @@
  * 02111-1307, USA.
  */
 
-'use strict';
-
-
-/**
- * @namespace latex-parser
- * @author Kirill Chuvilin <k.chuvilin@texnous.org>
- */
-module.exports = {
-  Utils:       require('./lib/Utils'), // general JavaScript utils
-  Latex:       require('./lib/Latex'), // general LaTeX definitions
-  LatexStyle:  require('./lib/LatexStyle'), // LaTeX style structures
-  SyntaxTree:  require('./lib/SyntaxTree'), // syntax tree structure elements
-  LatexTree:   require('./lib/LatexTree'), // LaTeX syntax tree structure elements
-  LatexParser: require('./lib/LatexParser') // LaTeX parser class
-};
+export * from "./lib/Utils" // general JavaScript utils
+export * from "./lib/Latex" // general LaTeX definitions
+export * from "./lib/LatexStyle" // LaTeX style structures
+export * from "./lib/SyntaxTree" // syntax tree structure elements
+export * from "./lib/LatexTree" // LaTeX syntax tree structure elements
+export * from "./lib/LatexParser"// LaTeX parser class

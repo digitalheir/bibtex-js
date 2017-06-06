@@ -18,17 +18,14 @@
  * 02111-1307, USA.
  */
 
-'use strict';
-
 /** @module */
 
-
-/** @external Latex */
-const Latex = require('./Latex'); // general LaTeX definitions
 /** @external LatexStyle*/
-const LatexStyle = require('./LatexStyle'); // LaTeX style structures
+import {Command, Environment, isEnvironment, mustBeCommand, Parameter, Symbol} from './LatexStyle'; // LaTeX style structures
 /** @external SyntaxTree */
-const SyntaxTree = require('./SyntaxTree'); // syntax tree structure elements
+import {SyntaxTree, Node} from './SyntaxTree';
+import {Lexeme} from "./Latex";
+import {mustNotBeUndefined} from "./Utils";
 
 
 /**
@@ -37,15 +34,15 @@ const SyntaxTree = require('./SyntaxTree'); // syntax tree structure elements
  * @extends SyntaxTree
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-module.exports = class extends SyntaxTree {
-  //noinspection JSUnusedGlobalSymbols
+export default class extends SyntaxTree {
+
   /**
    * Constructor
    * @param {!Token} rootToken the root token (must have no parent and no tree)
    * @param {string} source the sources text that has this syntax tree
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  constructor(rootToken, source) {
+  constructor(rootToken: Token, source: string) {
     if (!(rootToken instanceof Token))
       throw new TypeError('"rootToken" isn\'t a LatexTree.Token instance');
     super(rootToken, source); // the superclass constructor
@@ -61,24 +58,28 @@ module.exports = class extends SyntaxTree {
  * @property {(!Array.<Token>|undefined)} childTokens - The list of the child tokens
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-
+export interface TokenProperties {
+  parentToken?: Token;
+  childTokens?: Token[];
+}
 
 
 /**
  * LaTeX syntax tree token base structure
  * @class
  * @extends SyntaxTree.Node
- * @property {(Latex.Lexeme|null)} lexeme - The logical lexeme of the token
+ * @property {(Lexeme|null)} lexeme - The logical lexeme of the token
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-const Token = module.exports['Token'] = class extends SyntaxTree.Node {
-  //noinspection JSUnusedGlobalSymbols
+export class Token extends Node {
+  lexeme?: Lexeme;
+
   /**
    * Constructor
    * @param {!TokenProperties=} opt_initialProperties the initial property values
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  constructor(opt_initialProperties) {
+  constructor(opt_initialProperties: TokenProperties = {}) {
     if (opt_initialProperties === undefined) { // if the initial properties are not set
       super(); // superclass constructor
     } else if (opt_initialProperties instanceof Object) { // if the initial properties are set
@@ -102,7 +103,7 @@ const Token = module.exports['Token'] = class extends SyntaxTree.Node {
    * @override
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  toString(skipNodeClass) {
+  toString(skipNodeClass: boolean = false) {
     return skipNodeClass ? super.toString(true) : 'LatexTree.Token{' + super.toString(true) + '}';
   }
 };
@@ -117,37 +118,39 @@ Object.defineProperties(Token.prototype, { // default properties
  * LaTeX symbol token properties
  * @interface SymbolTokenProperties
  * @extends TokenProperties
- * @property {!LatexStyle.Symbol|undefined} symbol -
- *           The LaTeX symbol or undefined if the symbol is unrecognized
+ * @property {!Symbol|undefined} symbol - The LaTeX symbol or undefined if the symbol is unrecognized
  * @property {string|undefined} pattern - The pattern that corresponds to the unrecognized symbol
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-
+export interface SymbolTokenProperties extends TokenProperties {
+  symbol?: Symbol;
+  pattern?: string;
+}
 
 
 /**
  * LaTeX symbol token structure
  * @class
  * @extends Token
- * @property {?LatexStyle.Symbol} symbol -
- *           The corresponding LaTeX symbol or null if the symbol is unrecognized
+ * @property {?Symbol} symbol - The corresponding LaTeX symbol or null if the symbol is unrecognized
  * @property {string} pattern - The symbol LaTeX pattern
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-const SymbolToken = module.exports['SymbolToken'] = class extends Token {
-  //noinspection JSUnusedGlobalSymbols
+export class SymbolToken extends Token {
+  symbol?: Symbol;
+
   /**
    * Constructor
    * @param {!SymbolTokenProperties} initialProperties the initial property values
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  constructor(initialProperties) {
+  constructor(initialProperties: SymbolTokenProperties) {
     if (!(initialProperties instanceof Object))
       throw new TypeError ('"initialProperties" isn\'t an Object instance');
     super(initialProperties); // the superclass constructor
     if (initialProperties.symbol) { // if the symbol is defined
-      if (!(initialProperties.symbol instanceof LatexStyle.Symbol))
-        throw new TypeError('"initialProperties.symbol" isn\'t a LatexStyle.Symbol instance');
+      if (!(initialProperties.symbol instanceof Symbol))
+        throw new TypeError('"initialProperties.symbol" isn\'t a Symbol instance');
       // store the symbol
       Object.defineProperty(this, 'symbol', {value: initialProperties.symbol, enumerable: true});
     } else { // if the symbol isn't defined
@@ -161,12 +164,12 @@ const SymbolToken = module.exports['SymbolToken'] = class extends Token {
 
   /**
    * Get the logical lexeme
-   * @return {(Latex.Lexeme|null)} the lexeme or null if the lexeme isn't defined
+   * @return {(Lexeme|null)} the lexeme or null if the lexeme isn't defined
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get lexeme () {
-    //noinspection JSUnresolvedVariable
-    return this.symbol ? this.symbol.lexeme : null;
+  get lexeme (): Lexeme | undefined {
+    
+    return this.symbol ? this.symbol.lexeme : undefined;
   }
 
 
@@ -175,9 +178,8 @@ const SymbolToken = module.exports['SymbolToken'] = class extends Token {
    * @return {string} the symbol pattern
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get pattern () {
-    //noinspection JSUnresolvedVariable
-    return this.symbol.pattern;
+  get pattern (): string {
+    return mustNotBeUndefined(this.symbol).pattern;
   }
 
 
@@ -189,10 +191,10 @@ const SymbolToken = module.exports['SymbolToken'] = class extends Token {
    * @override
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  toString(skipNodeClass) {
+  toString(skipNodeClass: boolean = false) {
     let source = '';
     let iParameter = 0; // the parameter iterator
-    //noinspection JSUnresolvedVariable
+    
     let pattern = this.pattern; // LaTeX input pattern
     // for all the pattern chars
     for (
@@ -227,13 +229,14 @@ Object.defineProperties(SymbolToken.prototype, { // make getters and setters enu
  * LaTeX parameter token properties
  * @interface ParameterTokenProperties
  * @extends TokenProperties
- * @property {boolean} hasBrackets -
- *           True if the parameter is bounded by the logical brackets, false otherwise
- * @property {boolean} hasSpacePrefix -
- *           True if the parameter is prefixed by a space, false otherwise
+ * @property {boolean} hasBrackets - True if the parameter is bounded by the logical brackets, false otherwise
+ * @property {boolean} hasSpacePrefix - True if the parameter is prefixed by a space, false otherwise
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-
+export interface ParameterTokenProperties extends TokenProperties {
+  hasBrackets: boolean;
+  hasSpacePrefix: boolean;
+}
 
 
 /**
@@ -247,14 +250,18 @@ Object.defineProperties(SymbolToken.prototype, { // make getters and setters enu
  * @property {?LatexStyle.Parameter} parameter - The corresponding LaTeX parameter
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-const ParameterToken = module.exports['ParameterToken'] = class extends Token {
-  //noinspection JSUnusedGlobalSymbols
+export class ParameterToken extends Token {
+  public parentNode: SymbolToken;
+
+  private hasBrackets: boolean;
+  hasSpacePrefix: boolean;
+
   /**
    * Constructor
    * @param {!ParameterTokenProperties} initialProperties the initial property values
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  constructor(initialProperties) {
+  constructor(initialProperties: ParameterTokenProperties) {
     if (!(initialProperties instanceof Object))
       throw new TypeError ('"initialProperties" isn\'t an Object instance');
     super(initialProperties); // the superclass constructor
@@ -269,10 +276,12 @@ const ParameterToken = module.exports['ParameterToken'] = class extends Token {
 
   /**
    * Get the logical lexeme
-   * @return {(Latex.Lexeme|null)} the lexeme or null if the lexeme isn't defined
+   * @return {(Lexeme|null)} the lexeme or null if the lexeme isn't defined
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get lexeme () { return this.parameter && this.parameter.lexeme }
+  get lexeme (): Lexeme | undefined {
+    if(this.parameter && this.parameter.lexeme) return this.parameter.lexeme;
+  }
 
 
   /**
@@ -281,11 +290,13 @@ const ParameterToken = module.exports['ParameterToken'] = class extends Token {
    *         the LaTeX parameter or null of there is parent symbol or such a parameter
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get parameter () {
+  get parameter (): Parameter | undefined {
     /** @type {?SymbolToken} */
     let symbolToken = this.parentNode; // get the symbol token
-    //noinspection JSUnresolvedFunction
-    return symbolToken && symbolToken.symbol.parameter(symbolToken.childIndex(this));
+    let symbol = mustNotBeUndefined(symbolToken.symbol);
+    let parameterIndex = symbolToken.childIndex(this);
+    if(symbolToken !== undefined && parameterIndex !== undefined && parameterIndex >= 0)
+      return symbol.parameter(parameterIndex);
   }
 
 
@@ -297,7 +308,7 @@ const ParameterToken = module.exports['ParameterToken'] = class extends Token {
    * @override
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  toString(skipNodeClass) {
+  toString(skipNodeClass: boolean = false) {
     let source = this.hasSpacePrefix ? ' ' : '';
     source += this.hasBrackets ? '{' + super.toString(true) + '}' : super.toString(true);
     return skipNodeClass ? source : 'LatexTree.ParameterToken{' + source + '}';
@@ -323,7 +334,10 @@ Object.defineProperties(ParameterToken.prototype, { // make getters and setters 
  * @property {string|undefined} name - The name that corresponds to the unrecognized command
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-
+export interface CommandTokenProperties extends TokenProperties {
+  command?: Command;
+  name?: string;
+}
 
 
 /**
@@ -335,19 +349,19 @@ Object.defineProperties(ParameterToken.prototype, { // make getters and setters 
  * @property {string|undefined} name - The LaTeX command name
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-const CommandToken = module.exports['CommandToken'] = class extends SymbolToken {
-  //noinspection JSUnusedGlobalSymbols
+export class CommandToken extends SymbolToken {
+
   /**
    * Constructor
    * @param {!CommandTokenProperties} initialProperties the initial property values
    */
-  constructor(initialProperties) {
+  constructor(initialProperties: CommandTokenProperties) {
     if (!(initialProperties instanceof Object))
       throw new TypeError ('"initialProperties" isn\'t an Object instance');
     // copy the initial properties for the superclass
     let superInitialProperties = Object.create(initialProperties);
     if (initialProperties.command) { // if the command is defined
-      if (!(initialProperties.command instanceof LatexStyle.Command))
+      if (!(initialProperties.command instanceof Command))
         throw new TypeError('"initialProperties.command" isn\'t a LatexStyle.Command instance');
       // the command is the symbol for the superclass
       superInitialProperties.symbol = initialProperties.command;
@@ -368,7 +382,7 @@ const CommandToken = module.exports['CommandToken'] = class extends SymbolToken 
    * @return {!LatexStyle.Command} the command description
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get command () { return this.symbol }
+  get command (): Command { return mustBeCommand(this.symbol) }
 
 
   /**
@@ -376,7 +390,7 @@ const CommandToken = module.exports['CommandToken'] = class extends SymbolToken 
    * @return {string} the command name
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get name () { return this.command.name }
+  get name (): string { return this.command.name }
 
   /**
    * Get the string representation of this node
@@ -386,18 +400,22 @@ const CommandToken = module.exports['CommandToken'] = class extends SymbolToken 
    * @override
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  toString(skipNodeClass) {
+  toString(skipNodeClass: boolean = false) {
    let source = '\\' + this.name + super.toString(true);
    return skipNodeClass ?
      source :
      'LatexTree.CommandToken' + (this.command ? '' : '[?]') + '{' + source + '}';
   }
 };
+
 Object.defineProperties(CommandToken.prototype, { // make getters and setters enumerable
   command: { enumerable: true },
   name: {enumerable: true }
 });
 
+export function isCommandToken(x: any): x is CommandToken {
+  return x && x instanceof CommandToken;
+}
 
 
 /**
@@ -409,13 +427,26 @@ Object.defineProperties(CommandToken.prototype, { // make getters and setters en
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 
-
-
+export interface EnvironmentTokenPropertiesWithEnvironment
+  extends EnvironmentTokenProperties {
+  environment: Environment;
+  name: undefined;
+}
+export interface EnvironmentTokenPropertiesWithName
+  extends EnvironmentTokenProperties {
+  environment: undefined;
+  name: string;
+}
+export interface EnvironmentTokenProperties
+  extends TokenProperties {
+  environment?: Environment;
+  name?: string;
+}
 /**
  * LaTeX environment token structure
  * @class
  * @extends Token
- * @property {!LatexStyle.Environment} environment - The corresponding LaTeX environment
+ * @property {!Environment} environment - The corresponding LaTeX environment
  * @property {?CommandToken} beginCommandToken -
  *           The environment begin command token or null is there is no such a token
  * @property {?CommandToken} endCommandToken -
@@ -424,18 +455,19 @@ Object.defineProperties(CommandToken.prototype, { // make getters and setters en
  *           The environment body token or null is there is no such a token
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-const EnvironmentToken = module.exports['EnvironmentToken'] = class extends Token {
-  //noinspection JSUnusedGlobalSymbols
+export class EnvironmentToken extends Token {
+  environment: Environment;
+
   /**
    * Constructor
    * @param {!EnvironmentTokenProperties} initialProperties the initial property values
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  constructor(initialProperties) {
+  constructor(initialProperties: EnvironmentTokenProperties) {
     if (!(initialProperties instanceof Object))
       throw new TypeError ('"initialProperties" isn\'t an Object instance');
     super(initialProperties); // the superclass constructor
-    if (!(initialProperties.environment instanceof LatexStyle.Environment))
+    if (!(initialProperties.environment instanceof Environment))
       throw new TypeError(
         '"initialProperties.environment" isn\'t a LatexStyle.Environment instance');
     // store the environment
@@ -448,7 +480,7 @@ const EnvironmentToken = module.exports['EnvironmentToken'] = class extends Toke
 
   /**
    * Get the logical lexeme
-   * @return {(Latex.Lexeme|null)} the lexeme or null if the lexeme isn't defined
+   * @return {(Lexeme|null)} the lexeme or null if the lexeme isn't defined
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get lexeme () { return this.environment.lexeme }
@@ -496,7 +528,7 @@ const EnvironmentToken = module.exports['EnvironmentToken'] = class extends Toke
    * @override
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  toString(skipNodeClass) {
+  toString(skipNodeClass:boolean=false) {
     let beginCommandToken = this.beginCommandToken; // the begin command token
     let endCommandToken = this.endCommandToken; // the end command token
     let bodyToken = this.bodyToken; // the environment body token
@@ -515,7 +547,25 @@ Object.defineProperties(EnvironmentToken.prototype, { // make getters and setter
   endToken: { enumerable: true }
 });
 
+export function isEnvironmentToken(x: any): x is EnvironmentToken {
+  return x instanceof EnvironmentToken;
+}
 
+
+function getBeginCommandToken(x: any): CommandToken | undefined {
+  if(isCommandToken(x.beginCommandToken))
+    return x.beginCommandToken;
+}
+
+function getEndCommandToken(x: any): CommandToken | undefined {
+  if(isCommandToken(x.endCommandToken))
+    return x.endCommandToken;
+}
+
+function getEnvironment(x: any): Environment | undefined {
+  if(x.environment && isEnvironment(x.environment))
+    return x.environment;
+}
 
 /**
  * LaTeX environment body token structure
@@ -530,17 +580,17 @@ Object.defineProperties(EnvironmentToken.prototype, { // make getters and setter
  *           The environment end command token or null is there is no such a token
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-const EnvironmentBodyToken = module.exports['EnvironmentBodyToken'] = class extends Token {
-  //noinspection JSUnusedGlobalSymbols
+export class EnvironmentBodyToken extends Token {
+
   /**
    * Get the LaTeX environment
    * @return {?LatexStyle.Environment} the environment or null if there is no parent environment
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get environment () { return this.parentNode && this.parentNode.environment }
+  get environment (): Environment | undefined { return this.parentNode && getEnvironment(this.parentNode) }
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Get the parent environment token
    * @return {?EnvironmentToken} the environment or null if there is no parent environment
@@ -549,22 +599,22 @@ const EnvironmentBodyToken = module.exports['EnvironmentBodyToken'] = class exte
   get environmentToken () { return this.parentNode }
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Get the environment begin command token
    * @return {?CommandToken} the command token or null if there is no begin command
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get beginCommandToken () { return this.parentNode && this.parentNode.beginCommandToken }
+  get beginCommandToken () { return this.parentNode && getBeginCommandToken(this.parentNode) }
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Get the environment end command token
    * @return {(CommandToken|null)} the command token or null if there is no end command
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get endCommandToken () { return this.parentNode && this.parentNode.endCommandToken }
+  get endCommandToken () { return this.parentNode && getEndCommandToken(this.parentNode) }
 
 
   /**
@@ -575,7 +625,7 @@ const EnvironmentBodyToken = module.exports['EnvironmentBodyToken'] = class exte
    * @override
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  toString(skipNodeClass) {
+  toString(skipNodeClass: boolean = false) {
     return skipNodeClass ?
       super.toString(true) :
       'LatexTree.EnvironmentBodyToken{' + super.toString(true) + '}';
@@ -592,11 +642,12 @@ Object.defineProperties(EnvironmentBodyToken.prototype, { // default properties
  * @interface SpaceTokenProperties
  * @extends TokenProperties
  * @property {number|undefined} lineBreakCount - The number of line breaks
- * @property
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-
-
+export interface SpaceTokenProperties
+  extends TokenProperties {
+  lineBreakCount?: number;
+}
 
 /**
  * LaTeX space token structure
@@ -605,16 +656,20 @@ Object.defineProperties(EnvironmentBodyToken.prototype, { // default properties
  * @property {number} lineBreakCount - The number of line breaks
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-const SpaceToken = module.exports['SpaceToken'] = class extends Token {
-  //noinspection JSUnusedGlobalSymbols
+export class SpaceToken extends Token {
+  lineBreakCount: number;
+
+
   /**
    * Constructor
    * @param {!SpaceTokenProperties} initialProperties the initial property values
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  constructor(initialProperties) {
-    if (initialProperties === undefined)
-      return super();
+  constructor(initialProperties: SpaceTokenProperties) {
+    if (initialProperties === undefined) {
+      super();
+      return;
+    }
     else if (!(initialProperties instanceof Object))
       throw new TypeError ('"initialProperties" isn\'t an Object instance');
     super(initialProperties); // the superclass constructor
@@ -632,12 +687,11 @@ const SpaceToken = module.exports['SpaceToken'] = class extends Token {
 
   /**
    * Get the logical lexeme
-   * @return {(Latex.Lexeme|null)} the lexeme or null if the lexeme isn't defined
+   * @return {(Lexeme|null)} the lexeme or null if the lexeme isn't defined
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get lexeme () {
-    //noinspection JSUnresolvedVariable
-    return  this.lineBreakCount <= 1 ? Latex.Lexeme.SPACE : Latex.Lexeme.PARAGRAPH_SEPARATOR;
+  get lexeme (): Lexeme {
+    return this.lineBreakCount <= 1 ? "SPACE" : "PARAGRAPH_SEPARATOR";
   }
 
 
@@ -649,7 +703,7 @@ const SpaceToken = module.exports['SpaceToken'] = class extends Token {
    * @override
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  toString(skipNodeClass) {
+  toString(skipNodeClass: boolean = false): string {
     if (skipNodeClass) { // if the node class name must be skipped
       switch (this.lineBreakCount) {
       case 0:
@@ -671,7 +725,7 @@ const SpaceToken = module.exports['SpaceToken'] = class extends Token {
     }
   }
 };
-//noinspection JSUnresolvedVariable
+
 Object.defineProperties(SpaceToken.prototype, { // default properties
   lineBreakCount: { value: 0, enumerable: true } // line break number
 });
@@ -682,12 +736,15 @@ Object.defineProperties(SpaceToken.prototype, { // default properties
  * LaTeX source fragment token properties
  * @interface SourceTokenProperties
  * @extends TokenProperties
- * @property {Latex.Lexeme} lexeme - The logical lexeme
+ * @property {Lexeme} lexeme - The logical lexeme
  * @property {string} source - The source fragment
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-
-
+export interface SourceTokenProperties
+  extends TokenProperties {
+  lexeme: Lexeme;
+  source: string;
+}
 
 /**
  * LaTeX source fragment token structure
@@ -696,18 +753,19 @@ Object.defineProperties(SpaceToken.prototype, { // default properties
  * @property {string} source - The source fragment
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-const SourceToken = module.exports['SourceToken'] = class extends Token {
-  //noinspection JSUnusedGlobalSymbols
+export class SourceToken extends Token {
+  private source: string;
+
   /**
    * Constructor
    * @param {!SourceTokenProperties} initialProperties the initial property values
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  constructor(initialProperties) {
+  constructor(initialProperties: SourceTokenProperties) {
     if (!(initialProperties instanceof Object))
       throw new TypeError ('"initialProperties" isn\'t an Object instance');
     super(initialProperties); // the superclass constructor
-    if (!Latex.Lexeme[initialProperties.lexeme])
+    if (!Lexeme[initialProperties.lexeme])
       throw new TypeError('"initialProperties.lexeme" isn\'t known');
     // store the lexeme
     Object.defineProperty(this, 'lexeme', { value: initialProperties.lexeme, enumerable: true });
@@ -726,7 +784,7 @@ const SourceToken = module.exports['SourceToken'] = class extends Token {
    * @override
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  toString(skipNodeClass) {
+  toString(skipNodeClass: boolean = false) {
     return skipNodeClass ? this.source : 'LatexTree.SourceToken[' + this.lexeme + ']{' + this.source + '}';
   }
 };

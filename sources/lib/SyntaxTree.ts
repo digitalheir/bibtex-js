@@ -18,6 +18,8 @@
  * 02111-1307, USA.
  */
 
+import {isNumber} from "./Utils";
+
 'use strict';
 
 /**@module */
@@ -30,19 +32,24 @@
  * @property {string} source - The source text
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-const SyntaxTree = module.exports = class {
-  //noinspection JSUnusedGlobalSymbols
+export class SyntaxTree {
+  //noinspection JSUnusedGlobalSymbols // TODO
+  readonly rootNode: Node;
+  readonly source: string;
+
+
   /**
    * Constructor
    * @param {!Node} rootNode the root node (must have no parent and no tree)
    * @param {string} source the sources text that has this syntax tree
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  constructor(rootNode, source) {
+  constructor(rootNode: Node, source: string) {
     if (!(rootNode instanceof Node))
       throw new TypeError('"rootNode" isn\'t a SyntaxTree.Node instance');
     if (rootNode.parentNode) throw new TypeError('"rootNode" has a parent node');
     if (rootNode.tree) throw new TypeError('"rootNode" is a tree root');
+
     if (typeof source !== 'string')  throw new TypeError('"sources" isn\'t a string');
     // store the root node
     Object.defineProperty(this, 'rootNode', { value: rootNode, enumerable: true });
@@ -62,7 +69,10 @@ const SyntaxTree = module.exports = class {
  * @exports
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-
+export interface NodeProperties {
+  parentNode?: Node;
+  childNodes?: Node[];
+}
 
 
 /**
@@ -74,14 +84,19 @@ const SyntaxTree = module.exports = class {
  * @property {number} subtreeSize - The size of the subtree formed by this node
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-const Node = module.exports['Node'] = class {
-  //noinspection JSUnusedGlobalSymbols
+export class Node {
+  tree: SyntaxTree;
+  public parentNode: Node;
+  private subtreeSize: number;
+  private childNodes_:Node[];
+
+
   /**
    * Constructor
    * @param {!NodeProperties=} opt_initialProperties the initial property values
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  constructor(opt_initialProperties) {
+  constructor(opt_initialProperties?: NodeProperties) {
     if (opt_initialProperties !== undefined) { // if the initial properties are defined
       if (!(opt_initialProperties instanceof Object))
         throw new TypeError('initialProperties isn\'t an Object instance');
@@ -90,10 +105,11 @@ const Node = module.exports['Node'] = class {
           throw new TypeError('initialProperties.childNodes isn\'t an Array instance');
         opt_initialProperties.childNodes.forEach(this.insertChildSubtree, this);
       }
-      if (opt_initialProperties.parentNode !== undefined) { // if the parent node is set
-        if (opt_initialProperties.parentNode instanceof Node) {
+      let optParentNode = opt_initialProperties.parentNode;
+      if (optParentNode !== undefined) { // if the parent node is set
+        if (!!optParentNode) {
           //noinspection JSUnresolvedFunction
-          opt_initialProperties.parentNode.insertChildSubtree(this);
+          optParentNode.insertChildSubtree(this);
         } else {
           throw new TypeError('initialProperties.parentNode isn\'t a SyntaxTree.Node instance');
         }
@@ -102,29 +118,29 @@ const Node = module.exports['Node'] = class {
   }
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Get the child nodes
    * @return {!Array.<Node>} the child node list
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get childNodes() {
+  get childNodes(): Node[] {
     return this.childNodes_.slice()
   }
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Get the child node
    * @param {(!Node|number)} node the child node or its child index
    * @return {?Node} the child node or null of there is no such a child node
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  childNode(node) {
-    if (typeof node === 'number') // if the node child index is given
-      return this.childNodes_[node] || null;
+  childNode(node: Node | number): Node | undefined {
+    if (isNumber(node)) // if the node child index is given
+      return this.childNodes_[node] || undefined;
     if (node instanceof Node) // if the child node is given
-      return node.parentNode === this ? node : null;
+      return node.parentNode === this ? node : undefined;
     throw new TypeError('"node" is neither a number nor a SyntaxTree.Node instance');
   }
 
@@ -135,16 +151,16 @@ const Node = module.exports['Node'] = class {
    * @return {(number|null)} the child node or null of there is no such a child node
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  childIndex(node) {
-    if (typeof node === 'number') // if the node child index is given
-      return this.childNodes_[node] ? node : null;
+  childIndex(node: Node | number): number | undefined {
+    if (isNumber(node)) // if the node child index is given
+      return this.childNodes_[node] ? node : undefined;
     if (node instanceof Node) // if the child node is given
-      return node.parentNode === this ? this.childNodes_.indexOf(node) : null;
+      return node.parentNode === this ? this.childNodes_.indexOf(node) : undefined;
     throw new TypeError('"node" is neither a number nor a SyntaxTree.Node instance');
   }
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Insert a node to this child node list
    * @param {!Node} node the node to insert (must have no parent and no child nodes)
@@ -155,15 +171,16 @@ const Node = module.exports['Node'] = class {
    * @return {?Node} the inserted node or null if cannot insert
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  insertChildNode(node, childIndex, childNodesToCover) {
-    if (!(node instanceof SyntaxTree.Node))
+  insertChildNode(node: Node, childIndex: number, childNodesToCover: number): Node {
+    if (!(node instanceof Node))
       throw new TypeError('"node" isn\'t a SyntaxTree.Node instance');
     if (node.parentNode) throw new TypeError('"node" has a parent');
     if (node.tree) throw new TypeError('"node" is a tree root');
-    //noinspection JSUnresolvedVariable
-    if (!(this instanceof node.parentNodeClass_))
-      throw new TypeError('"this" isn\'t a suitable class instance');
-    //noinspection JSUnresolvedVariable
+
+    // TODO
+    // if (!(this instanceof node.parentNodeClass_))
+    //   throw new TypeError('"this" isn\'t a suitable class instance');
+
     if (node.childNodes_.length) throw new TypeError('"node" has child nodes');
     if (!this.hasOwnProperty('childNodes_')) // if there was no child nodes
     // init the property
@@ -215,14 +232,15 @@ const Node = module.exports['Node'] = class {
    *        the position of the subtree root for this child node list, the last by default
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  insertChildSubtree(node, childIndex) {
-    if (!(node instanceof SyntaxTree.Node))
+  insertChildSubtree(node: Node, childIndex?: number) {
+    if (!(node instanceof Node))
       throw new TypeError('"node" isn\'t a SyntaxTree.Node instance');
     if (node.parentNode) throw new TypeError('"node" has a parent');
     if (node.tree) throw new TypeError('"node" is a tree root');
-    //noinspection JSUnresolvedVariable
-    if (!(this instanceof node.parentNodeClass_))
-      throw new TypeError('"this" isn\'t a suitable class instance');
+
+    // todo check
+    // if (!(this instanceof node.parentNodeClass_))
+    //   throw new TypeError('"this" isn\'t a suitable class instance');
     // init child nodes property if not exists
     if (!this.hasOwnProperty('childNodes_')) // if there was no child nodes
     // init the property
@@ -251,20 +269,23 @@ const Node = module.exports['Node'] = class {
   }
 
   
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Remove a child node of this node. All its child nodes become the child nodes of this node
-   * @param {(!Node|number)} node the subtree root or its child index
+   * @param {(!Node|number)} nodeOrNodeIndex the subtree root or its child index
    * @return {?Node} the removed node or null of there is no such a child node
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  removeChildNode(node) {
-    let nodeChildIndex = this.childIndex(node); // the child index of the node
-    if (nodeChildIndex === null) return null; // return if there is no such a child
-    node = this.childNodes_[nodeChildIndex]; // the child node to remove
+  removeChildNode(nodeOrNodeIndex: number | Node): Node | undefined {
+    let nodeChildIndex: number | undefined = this.childIndex(nodeOrNodeIndex); // the child index of the node
+    if (nodeChildIndex === undefined) return undefined; // return if there is no such a child
+
+    const node: Node = this.childNodes_[nodeChildIndex]; // the child node to remove
+
     // replace the node with its child nodes at this child node list
-    //noinspection JSUnresolvedVariable
-    Array.prototype.splice.apply(this.childNodes_, [nodeChildIndex, 1].concat(node.childNodes_));
+    // todo could be more efficient?
+    this.childNodes_.splice(nodeChildIndex, 1, ...node.childNodes_);
+
     if (this.childNodes_.length) { // if there are child nodes
       // update this node subtree size
       Object.defineProperty(this, 'subtreeSize', { value: this.subtreeSize - 1 });
@@ -278,23 +299,24 @@ const Node = module.exports['Node'] = class {
       Object.defineProperty(parentNode, 'subtreeSize', { value: parentNode.subtreeSize - 1 });
     }
     delete node.parentNode; // the node has no parent node anymore
-    //noinspection JSUnresolvedVariable
+
     delete node.childNodes_; // the node has no child nodes anymore
     delete node.subtreeSize; // the node has no subtree anymore
     return node;
   }
 
 
-  //noinspection JSUnusedGlobalSymbols
+
   /**
    * Remove a subtree formed by a child node of this node
    * @param {(!Node|number)} node the subtree root or its child index
    * @return {?Node} the removed subtree root node or null of there is no such a child node
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  removeChildSubtree(node) {
-    let nodeChildIndex = this.childIndex(node); // the child index of the node
-    if (nodeChildIndex === null) return null; // return if there is no such a child
+  removeChildSubtree(node: Node | number): Node | undefined {
+    let nodeChildIndex: number | undefined = this.childIndex(node); // the child index of the node
+    if (nodeChildIndex === undefined) return undefined; // return if there is no such a child
+
     node = this.childNodes_.splice(nodeChildIndex, 1)[0]; // remove the node from the child list
     let nodeSubtreeSize = node.subtreeSize; // the size of the subtree formed by the node
     if (this.childNodes_.length) { // if there are child nodes
@@ -324,7 +346,7 @@ const Node = module.exports['Node'] = class {
    * @override
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  toString(skipNodeClass) {
+  toString(skipNodeClass: boolean = false): string {
     let source = ''; // the sources
     // for all the child nodes
     this.childNodes_.forEach(childNode => { source += childNode.toString(true) });
