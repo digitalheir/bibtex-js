@@ -22,13 +22,29 @@
     {
       "name": "Kirill Chuvilin",
       "email": "k.chuvilin@texnous.org"
+    },
+    {
+      "name": "Maarten Trompper",
+      "email": "maartentrompper@gmail.com"
     }
   ],
   "main": "deploy/main.js",
   "repository": "bitbucket:texnous/latex-parser",
   "devDependencies": {
+    "@types/chai": "^4.0.0",
+    "@types/mocha": "^2.2.41",
     "babel-cli": "^6.14.0",
     "babel-preset-es2015": "^6.14.0",
-    "typescript": "^2.3.4"
+    "chai": "^4.0.2",
+    "mocha": "^3.4.2",
+    "ts-node": "^3.0.6",
+    "typescript": "^2.3.4",
+    "webpack": "^2.6.1"
+  },
+  "scripts": {
+    "build": "npm run build:min",
+    "build:min": "webpack -p",
+    "build:ts": "tsc",
+    "test": "mocha --compilers ts:ts-node/register,tsx:ts-node/register ./**/*.spec.ts --recursive"
   }
 }

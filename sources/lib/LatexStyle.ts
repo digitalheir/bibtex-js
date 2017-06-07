@@ -21,7 +21,7 @@
 /**@module */
 
 
-import {isNumber, testProperties} from './Utils'; // object property testing function
+import {isNumber, mustNotBeUndefined, testProperties} from './Utils'; // object property testing function
 
 import {
   Lexeme, Mode, modes, mustBeMode, mustBeOperationProperties, Operation, OperationProperties,
@@ -34,7 +34,7 @@ function isArray(x: any): x is any[] {
 }
 
 function mustBeArray(x: any): any[] {
-  if(!isArray(x))throw new Error();
+  if (!isArray(x))throw new Error();
   return x;
 }
 
@@ -58,9 +58,9 @@ export interface PackageProperties {
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 export default class LatexStyle {
-  private environments_: {[name: string]: EnvironmentAndPackage[]};
-  private commands_: {[name: string]: CommandAndPackage[]};
-  private symbols_: {[name: string]: SymbolAndPackage[]};
+  private environments_: { [name: string]: EnvironmentAndPackage[] };
+  private commands_: { [name: string]: CommandAndPackage[] };
+  private symbols_: { [name: string]: SymbolAndPackage[] };
 
 
   /**
@@ -89,7 +89,6 @@ export default class LatexStyle {
   };
 
 
-
   /**
    * Load a package with style definitions
    * @param {string} packageName the name of the style package
@@ -106,11 +105,11 @@ export default class LatexStyle {
         if (symbol.pattern) { // if the symbol has a pattern
           let symbolPatternFirstChar = symbol.pattern[0]; // the first char of the pattern
           // the symbols with the same pattern first char
-          if(!this.symbols_.hasOwnProperty(symbolPatternFirstChar))
+          if (!this.symbols_.hasOwnProperty(symbolPatternFirstChar))
             this.symbols_[symbolPatternFirstChar] = [];
           let symbols: SymbolAndPackage[] = this.symbols_[symbolPatternFirstChar];
 
-          symbols.push({ symbol, packageName }); // store the symbol and the package name
+          symbols.push({symbol, packageName}); // store the symbol and the package name
         }
       }
     }
@@ -123,13 +122,13 @@ export default class LatexStyle {
         if (command.name) { // if the command has a name
           // the commands with the same name
           (this.commands_[command.name] || (this.commands_[command.name] = []))
-            .push({ command, packageName }); // store the command and the package name
+            .push({command, packageName}); // store the command and the package name
         }
       }
     }
     if (stylePackage.environments !== undefined) { // if the environment descriptions are defined
       if (!(stylePackage.environments instanceof Array))
-        throw new TypeError('"stylePackage.environments" isn\'t an Array');
+        throw new TypeError(`"stylePackage.environments" isn't an Array`);
       // for all the environment descriptions
       for (let iEnvironment = stylePackage.environments.length - 1; iEnvironment >= 0;
            --iEnvironment) {
@@ -139,16 +138,15 @@ export default class LatexStyle {
         if (envName) { // if the environment has a name
           // the environments with the same name
           let storedEnv = this.environments_[envName];
-          if(storedEnv === undefined) {
+          if (storedEnv === undefined) {
             storedEnv = [];
             this.environments_[envName] = storedEnv;
           }
-          storedEnv.push({ environment, packageName }); // store the environment and the package name
+          storedEnv.push({environment, packageName}); // store the environment and the package name
         }
       }
     }
   };
-
 
 
   /**
@@ -202,7 +200,6 @@ export default class LatexStyle {
   };
 
 
-
   /**
    * Get symbols
    * @param {!State} state the state that the symbols must match to
@@ -225,7 +222,6 @@ export default class LatexStyle {
     }
     return filteredSymbols;
   };
-
 
 
   /**
@@ -251,7 +247,6 @@ export default class LatexStyle {
   };
 
 
-
   /**
    * Get environments
    * @param {!State} state the state that the environments must match to
@@ -274,50 +269,52 @@ export default class LatexStyle {
 /**
  * LaTeX style item properties
  * @interface ItemProperties
- * @property {(Lexeme|null|undefined)} lexeme - The logical lexeme
+ * @property {(Lexeme|undefined)} lexeme - The logical lexeme
  * @property {(!Object.<Mode, boolean>|undefined)} modes -
  *           The modes where the item is defined or not
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 export interface ItemProperties {
-  lexeme?: Lexeme|null;
-  modes?: {[mode: string]: boolean};
+  lexeme?: Lexeme;
+  modes?: { [mode: string]: boolean };
 }
 
 
 /**
  * LaTeX style item encapsulation
  * @class
- * @property {(Lexeme|null)} lexeme - The logical lexeme
+ * @property {(?Lexeme)} lexeme - The logical lexeme
  * @property {!Object.<Mode, boolean>} modes - The modes where the item is defined or not
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 export class Item {
   lexeme?: Lexeme;
-  modes: {[mode: string]: boolean};
+  modes: { [mode: string]: boolean };
 
   /**
    * Constructor.
    * @param {!ItemProperties=} opt_initialProperties the initial property values
    */
-  constructor (opt_initialProperties: ItemProperties = {}) {
+  constructor(opt_initialProperties: ItemProperties = {}) {
     // do nothing if there are no initial properties
     if (opt_initialProperties === undefined) return;
     if (!(opt_initialProperties instanceof Object))
       throw new TypeError('"initialProperties" isn\'t an Object instance');
     switch (opt_initialProperties.lexeme) {
-    case undefined: break; // do nothing if no lexeme defined
-    case null: break; // do nothing if the default lexeme defined
-    default:
-      let lexeme = Lexeme[opt_initialProperties.lexeme]; // verify the lexeme
-      if (lexeme === undefined)
-        throw new TypeError('"initialProperties.lexeme" isn\'t a Lexeme option');
-      Object.defineProperty(this, 'lexeme', { value: lexeme });
+      case undefined:
+        break; // do nothing if no lexeme defined
+      case null:
+        break; // do nothing if the default lexeme defined
+      default:
+        let lexeme = Lexeme[opt_initialProperties.lexeme]; // verify the lexeme
+        if (lexeme === undefined)
+          throw new TypeError('"initialProperties.lexeme" isn\'t a Lexeme option');
+        Object.defineProperty(this, 'lexeme', {value: lexeme});
     }
     if (opt_initialProperties.modes !== undefined) {// if the mode states are set
       if (!(opt_initialProperties.modes instanceof Object))
         throw new TypeError('"initialProperties.modes" isn\'t an Object instance');
-      Object.defineProperty(this, 'modes', { value: { } }); // create the mode state storage
+      Object.defineProperty(this, 'modes', {value: {}}); // create the mode state storage
       for (let modeKey in opt_initialProperties.modes) { // for all the given modes // TODO better loop
         let mode: Mode = mustBeMode(modeKey); // verify the mode key
         if (mode === undefined) // if the mode is unknown
@@ -345,12 +342,12 @@ export class Item {
     return this.lexeme === other.lexeme &&
       testProperties(this.modes, other.modes, modes, false);
   }
-};
+}
+;
 Object.defineProperties(Item.prototype, { // default property values
-  lexeme: { value: null, enumerable: true }, // no lexeme by default
-  modes: { value: {}, enumerable: true } // no mode mask by default
+  lexeme: {value: undefined, enumerable: true}, // no lexeme by default
+  modes: {value: {}, enumerable: true} // no mode mask by default
 });
-
 
 
 /**
@@ -365,12 +362,12 @@ export interface ParameterProperties extends ItemProperties {
   operations?: (Operation | OperationProperties)[];
 }
 
-export function isParameterProperties(x: any): x is ParameterProperties {
+export function isParameterProperties(ignored: any): ignored is ParameterProperties {
   return true; // todo fields are all optional
 }
 
 export function mustBeParameterProperties(x: any): ParameterProperties {
-  if(!isParameterProperties) throw new Error();
+  if (!isParameterProperties) throw new Error();
   return x;
 }
 
@@ -405,14 +402,14 @@ export class Parameter extends Item {
   }
 
 
-
   /**
    * Get the LaTeX operations that are performed before this parameter
    * @return {!Array.<!Operation>} the operation list
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get operations(): Operation[] { return this.operations_.slice() }
-
+  get operations(): Operation[] {
+    return this.operations_.slice()
+  }
 
 
   /**
@@ -432,14 +429,14 @@ export class Parameter extends Item {
     return this.operations_.every((operation, iOperation) =>
       operation.equals(other.operations_[iOperation]));
   }
-};
+}
+;
 Object.defineProperties(Parameter.prototype, { // make getters and setters enumerable
-  operations: { enumerable: true }
+  operations: {enumerable: true}
 });
 Object.defineProperties(Parameter.prototype, { // default property values
-  operations_: { value: [], enumerable: false } // empty operation list by default
+  operations_: {value: [], enumerable: false} // empty operation list by default
 });
-
 
 
 /**
@@ -454,8 +451,8 @@ Object.defineProperties(Parameter.prototype, { // default property values
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 export interface SymbolProperties extends ItemProperties {
-  operations?: (Operation|OperationProperties)[];
-  parameters?: (Parameter|ParameterProperties)[];
+  operations?: (Operation | OperationProperties)[];
+  parameters?: (Parameter | ParameterProperties)[];
   pattern?: string;
   html?: string;
 }
@@ -472,7 +469,7 @@ export interface SymbolAndPackage {
  * @property {!Array.<!Operation>} operations -
  *           The LaTeX operations that are performed after this symbol
  * @property {!Array.<!Parameter>} parameters - The parameters description list
- * @property {!Array.<null|string|number>} patternComponents - The LaTeX input pattern components
+ * @property {!Array.<undefined|string|number>} patternComponents - The LaTeX input pattern components
  * @property {string} pattern - The LaTeX input pattern
  * @property {string} html - The HTML output pattern
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
@@ -483,7 +480,7 @@ export class Symbol extends Item {
   //noinspection JSMismatchedCollectionQueryUpdate // TODO
   private parameters_: Parameter[];
   //noinspection JSMismatchedCollectionQueryUpdate // TODO
-  private patternComponents_: (null|string|number)[];
+  private patternComponents_: (undefined | string | number)[];
 
   html: string;
 
@@ -506,21 +503,22 @@ export class Symbol extends Item {
     if (opt_initialProperties.parameters !== undefined) { // if the parameters list is set
       if (!(opt_initialProperties.parameters instanceof Array))
         throw new TypeError('"initialProperties.parameters" isn\'t an Array instance');
-      Object.defineProperty(this, 'parameters_', { // generate and store the parameters list
-        value: opt_initialProperties.parameters.map(parameter => new Parameter(mustBeParameterProperties(parameter)))
-      });
+      // generate and store the parameters list
+      this.parameters_ = opt_initialProperties.parameters.map(parameter => new Parameter(mustBeParameterProperties(parameter)));
     }
     if (opt_initialProperties.pattern !== undefined) { // if the LaTeX pattern is set
       if (typeof opt_initialProperties.pattern !== 'string')
         throw new TypeError('"initialProperties.pattern" isn\'t a string');
       // try to parse the pattern
-      let patternComponents = opt_initialProperties.pattern.match(/([ \t]+|#\d+|[^ \t#]+)/g);
-      if (patternComponents !== null) { // if there is a non-trivial pattern
-        this.patternComponents_ = // store the pattern components
-          patternComponents.map(patternPart => {
-            switch (patternPart[0]) {
-            case ' ': case '\t': // if a space part
-              return null; // null is a mark for spaces
+      const patternComponents = opt_initialProperties.pattern.match(/([ \t]+|#\d+|[^ \t#]+)/g);
+      if (!!patternComponents) { // if there is a non-trivial pattern
+
+        // store the pattern components
+        this.patternComponents_ = patternComponents.map((patternPart: string): string | undefined | number => {
+          switch (patternPart[0]) {
+            case ' ':
+            case '\t': // if a space part
+              return undefined; // undefined is a mark for spaces
             case '#': // if a parameter part
               let parameterIndex = Number(patternPart.substring(1)) - 1; // the index of a parameter
               if (!this.parameters_[parameterIndex])
@@ -531,15 +529,15 @@ export class Symbol extends Item {
               return parameterIndex;
             default: // raw pattern part
               return patternPart;
-            }
-          });
+          }
+        });
       }
     }
     if (opt_initialProperties.html !== undefined) { // if the LaTeX pattern is set
       if (typeof opt_initialProperties.html !== 'string')
         throw new TypeError('"initialProperties.html" isn\'t a string');
       // store the pattern
-      Object.defineProperty(this, 'html', { value: opt_initialProperties.html, enumerable: true });
+      Object.defineProperty(this, 'html', {value: opt_initialProperties.html, enumerable: true});
     }
   };
 
@@ -548,30 +546,37 @@ export class Symbol extends Item {
    * @return {!Array.<!Operation>} the operation list
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get operations (): Operation[] { return this.operations_.slice() }
+  get operations(): Operation[] {
+    return this.operations_.slice()
+  }
 
   /**
    * Get the parameters description list
    * @return {!Array.<!Latex.Parameter>} the parameter list
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get parameters (): Parameter[] { return this.parameters_.slice() }
+  get parameters(): Parameter[] {
+    return this.parameters_.slice()
+  }
 
   /**
    * Get the parameter description
    * @param {number} parameterIndex the index of the parameter
-   * @return {?Latex.Parameter} the parameter or null if there is no parameter with such an index
+   * @return {?Latex.Parameter} the parameter or undefined if there is no parameter with such an index
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  parameter(parameterIndex: number): Parameter | undefined { return this.parameters_[parameterIndex] || undefined }
+  parameter(parameterIndex: number): Parameter | undefined {
+    return this.parameters_[parameterIndex] || undefined
+  }
 
   /**
    * Get the pattern components
    * @return {!Array.<!Latex.Parameter>} the pattern component list
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get patternComponents () { return this.patternComponents_.slice() }
-
+  get patternComponents(): any[] {
+    return mustNotBeUndefined(this.patternComponents_.slice())
+  }
 
 
   /**
@@ -579,14 +584,16 @@ export class Symbol extends Item {
    * @return {string} the LaTeX input pattern
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get pattern () {
+  get pattern() {
     return this.patternComponents_.map(patternComponent => {
-      if(isNumber(patternComponent)){
+      if (isNumber(patternComponent)) {
         return '#' + (patternComponent + 1);
       }
       switch (typeof patternComponent) {
-      case 'string': return patternComponent;
-      default: return ' ';
+        case 'string':
+          return patternComponent;
+        default:
+          return ' ';
       }
     }).join('');
   }
@@ -617,20 +624,21 @@ export class Symbol extends Item {
       return false;
     return this.html === other.html;
   }
-};
+}
+;
 Object.defineProperties(Symbol.prototype, { // make getters and setters enumerable
-  operations: { enumerable: true },
-  parameters: { enumerable: true },
-  patternComponents: { enumerable: true },
-  pattern: { enumerable: true }
-});
-Object.defineProperties(Symbol.prototype, { // default property values
-  operations_: { value: [], enumerable: false }, // empty operation list
-  parameters_: { value: [], enumerable: false }, // empty parameter list
-  patternComponents_: { value: [], enumerable: false }, // empty pattern
-  html: { value: '', enumerable: true } // empty HTML pattern
+  operations: {enumerable: true},
+  parameters: {enumerable: true},
+  patternComponents: {enumerable: true},
+  pattern: {enumerable: true}
 });
 
+Object.defineProperties(Symbol.prototype, { // default property values
+  operations_: {value: [], enumerable: false, writable: true}, // empty operation list
+  parameters_: {value: [], enumerable: false, writable: true}, // empty parameter list
+  patternComponents_: {value: [], enumerable: false, writable: true}, // empty pattern
+  html: {value: '', enumerable: true, writable: true} // empty HTML pattern
+});
 
 
 /**
@@ -672,10 +680,9 @@ export class Command extends Symbol {
       if (typeof opt_initialProperties.name !== 'string')
         throw new TypeError('"initialProperties.name" isn\'t a string');
       // store the name
-      Object.defineProperty(this, 'name', { value: opt_initialProperties.name });
+      Object.defineProperty(this, 'name', {value: opt_initialProperties.name});
     }
   };
-
 
 
   /**
@@ -690,15 +697,16 @@ export class Command extends Symbol {
     if (!super.equals(other)) return false; // superclass test
     return this.name === other.name;
   }
-};
+}
+;
 Object.defineProperties(Command.prototype, { // default property values
-  name: {value: '', enumerable: true } // empty name
+  name: {value: '', enumerable: true} // empty name
 });
 export function isCommand(c: any): c is Command {
   return c instanceof Command;
 }
 export function mustBeCommand(c: any): Command {
-  if(!isCommand(c)) throw new Error();
+  if (!isCommand(c)) throw new Error();
   return c;
 }
 
@@ -742,10 +750,9 @@ export class Environment extends Item {
       if (typeof opt_initialProperties.name !== 'string')
         throw new TypeError('"initialProperties.name" isn\'t a string');
       // store the name
-      Object.defineProperty(this, 'name', { value: opt_initialProperties.name });
+      Object.defineProperty(this, 'name', {value: opt_initialProperties.name});
     }
   };
-
 
 
   /**
@@ -760,9 +767,10 @@ export class Environment extends Item {
     if (!super.equals(other)) return false; // superclass test
     return this.name === other.name;
   }
-};
+}
+;
 Object.defineProperties(Environment.prototype, { // default property values
-  name: {value: '', enumerable: true } // empty name
+  name: {value: '', enumerable: true} // empty name
 });
 export function isEnvironment(x: any): x is Environment {
   return x instanceof Environment;

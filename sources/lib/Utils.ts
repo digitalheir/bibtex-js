@@ -43,8 +43,8 @@ export interface OptAttributes {
  */
 export function updateProperties(target: TargetObject,
                                  values: ValuesObject,
-                                 opt_keys: OptKeys,
-                                 opt_attributes: OptAttributes) {
+                                 opt_keys?: OptKeys,
+                                 opt_attributes: OptAttributes = { writable: true, enumerable: true, configurable: true }) {
   if (!(target instanceof Object)) throw new TypeError('"target" isn\'t an Object instance');
   if (values === undefined) return; // do noting is the sources is undefined
   if (!(values instanceof Object)) throw new TypeError('"properties" isn\'t an Object instance');
@@ -90,8 +90,8 @@ export function updateProperties(target: TargetObject,
 /**
  * Test object properties with property values (strict comparing is used)
  * @param {!Object} target the object with properties to test
- * @param {!Object} values the object with property values (undefined values will be skipped)
- * @param {(!Object.<string,string>|!Array.<string>)=} opt_keys
+ * @param {?Object} values the object with property values (undefined values will be skipped)
+ * @param {?(Object.<string,string>|Array.<string>)} opt_keys
  *        list of keys or map of the target keys to the property names, all the enumerable
  *        properties will be used if undefined
  * @param {boolean=true} opt_skipUndefined true to skip keys with undefined values, false otherwise
@@ -99,16 +99,16 @@ export function updateProperties(target: TargetObject,
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 export function testProperties(target: TargetObject,
-                               values: ValuesObject,
-                               opt_keys: OptKeys,
+                               values?: ValuesObject,
+                               opt_keys?: OptKeys,
                                opt_skipUndefined: boolean = true) {
   if (!(target instanceof Object)) throw new TypeError('"target" isn\'t an Object instance');
   if (values === undefined) return true; // do noting is the sources is undefined
   if (!(values instanceof Object)) throw new TypeError('"properties" isn\'t an Object instance');
   if (opt_skipUndefined === undefined) opt_skipUndefined = true; // skip undefined by default
+
   if (opt_keys === undefined) { // if the key map isn't defined
     for (let key in values) { // for all the enumerable properties
-      //noinspection JSUnfilteredForInLoop
       if (target[key] !== values[key] && !(values[key] === undefined && opt_skipUndefined))
         return false; // false if any value is different
     }
@@ -118,9 +118,7 @@ export function testProperties(target: TargetObject,
     });
   } else if (opt_keys instanceof Object) { // if the map of the keys is defined
     for (let targetKey in opt_keys) { // for all the target keys
-      //noinspection JSUnfilteredForInLoop
       let key = opt_keys[targetKey]; // the sources key
-      //noinspection JSUnfilteredForInLoop
       if (target[targetKey] !== values[key] && !(values[key] === undefined && opt_skipUndefined))
         return false; // false if any value is different
     }

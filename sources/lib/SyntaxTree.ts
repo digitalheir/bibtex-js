@@ -64,7 +64,7 @@ export class SyntaxTree {
 /**
  * Syntax tree node properties
  * @interface NodeProperties
- * @property {(?Node|undefined)} parentNode - The parent node or null if there is no parent
+ * @property {(?Node|undefined)} parentNode - The parent node or undefined if there is no parent
  * @property {(!Array.<Node>|undefined)} childNodes - The list of the child nodes
  * @exports
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
@@ -78,8 +78,8 @@ export interface NodeProperties {
 /**
  * Syntax tree node structure
  * @class
- * @property {?SyntaxTree} tree - The tree or null if this node isn't in any tree
- * @property {?Node} parentNode - The parent node or null if there is no parent
+ * @property {?SyntaxTree} tree - The tree or undefined if this node isn't in any tree
+ * @property {?Node} parentNode - The parent node or undefined if there is no parent
  * @property {!Array.<Node>} childNodes - The child node list
  * @property {number} subtreeSize - The size of the subtree formed by this node
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
@@ -133,7 +133,7 @@ export class Node {
   /**
    * Get the child node
    * @param {(!Node|number)} node the child node or its child index
-   * @return {?Node} the child node or null of there is no such a child node
+   * @return {?Node} the child node or undefined of there is no such a child node
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   childNode(node: Node | number): Node | undefined {
@@ -148,7 +148,7 @@ export class Node {
   /**
    * Get the child node index
    * @param {(!Node|number)} node the child node or its child index
-   * @return {(number|null)} the child node or null of there is no such a child node
+   * @return {(number|undefined)} the child node or undefined of there is no such a child node
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   childIndex(node: Node | number): number | undefined {
@@ -168,12 +168,11 @@ export class Node {
    *        the position of the node for this child node list, the last by default
    * @param {number=0} childNodesToCover
    *        the number of this child nodes to become the child nodes of the new node
-   * @return {?Node} the inserted node or null if cannot insert
+   * @return {?Node} the inserted node or undefined if cannot insert
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   insertChildNode(node: Node, childIndex: number, childNodesToCover: number): Node {
-    if (!(node instanceof Node))
-      throw new TypeError('"node" isn\'t a SyntaxTree.Node instance');
+    if (!(node instanceof Node)) throw new TypeError('"node" isn\'t a SyntaxTree.Node instance');
     if (node.parentNode) throw new TypeError('"node" has a parent');
     if (node.tree) throw new TypeError('"node" is a tree root');
 
@@ -273,7 +272,7 @@ export class Node {
   /**
    * Remove a child node of this node. All its child nodes become the child nodes of this node
    * @param {(!Node|number)} nodeOrNodeIndex the subtree root or its child index
-   * @return {?Node} the removed node or null of there is no such a child node
+   * @return {?Node} the removed node or undefined of there is no such a child node
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   removeChildNode(nodeOrNodeIndex: number | Node): Node | undefined {
@@ -310,7 +309,7 @@ export class Node {
   /**
    * Remove a subtree formed by a child node of this node
    * @param {(!Node|number)} node the subtree root or its child index
-   * @return {?Node} the removed subtree root node or null of there is no such a child node
+   * @return {?Node} the removed subtree root node or undefined of there is no such a child node
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   removeChildSubtree(node: Node | number): Node | undefined {
@@ -357,8 +356,8 @@ Object.defineProperties(Node.prototype, { // make getters and setters enumerable
   childNodes: { enumerable: true }
 });
 Object.defineProperties(Node.prototype, { // default property values
-  tree: { value: null, enumerable: true }, // no tree
-  parentNode: { value: null, enumerable: true }, // no parent node
+  tree: { value: undefined, enumerable: true }, // no tree
+  parentNode: { value: undefined, enumerable: true }, // no parent node
   subtreeSize: { value: 1, enumerable: true }, // only one node in the subtree
   childNodes_: { value: [], enumerable: false }, // no child nodes
   parentNodeClass_: { value: Node, enumerable: false } // parent node must be a Node instance

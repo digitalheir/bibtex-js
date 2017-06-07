@@ -144,8 +144,6 @@ export class State {
    * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
    */
   update(modeStates: ModeStates) {
-    if (!(modeStates instanceof Object))
-      throw new TypeError('"modeStates" isn\'t an Object instance');
     for (let modeKey in modeStates) { // for all the given modes
       //noinspection JSUnfilteredForInLoop
       let mode = modes[mustBeMode(modeKey)]; // verify the mode key
@@ -165,15 +163,11 @@ export class State {
    * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
    */
   test(modeStates: ModeStates) {
-    if (!(modeStates instanceof Object))
-      throw new TypeError('"modeStates" isn\'t an Object instance');
     for (let modeKey in modeStates) { // for all the given modes
-      //noinspection JSUnfilteredForInLoop
       let mode = modes[mustBeMode(modeKey)]; // verify the mode key
       if (mode === undefined) // if the mode is unknown
         throw new TypeError('"modeStates[' + modeKey + ']" isn\'t a Latex.Mode option');
       // exit if the mode has different states
-      //noinspection JSUnfilteredForInLoop,JSUnresolvedVariable
       if (this.modeStates_[mode] !== modeStates[modeKey]) return false;
     }
     return true;
@@ -207,8 +201,8 @@ export type GROUP = 'GROUP';
 /**
  * LaTeX operation properties
  * @interface OperationProperties
- * @property {Directive} directive - The directive or null if there is no a directive
- * @property {Mode|GROUP} operand - The operand or null if there is no an operand
+ * @property {Directive} directive - The directive or undefined if there is no a directive
+ * @property {Mode|GROUP} operand - The operand or undefined if there is no an operand
  * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
  */
 export interface OperationProperties {
@@ -227,8 +221,8 @@ export function mustBeOperationProperties(x: any): OperationProperties {
 /**
  * LaTeX operation encapsulation
  * @class
- * @property {Directive} directive - The directive or null if there is no a directive
- * @property {Mode|GROUP} operand - The operand or null if there is no an operand
+ * @property {Directive} directive - The directive or undefined if there is no a directive
+ * @property {Mode|GROUP} operand - The operand or undefined if there is no an operand
  * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
  */
 export class Operation {

@@ -44,7 +44,7 @@ export default class extends SyntaxTree {
    */
   constructor(rootToken: Token, source: string) {
     if (!(rootToken instanceof Token))
-      throw new TypeError('"rootToken" isn\'t a LatexTree.Token instance');
+      throw new TypeError('"rootToken" isn\'t a Token instance');
     super(rootToken, source); // the superclass constructor
   }
 };
@@ -54,7 +54,7 @@ export default class extends SyntaxTree {
 /**
  * LaTeX syntax tree token base properties
  * @interface TokenProperties
- * @property {(?Token|undefined)} parentToken - The parent token or null if there is no parent
+ * @property {(?Token|undefined)} parentToken - The parent token or undefined if there is no parent
  * @property {(!Array.<Token>|undefined)} childTokens - The list of the child tokens
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
@@ -68,7 +68,7 @@ export interface TokenProperties {
  * LaTeX syntax tree token base structure
  * @class
  * @extends SyntaxTree.Node
- * @property {(Lexeme|null)} lexeme - The logical lexeme of the token
+ * @property {(Lexeme|undefined)} lexeme - The logical lexeme of the token
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 export class Token extends Node {
@@ -104,11 +104,11 @@ export class Token extends Node {
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   toString(skipNodeClass: boolean = false) {
-    return skipNodeClass ? super.toString(true) : 'LatexTree.Token{' + super.toString(true) + '}';
+    return skipNodeClass ? super.toString(true) : 'Token{' + super.toString(true) + '}';
   }
 };
 Object.defineProperties(Token.prototype, { // default properties
-  lexeme: { value: null, enumerable: true }, // no lexeme
+  lexeme: { value: undefined, enumerable: true }, // no lexeme
   parentNodeClass_: { value: Token } // parent node must be an EnvironmentToken instance
 });
 
@@ -132,7 +132,7 @@ export interface SymbolTokenProperties extends TokenProperties {
  * LaTeX symbol token structure
  * @class
  * @extends Token
- * @property {?Symbol} symbol - The corresponding LaTeX symbol or null if the symbol is unrecognized
+ * @property {?Symbol} symbol - The corresponding LaTeX symbol or undefined if the symbol is unrecognized
  * @property {string} pattern - The symbol LaTeX pattern
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
@@ -164,7 +164,7 @@ export class SymbolToken extends Token {
 
   /**
    * Get the logical lexeme
-   * @return {(Lexeme|null)} the lexeme or null if the lexeme isn't defined
+   * @return {(Lexeme|undefined)} the lexeme or undefined if the lexeme isn't defined
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get lexeme (): Lexeme | undefined {
@@ -213,11 +213,11 @@ export class SymbolToken extends Token {
     }
     return skipNodeClass ?
       source :
-      'LatexTree.SymbolToken' + (this.symbol ? '' : '[?]') + '{' + source + '}';
+      'SymbolToken' + (this.symbol ? '' : '[?]') + '{' + source + '}';
   }
 };
 Object.defineProperties(SymbolToken.prototype, { // default properties
-  symbol: { value: null, enumerable: true } // no symbol token
+  symbol: { value: undefined, enumerable: true } // no symbol token
 });
 Object.defineProperties(SymbolToken.prototype, { // make getters and setters enumerable
   pattern: { enumerable: true }
@@ -276,7 +276,7 @@ export class ParameterToken extends Token {
 
   /**
    * Get the logical lexeme
-   * @return {(Lexeme|null)} the lexeme or null if the lexeme isn't defined
+   * @return {(Lexeme|undefined)} the lexeme or undefined if the lexeme isn't defined
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get lexeme (): Lexeme | undefined {
@@ -287,7 +287,7 @@ export class ParameterToken extends Token {
   /**
    * Get the corresponding LaTeX parameter description
    * @return {?LatexStyle.Parameter}
-   *         the LaTeX parameter or null of there is parent symbol or such a parameter
+   *         the LaTeX parameter or undefined of there is parent symbol or such a parameter
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get parameter (): Parameter | undefined {
@@ -311,7 +311,7 @@ export class ParameterToken extends Token {
   toString(skipNodeClass: boolean = false) {
     let source = this.hasSpacePrefix ? ' ' : '';
     source += this.hasBrackets ? '{' + super.toString(true) + '}' : super.toString(true);
-    return skipNodeClass ? source : 'LatexTree.ParameterToken{' + source + '}';
+    return skipNodeClass ? source : 'ParameterToken{' + source + '}';
   }
 };
 Object.defineProperties(ParameterToken.prototype, { // default properties
@@ -345,7 +345,7 @@ export interface CommandTokenProperties extends TokenProperties {
  * @class
  * @extends SymbolToken
  * @property {!LatexStyle.Command} command -
- *           The corresponding LaTeX command or null if the command is unrecognized
+ *           The corresponding LaTeX command or undefined if the command is unrecognized
  * @property {string|undefined} name - The LaTeX command name
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
@@ -404,7 +404,7 @@ export class CommandToken extends SymbolToken {
    let source = '\\' + this.name + super.toString(true);
    return skipNodeClass ?
      source :
-     'LatexTree.CommandToken' + (this.command ? '' : '[?]') + '{' + source + '}';
+     'CommandToken' + (this.command ? '' : '[?]') + '{' + source + '}';
   }
 };
 
@@ -432,27 +432,30 @@ export interface EnvironmentTokenPropertiesWithEnvironment
   environment: Environment;
   name: undefined;
 }
+
 export interface EnvironmentTokenPropertiesWithName
   extends EnvironmentTokenProperties {
   environment: undefined;
   name: string;
 }
+
 export interface EnvironmentTokenProperties
   extends TokenProperties {
   environment?: Environment;
   name?: string;
 }
+
 /**
  * LaTeX environment token structure
  * @class
  * @extends Token
  * @property {!Environment} environment - The corresponding LaTeX environment
  * @property {?CommandToken} beginCommandToken -
- *           The environment begin command token or null is there is no such a token
+ *           The environment begin command token or undefined is there is no such a token
  * @property {?CommandToken} endCommandToken -
- *           The environment end command token or null is there is no such a token
+ *           The environment end command token or undefined is there is no such a token
  * @property {?EnvironmentBodyToken} bodyToken -
- *           The environment body token or null is there is no such a token
+ *           The environment body token or undefined is there is no such a token
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 export class EnvironmentToken extends Token {
@@ -480,7 +483,7 @@ export class EnvironmentToken extends Token {
 
   /**
    * Get the logical lexeme
-   * @return {(Lexeme|null)} the lexeme or null if the lexeme isn't defined
+   * @return {(Lexeme|undefined)} the lexeme or undefined if the lexeme isn't defined
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get lexeme () { return this.environment.lexeme }
@@ -488,35 +491,35 @@ export class EnvironmentToken extends Token {
 
   /**
    * Get the begin command token
-   * @return {?CommandToken} the command token or null if there is no begin command
+   * @return {?CommandToken} the command token or undefined if there is no begin command
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get beginCommandToken () {
     let beginCommandToken = this.childNode(0);
-    return beginCommandToken instanceof CommandToken ? beginCommandToken : null;
+    return beginCommandToken instanceof CommandToken ? beginCommandToken : undefined;
   }
 
 
   /**
    * Get the end command token
-   * @return {?CommandToken} the command token or null if there is no end command
+   * @return {?CommandToken} the command token or undefined if there is no end command
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get endCommandToken () {
     let endCommandToken = this.childNode(2);
-    return endCommandToken instanceof CommandToken ? endCommandToken : null;
+    return endCommandToken instanceof CommandToken ? endCommandToken : undefined;
   }
 
 
 
   /**
    * Get the environment body token
-   * @return {?EnvironmentBodyToken} the body or null if there is no body
+   * @return {?EnvironmentBodyToken} the body or undefined if there is no body
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get bodyToken () {
     let bodyToken = this.childNode(1);
-    return bodyToken instanceof EnvironmentBodyToken ? bodyToken : null;
+    return bodyToken instanceof EnvironmentBodyToken ? bodyToken : undefined;
   }
 
 
@@ -539,13 +542,18 @@ export class EnvironmentToken extends Token {
     source += bodyToken ? bodyToken.toString(true) : '??';
     source += '\\end{' + this.environment.name + '}';
     source += endCommandToken ? SymbolToken.prototype.toString.call(endCommandToken, true) : '??';
-    return skipNodeClass ? source : 'LatexTree.EnvironmentToken{' + source + '}';
+    return skipNodeClass ? source : 'EnvironmentToken{' + source + '}';
   }
 };
 Object.defineProperties(EnvironmentToken.prototype, { // make getters and setters enumerable
   beginToken: { enumerable: true },
   endToken: { enumerable: true }
 });
+
+export function mustBeEnvironmentToken(x: any): EnvironmentToken {
+  if(!isEnvironmentToken(x)) throw new Error();
+  return x;
+}
 
 export function isEnvironmentToken(x: any): x is EnvironmentToken {
   return x instanceof EnvironmentToken;
@@ -572,37 +580,38 @@ function getEnvironment(x: any): Environment | undefined {
  * @class
  * @extends Token
  * @property {?LatexStyle.Environment} environment -
- *           The LaTeX environment or null if there is no parent environment
+ *           The LaTeX environment or undefined if there is no parent environment
  * @property {?EnvironmentToken} environmentToken - The parent environment token
  * @property {?CommandToken} beginCommandToken -
- *           The environment begin command token or null is there is no such a token
+ *           The environment begin command token or undefined is there is no such a token
  * @property {?CommandToken} endCommandToken -
- *           The environment end command token or null is there is no such a token
+ *           The environment end command token or undefined is there is no such a token
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
 export class EnvironmentBodyToken extends Token {
 
   /**
    * Get the LaTeX environment
-   * @return {?LatexStyle.Environment} the environment or null if there is no parent environment
+   * @return {?LatexStyle.Environment} the environment or undefined if there is no parent environment
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get environment (): Environment | undefined { return this.parentNode && getEnvironment(this.parentNode) }
 
 
 
+  //noinspection JSUnusedGlobalSymbols
   /**
    * Get the parent environment token
-   * @return {?EnvironmentToken} the environment or null if there is no parent environment
+   * @return {?EnvironmentToken} the environment or undefined if there is no parent environment
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
-  get environmentToken () { return this.parentNode }
+  get environmentToken (): EnvironmentToken | undefined { return this.parentNode && mustBeEnvironmentToken(this.parentNode); }
 
 
 
   /**
    * Get the environment begin command token
-   * @return {?CommandToken} the command token or null if there is no begin command
+   * @return {?CommandToken} the command token or undefined if there is no begin command
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get beginCommandToken () { return this.parentNode && getBeginCommandToken(this.parentNode) }
@@ -611,7 +620,7 @@ export class EnvironmentBodyToken extends Token {
 
   /**
    * Get the environment end command token
-   * @return {(CommandToken|null)} the command token or null if there is no end command
+   * @return {(CommandToken|undefined)} the command token or undefined if there is no end command
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get endCommandToken () { return this.parentNode && getEndCommandToken(this.parentNode) }
@@ -628,7 +637,7 @@ export class EnvironmentBodyToken extends Token {
   toString(skipNodeClass: boolean = false) {
     return skipNodeClass ?
       super.toString(true) :
-      'LatexTree.EnvironmentBodyToken{' + super.toString(true) + '}';
+      'EnvironmentBodyToken{' + super.toString(true) + '}';
   }
 };
 Object.defineProperties(EnvironmentBodyToken.prototype, { // default properties
@@ -687,7 +696,7 @@ export class SpaceToken extends Token {
 
   /**
    * Get the logical lexeme
-   * @return {(Lexeme|null)} the lexeme or null if the lexeme isn't defined
+   * @return {(Lexeme|undefined)} the lexeme or undefined if the lexeme isn't defined
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   get lexeme (): Lexeme {
@@ -716,11 +725,11 @@ export class SpaceToken extends Token {
     } else { // if the node class name must be included
       switch (this.lineBreakCount) {
       case 0:
-        return 'LatexTree.SpaceToken{ }';
+        return 'SpaceToken{ }';
       case 1:
-        return 'LatexTree.SpaceToken{\n}';
+        return 'SpaceToken{\n}';
       default:
-        return 'LatexTree.SpaceToken{\n\n}';
+        return 'SpaceToken{\n\n}';
       }
     }
   }
@@ -785,6 +794,6 @@ export class SourceToken extends Token {
    * @author Kirill Chuvilin <k.chuvilin@texnous.org>
    */
   toString(skipNodeClass: boolean = false) {
-    return skipNodeClass ? this.source : 'LatexTree.SourceToken[' + this.lexeme + ']{' + this.source + '}';
+    return skipNodeClass ? this.source : 'SourceToken[' + this.lexeme + ']{' + this.source + '}';
   }
 };

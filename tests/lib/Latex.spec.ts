@@ -18,22 +18,23 @@
  * MA 02111-1307, USA.
  */
 
-'use strict';
-
-var Latex = require('../../deploy/lib/Latex');
+import "mocha";
+import {expect} from "chai";
 
 
 /**
  * LaTeX state structure tests
  * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
  */
-module.exports['State'] = {
-};
+describe("State", () => {
+
+});
 
 
 /**
  * LaTeX state change operations tests
  * @author Kirill Chuvilin <kirill.chuvilin@gmail.com>
  */
-module.exports['Operation'] = {
-};
+describe("Operation", () => {
+
+});
