@@ -2,3 +2,4 @@
 node_modules
 .gslint.conf
 ts-compiled/
+/ts-compiled.*

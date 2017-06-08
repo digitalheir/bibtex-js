@@ -39,12 +39,10 @@ const config = {
       // },
       {
         test: /\.tsx?$/,
-        loader: [
-          'babel-loader?presets[]=es2015',
-          'awesome-typescript-loader'
-        ],
+        loader: "awesome-typescript-loader",
         options: {
-          configFileName: 'tsconfig.webpack.json'
+          configFileName: "tsconfig.webpack.json",
+          useBabel: true
         },
         exclude: /node_modules/
       }
