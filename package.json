@@ -1,16 +1,17 @@
 {
-  "name": "@texnous/latex-parser",
-  "version": "0.1.1",
-  "description": "LaTeX parser core libs.\nThis is a part of the TeXnous project.",
+  "name": "latex-parser",
+  "version": "0.1.0",
+  "description": "LaTeX parser",
   "keywords": [
     "LaTeX",
     "parser",
-    "syntax tree"
+    "syntax tree",
+    "ast"
   ],
-  "homepage": "https://bitbucket.org/texnous/latex-parser",
+  "homepage": "https://bitbucket.org/digitalheir/latex-parser",
   "bugs": {
-    "url": "https://bitbucket.org/texnous/latex-parser/issues",
-    "email": "issues@texnous.org"
+    "url": "https://bitbucket.org/digitalheir/latex-parser/issues",
+    "email": "maartentrompper@gmail.com"
   },
   "license": "LGPL-3.0",
   "author": {
@@ -28,8 +29,9 @@
       "email": "maartentrompper@gmail.com"
     }
   ],
-  "main": "deploy/main.js",
-  "repository": "bitbucket:texnous/latex-parser",
+  "main": "latex-parser.js",
+  "types": "latex-parser.d.ts",
+  "repository": "bitbucket:digitalheir/latex-parser",
   "devDependencies": {
     "@types/chai": "^4.0.0",
     "@types/mocha": "^2.2.41",
