@@ -1,5 +1,6 @@
 .idea
 node_modules
 .gslint.conf
-ts-compiled/
+/ts-compiled/
+/ts-compiled-webpack/
 /ts-compiled.*

@@ -1,5 +1,7 @@
 /webpack.config.js
 /ts-compiled.*
+/ts-compiled/
+/ts-compiled-webpack/
 *.map
 *.tgz
 /node_modules/
