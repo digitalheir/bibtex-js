@@ -1,7 +1,6 @@
 const webpack = require("webpack");
 const path = require("path");
 
-
 const libraryName = "latex-parser",
   plugins = [
     new webpack.LoaderOptionsPlugin({
@@ -44,6 +43,9 @@ const config = {
           'babel-loader?presets[]=es2015',
           'awesome-typescript-loader'
         ],
+        options: {
+          configFileName: 'tsconfig.webpack.json'
+        },
         exclude: /node_modules/
       }
     ]

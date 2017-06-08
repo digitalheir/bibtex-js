@@ -1,7 +1,7 @@
+/webpack.config.js
+/ts-compiled.*
 *.map
 *.tgz
-
-.*
-node_modules
-sources
-tests
+/node_modules/
+/sources/
+/tests/

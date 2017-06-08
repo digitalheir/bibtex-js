@@ -3,7 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "jsx": "react",
-    "module": "amd",
+    "module": "es2015",
     "noImplicitAny": true,
     "preserveConstEnums": true,
     "removeComments": true,
@@ -11,7 +11,7 @@
     "target": "es2015",
     "strictNullChecks": true,
     "allowJs": false,
-    "outFile": "ts-compiled.js"
+    "outDir": "ts-compiled-webpack"
   },
   "include": [
     "sources/**/*.ts"
