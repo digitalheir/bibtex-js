@@ -50,6 +50,6 @@
     "build": "npm run build:min",
     "build:min": "webpack -p",
     "build:ts": "tsc",
-    "test": "mocha --compilers ts:ts-node/register,tsx:ts-node/register ./**/*.spec.ts --recursive"
+    "test": "mocha --compilers ts:ts-node/register,tsx:ts-node/register **/*.spec.ts"
   }
 }
