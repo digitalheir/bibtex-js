@@ -1,6 +1,6 @@
 {
   "name": "latex-parser",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "description": "LaTeX parser",
   "keywords": [
     "LaTeX",
@@ -29,8 +29,8 @@
       "email": "maartentrompper@gmail.com"
     }
   ],
-  "main": "latex-parser.js",
-  "types": "latex-parser.d.ts",
+  "main": "main.js",
+  "types": "main.d.ts",
   "repository": "bitbucket:digitalheir/latex-parser",
   "devDependencies": {
     "@types/chai": "^4.0.0",

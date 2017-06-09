@@ -57,7 +57,7 @@ export interface PackageProperties {
  * @class
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-export default class LatexStyle {
+export class LatexStyle {
   private environments_: { [name: string]: EnvironmentAndPackage[] };
   private commands_: { [name: string]: CommandAndPackage[] };
   private symbols_: { [name: string]: SymbolAndPackage[] };
@@ -768,10 +768,13 @@ export class Environment extends Item {
     return this.name === other.name;
   }
 }
-;
+
 Object.defineProperties(Environment.prototype, { // default property values
-  name: {value: '', enumerable: true} // empty name
+  name: {value: "", enumerable: true} // empty name
 });
+
 export function isEnvironment(x: any): x is Environment {
   return x instanceof Environment;
 }
+
+// export default LatexStyle;

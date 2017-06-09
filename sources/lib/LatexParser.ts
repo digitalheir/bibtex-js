@@ -21,7 +21,7 @@
 /**@module */
 
 
-import LatexStyle, {Symbol as SymbolItem, Command, Parameter, Environment, EnvironmentAndPackage} from "./LatexStyle";
+import {LatexStyle, Symbol as SymbolItem, Command, Parameter, Environment, EnvironmentAndPackage} from "./LatexStyle";
 import {
   ParameterToken,
   CommandToken,
@@ -588,4 +588,4 @@ export class Context {
 };
 
 //noinspection JSUnusedGlobalSymbols // TODO
-export default LatexParser;
+// export default LatexParser;

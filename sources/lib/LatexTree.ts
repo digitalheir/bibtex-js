@@ -34,7 +34,7 @@ import {mustNotBeUndefined} from "./Utils";
  * @extends SyntaxTree
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-export default class extends SyntaxTree {
+export class extends SyntaxTree {
 
   /**
    * Constructor
@@ -797,3 +797,5 @@ export class SourceToken extends Token {
     return skipNodeClass ? this.source : 'SourceToken[' + this.lexeme + ']{' + this.source + '}';
   }
 };
+
+export default SyntaxTree;
