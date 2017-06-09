@@ -20,7 +20,7 @@
 
 import {expect} from "chai";
 
-import LatexStyle from "../../sources/lib/LatexStyle";
+import {LatexStyle} from "../../sources/lib/LatexStyle";
 import {LatexParser} from "../../sources/lib/LatexParser";
 
 let latexStyle = new LatexStyle();

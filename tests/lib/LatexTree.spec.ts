@@ -1,4 +1,4 @@
-import LatexStyle, {Command, Environment} from "../../sources/lib/LatexStyle";
+import {Command, Environment} from "../../sources/lib/LatexStyle";
 import {
   CommandToken, ParameterToken, SourceToken, SpaceToken, EnvironmentBodyToken,
   EnvironmentToken

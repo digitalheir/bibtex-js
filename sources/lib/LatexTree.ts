@@ -34,7 +34,7 @@ import {mustNotBeUndefined} from "./Utils";
  * @extends SyntaxTree
  * @author Kirill Chuvilin <k.chuvilin@texnous.org>
  */
-export class extends SyntaxTree {
+export class LatexTree extends SyntaxTree {
 
   /**
    * Constructor
