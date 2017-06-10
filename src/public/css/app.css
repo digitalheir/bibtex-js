@@ -1,0 +1,9 @@
+.mdc-textfield {
+    margin-bottom: 8px;
+    max-width: 100%;
+}
+
+.mdc-textfield__input {
+    max-width: 100%;
+}
+

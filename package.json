@@ -1,55 +1,27 @@
 {
-  "name": "latex-parser",
-  "version": "0.1.4",
-  "description": "LaTeX parser",
-  "keywords": [
-    "LaTeX",
-    "parser",
-    "syntax tree",
-    "ast"
-  ],
-  "homepage": "https://bitbucket.org/digitalheir/latex-parser",
-  "bugs": {
-    "url": "https://bitbucket.org/digitalheir/latex-parser/issues",
-    "email": "maartentrompper@gmail.com"
+  "name": "text-to-unicode-demo",
+  "version": "1.0.0",
+  "description": "Browser demo for text-to-unicode",
+  "scripts": {
+    "build": "webpack -p"
   },
-  "license": "LGPL-3.0",
-  "author": {
-    "name": "TeXnous team",
-    "email": "team@texnous.org",
-    "url": "http://texnous.org"
-  },
-  "contributors": [
-    {
-      "name": "Kirill Chuvilin",
-      "email": "k.chuvilin@texnous.org"
-    },
-    {
-      "name": "Maarten Trompper",
-      "email": "maartentrompper@gmail.com"
-    }
-  ],
-  "main": "main.js",
-  "types": "main.d.ts",
-  "repository": "bitbucket:digitalheir/latex-parser",
+  "author": "Maarten Trompper",
+  "license": "ISC",
   "devDependencies": {
-    "@types/chai": "^4.0.0",
-    "@types/mocha": "^2.2.41",
     "awesome-typescript-loader": "^3.1.3",
-    "babel-cli": "^6.14.0",
-    "babel-core": "^6.24.1",
-    "babel-loader": "^7.0.0",
-    "babel-preset-es2015": "^6.14.0",
-    "chai": "^4.0.2",
-    "mocha": "^3.4.2",
-    "ts-node": "^3.0.6",
+    "copy-webpack-plugin": "^4.0.1",
+    "material-components-web": "^0.12.1",
+    "preact": "^8.1.0",
+    "preact-compat": "^3.16.0",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "tslint": "^5.4.3",
+    "tslint-loader": "^3.5.3",
     "typescript": "^2.3.4",
     "webpack": "^2.6.1"
   },
-  "scripts": {
-    "build": "npm run build:min",
-    "build:min": "webpack -p",
-    "build:ts": "tsc",
-    "test": "mocha --compilers ts:ts-node/register,tsx:ts-node/register **/*.spec.ts"
+  "dependencies": {
+    "@types/react": "^15.0.27",
+    "@types/react-dom": "^15.5.0"
   }
 }

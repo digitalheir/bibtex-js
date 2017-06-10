@@ -7,16 +7,13 @@
     "noImplicitAny": true,
     "preserveConstEnums": true,
     "removeComments": true,
-    "sourceMap": true,
-    "target": "es2015",
-    "strictNullChecks": true,
-    "allowJs": false,
-    "outDir": "ts-compiled"
+    "sourceMap": false,
+    "target": "es5",
+    "outDir": "ts-compile"
   },
   "include": [
-    "sources/**/*.ts"
+    "src/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
   ]
 }
