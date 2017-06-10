@@ -90,20 +90,10 @@ export class TexTranslator extends React.PureComponent<TexProps, TexState> {
     render() {
         // rows="8"
         //                   cols={40}
-        return <section className="input-fields">
-            <div className="mdc-textfield mdc-textfield--multiline">
-                <textarea
-                    className="mdc-textfield__input input"
-                    name="tex-input"
-                    rows={8}
-                    value={this.state.tex}
-                    onChange={e => this.onChangeInput(e.target.value)}
-                    id="tex-input"
-                    placeholder="Input LaTeX / TeX here"
-                />
-            </div>
-
-            <div className="mdc-textfield mdc-textfield--multiline">
+        return <div className="demo">
+            <section className="input-field-style">
+                <h2>TeX style</h2>
+                <div className="mdc-textfield mdc-textfield--multiline">
                 <textarea
                     className="mdc-textfield__input input"
                     value={this.state.style}
@@ -113,12 +103,30 @@ export class TexTranslator extends React.PureComponent<TexProps, TexState> {
                     id="style-input"
                     placeholder="Input TeX style here"
                 />
-            </div>
+                </div>
 
-            <ParsedTex
-                style={this.state.style}
-                tex={this.state.tex}
-            />
-        </section>;
+            </section>
+            <section className="input-field-tex">
+                <h2>TeX source</h2>
+                <div className="mdc-textfield mdc-textfield--multiline">
+                <textarea
+                    className="mdc-textfield__input input"
+                    name="tex-input"
+                    rows={8}
+                    value={this.state.tex}
+                    onChange={e => this.onChangeInput(e.target.value)}
+                    id="tex-input"
+                    placeholder="Input LaTeX / TeX here"
+                />
+                </div>
+            </section>
+            <section className="output">
+                <h2>Parsed TeX</h2>
+                <ParsedTex
+                    style={this.state.style}
+                    tex={this.state.tex}
+                />
+            </section>
+        </div>;
     }
 }
