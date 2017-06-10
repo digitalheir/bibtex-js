@@ -5,5 +5,45 @@
 
 .mdc-textfield__input {
     max-width: 100%;
+    width: 600px;
 }
 
+.tex-ast > ol {
+    padding-left: 0;
+}
+
+.tex-ast ol {
+    list-style: none;
+}
+
+.node-label {
+    padding: 8px 0;
+}
+.node-label:hover {
+    background: #eee;
+    cursor: pointer;
+}
+
+.tex-node.closed ol {
+    display: none;
+}
+
+.tex-node.without-children .node-label {
+    /*font-weight: bold;*/
+    /*font-size: italic;*/
+}
+
+.tex-node .node-label::before{
+    content: "·";
+    font-weight: bold;
+    display:inline-block;
+    width: 16px;
+    text-align: center;
+}
+
+.tex-node.with-children.closed>.node-label::before{
+    content: "+";
+}
+.tex-node.with-children.open>.node-label::before{
+    content: "-";
+}
