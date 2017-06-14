@@ -19,6 +19,7 @@
 .node-label {
     padding: 8px 0;
 }
+
 .node-label:hover {
     background: #eee;
     cursor: pointer;
@@ -33,17 +34,23 @@
     /*font-size: italic;*/
 }
 
-.tex-node .node-label::before{
+.tex-node .node-label::before {
     content: "·";
     font-weight: bold;
-    display:inline-block;
+    display: inline-block;
     width: 16px;
     text-align: center;
 }
 
-.tex-node.with-children.closed>.node-label::before{
+.tex-node.with-children.closed > .node-label::before {
     content: "+";
 }
-.tex-node.with-children.open>.node-label::before{
+
+.tex-node.with-children.open > .node-label::before {
     content: "-";
+}
+
+.error {
+    font-weight: bold;
+    color: #ca0026;
 }

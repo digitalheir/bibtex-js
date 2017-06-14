@@ -4,23 +4,13 @@ import {PureComponent} from "react";
 import {
     LatexStyle,
     LatexParser,
-    PackageProperties,
-    mustBePackageProperties,
     Token,
     Node as TexNode
 } from "latex-parser";
 
-import {TexState} from "./TexTranslator";
 
-function convertStyle(styleSrc: string): PackageProperties {
-    return mustBePackageProperties(JSON.parse(styleSrc));
-}
-
-function convertTex(texSrc: string, styleSrc: string): Token[] {
-    const latexStyle = new LatexStyle();
-    latexStyle.loadPackage("latex", convertStyle(styleSrc));
-
-    const latexParser: LatexParser = new LatexParser(latexStyle);
+function convertTex(texSrc: string, style: LatexStyle): Token[] {
+    const latexParser: LatexParser = new LatexParser(style);
     return latexParser.parse(texSrc);
 }
 
@@ -62,18 +52,12 @@ export class TexNd extends PureComponent<{ node: TexNode }, { isOpen: boolean }>
     }
 }
 
-export const ParsedTex: React.StatelessComponent<TexState> = ({tex, style}) => {
-    try {
-        const parsed: Token[] = convertTex(tex, style);
+export const ParsedTex: React.StatelessComponent<{tex: string, style: LatexStyle}> = ({tex, style}) => {
+    const parsed: Token[] = convertTex(tex, style);
 
-        return <div className="tex-ast">
-            <ol className="node-children token-children">
-                {renderTokens(parsed)}
-            </ol>
-        </div>;
-    } catch (e) {
-        return <div className="error">
-            {"ERROR: " + e.message}
-        </div>;
-    }
+    return <div className="tex-ast">
+        <ol className="node-children token-children">
+            {renderTokens(parsed)}
+        </ol>
+    </div>;
 };
