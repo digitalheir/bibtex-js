@@ -38,5 +38,11 @@
     "nearleyc": "nearleyc src/parser/parser.ne -o src/parser/parser.js",
     "nearleytest": "nearleyc src/parser/parser.ne -o src/parser/test.ts",
     "nearleyrr": "nearley-railroad src/parser/parser.ne -o bibtex.html"
-  }
+  },
+  "contributors": [
+      {
+        "name": "Maarten Trompper",
+        "email": "maartentrompper@gmail.com"
+      }
+  ]
 }
