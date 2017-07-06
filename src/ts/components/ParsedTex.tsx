@@ -27,7 +27,17 @@ function renderTokens(parsed: LaTeX): React.ReactElement<any> {
         return <span className={"TeXBlock " + parsed.type}>{parsed.text}<br/></span>;
     else if (isTeXRaw(parsed))
         return <span className={"TeXBlock " + parsed.type}>{parsed.text}</span>;
-    else if (isTeXComm(parsed) || isTeXEnv(parsed))
+    else if (isTeXEnv(parsed))
+        return <div className={"TeXBlock " + parsed.type}>
+            <div className="envOpts">{<span className="name">{parsed.name}</span>} (
+                <Arguments args={parsed.arguments}/>
+                )
+            </div>
+            <div className="envBody">
+                {parsed.latex.map((e, i) => <span key={i}>{renderTokens(e)}</span>)}
+            </div>
+        </div>;
+    else if (isTeXComm(parsed))
         return <span className={"TeXBlock " + parsed.type}>{<span className="name">{parsed.name}</span>} (
             <Arguments args={parsed.arguments}/>
             )</span>;
