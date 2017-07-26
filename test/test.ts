@@ -8,7 +8,6 @@ import {BibEntry, EntryFields} from "../src/bibfile/entry/BibEntry";
 import {determineAuthorNames$} from "../src/bibfile/entry/Authors";
 import {BracedString} from "../src/bibfile/datatype/string/BracedString";
 import Lexer from "../src/lexer/Lexer";
-import {resolveStrings} from "../src/bibfile/entry/StringEntry";
 import {BibStringData} from "../src/bibfile/datatype/string/BibStringData";
 import {flattenQuotedStrings} from "../src/bibfile/datatype/string/bib-string-utils";
 import {FieldValue} from "../src/bibfile/datatype/KeyVal";
@@ -65,7 +64,7 @@ describe("field values", () => {
             ])
         ]));
 
-        //TODO
+        // TODO
         // expect(bib.entries$.comp4nion.getField("quotedCOMPLEX")).to.deep.equal(
         //     {
         //         "type": "quotedstringwrapper",
