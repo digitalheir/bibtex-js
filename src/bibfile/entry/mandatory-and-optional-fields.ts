@@ -1,5 +1,6 @@
 import {isArray, isString} from "../../util";
 import {BibEntry} from "./BibEntry";
+
 /**
  * From Taming the BeaST: http://ctan.cs.uu.nl/info/bibtex/tamethebeast/ttb_en.pdf
  *
@@ -141,32 +142,32 @@ export const type = "type";
 export const volume = "volume";
 export const year = "year";
 
-export type KnownField = "address"|
-    "author"|
-    "booktitle"|
-    "chapter"|
-    "edition"|
-    "editor"|
-    "howpublished"|
-    "institution"|
-    "journal"|
-    "month"|
-    "note"|
-    "number"|
-    "organization"|
-    "pages"|
-    "publisher"|
-    "school"|
-    "series"|
-    "title"|
-    "type"|
-    "volume"|
+export type KnownField = "address" |
+    "author" |
+    "booktitle" |
+    "chapter" |
+    "edition" |
+    "editor" |
+    "howpublished" |
+    "institution" |
+    "journal" |
+    "month" |
+    "note" |
+    "number" |
+    "organization" |
+    "pages" |
+    "publisher" |
+    "school" |
+    "series" |
+    "title" |
+    "type" |
+    "volume" |
     "year";
 
 export type MandatoryFields = KnownField | KnownField[];
 export type OptionalFields = KnownField | KnownField[];
 
-export const optionalFields: {[k: string]: (KnownField | KnownField[])[]} = {
+export const optionalFields: { [k: string]: (KnownField | KnownField[])[] } = {
     "book": [["volume", "number"], "series", "address", "edition", "month", "note"],
     "booklet": ["author", "howpublished", "address", "address", "month", "year", "note"],
     "conference": ["editor", ["volume", "number"], "series", "pages", "address", "month", "organization", "publisher", "note"],
@@ -182,7 +183,7 @@ export const optionalFields: {[k: string]: (KnownField | KnownField[])[]} = {
     "unpublished": ["month", "year"]
 };
 
-export const mandatoryFields: {[k: string]: (KnownField | KnownField[])[]} = {
+export const mandatoryFields: { [k: string]: (KnownField | KnownField[])[] } = {
     "article": ["author", "title", "year", "journal"],
     "book": [["author", "editor"], "title", "publisher", "year"],
     "booklet": ["title"],
@@ -232,8 +233,7 @@ export const findError = (entry: BibEntry, field: MandatoryFields): (Error | und
     } else if (isArray(field)) {
         const hasAllFields: boolean = field.reduce(
             (acc: boolean, fieldName: KnownField): boolean => {
-                if (isString(fieldName))
-                {
+                if (isString(fieldName)) {
                     return (acc && fields.hasOwnProperty(fieldName));
                 }
                 else

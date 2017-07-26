@@ -1,4 +1,4 @@
-import {BibStringData} from "../string/BibStringItem";
+import {BibStringData} from "../datatype/string/BibStringItem";
 
 function word2string(obj) {
     if (typeof obj === "string") return obj;

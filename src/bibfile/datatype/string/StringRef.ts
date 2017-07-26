@@ -1,3 +1,6 @@
+/**
+ * A named reference to a string, eg. `{string1} # stringRef # {string2}`
+ */
 export class StringRef {
     readonly stringref: string;
     readonly braceDepth: number;

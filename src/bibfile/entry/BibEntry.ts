@@ -1,16 +1,15 @@
-import {OuterQuotedString, QuotedString} from "../string/QuotedString";
-import {BracedString, OuterBracedString} from "../string/BracedString";
-import {flattenMyArray, isArray, isNumber, isString, mustBeArray, mustBeString} from "../../util";
-import {BibOuterStringComponent, BibStringComponent} from "../string/BibStringItem";
-import {isStringRef, StringRef} from "../string/StringRef";
 import {Authors, mustBeAuthors} from "./Authors";
 import {
-    findError, hasMandatoryFields, KnownField, MandatoryFields,
+    findError,
+    hasMandatoryFields,
     mandatoryFields
 } from "./mandatory-and-optional-fields";
-import {resolveStringReference} from "../string/StringEntry";
-import {getFile} from "ts-node/dist";
+import {resolveStringReference} from "./StringEntry";
+import {FieldValue, parseFieldValue} from "../datatype/KeyVal";
 
+/**
+ * Represents a single "@[entityName]" entity, not a special entity such as @string
+ */
 export class BibEntry {
     readonly type: string;
     readonly _id: string;
@@ -65,6 +64,11 @@ export class BibEntry {
     }
 }
 
+
+export interface EntryFields {
+    [k: string]: FieldValue;
+}
+
 export function parseEntryFields(fields: any): EntryFields {
     const fieldz: EntryFields = {};
     Object.keys(fields).forEach(key => {
@@ -78,36 +82,6 @@ export function parseEntryFields(fields: any): EntryFields {
 }
 
 
-export function parseStringComponent(braceDepth: number, obj: any): BibStringComponent | string | number | StringRef {
-    if (isNumber(obj) || isString(obj))
-        return /*new BibStringComponent(typeof obj, braceDepth, [*/obj/*])*/;
-
-    if (isStringRef(obj))
-        return new StringRef(0, obj.stringref);
-    // if (isWhitespace(obj)) return obj;
-    // if (isIdToken(obj)) return obj.string;
-
-    switch (mustBeString(obj.type, obj)) {
-        case "id":
-        case "ws":
-        case "number":
-            return mustBeString(obj.string);
-        case "bracedstring":
-        case "braced":
-            if (!isArray(obj.data)) {
-                throw new Error("Expect array for data: " + JSON.stringify(obj));
-            }
-            return new BracedString(braceDepth, flattenMyArray(obj.data).map(e => parseStringComponent(braceDepth + 1, e)));
-        case "quotedstring":
-            if (!isArray(obj.data)) {
-                throw new Error("Expect array for data: " + JSON.stringify(obj));
-            }
-            const flattened = flattenMyArray(obj.data);
-            return new QuotedString(braceDepth, flattened.map(e => parseStringComponent(braceDepth, e)));
-        default:
-            throw new Error("Unexpected complex string type: " + obj.type);
-    }
-}
 
 
 // export function parseComplexStringOuter(obj: any): OuterQuotedString | OuterBracedString | number {
@@ -125,39 +99,6 @@ export function parseStringComponent(braceDepth: number, obj: any): BibStringCom
 //     }
 // }
 
-export function parseFieldValue(value: any): FieldValue {
-    if (isNumber(value)) {
-        return value;
-    }
-    const data = mustBeArray(value.data);
-    switch (value.type) {
-        case "quotedstringwrapper":
-            if (data.length === 1 && isNumber(data[0]))
-            // A single number is in a quoted string wrapper because the parser considered it part of a concatenated string
-                return data[0];
-
-            return new OuterQuotedString(data.map(e => parseStringComponent(0, e)));
-        case "bracedstringwrapper":
-            return new OuterBracedString(data.map(e => parseStringComponent(0, e)));
-        default:
-            throw new Error("Unexpected value: " + JSON.stringify(value));
-    }
-}
-
-
-/**
- * Values (i.e. right hand sides of each assignment) can be either between curly braces or between
- * double quotes. The main difference is that you can write double quotes in the first case, and not
- * in the second case.
- *
- * For numerical values, curly braces and double quotes can be omitted.
- */
-export type FieldValue = number | BibOuterStringComponent;
-
-
-export interface EntryFields {
-    [k: string]: FieldValue;
-}
 
 export function isBibEntry(x: any): x is BibEntry {
     return typeof x["type"] === "string"
@@ -174,21 +115,21 @@ export function processEntry(entry: BibEntry, strings$: { [p: string]: FieldValu
             })
         ;
 
-    const fieldz: EntryFields = {};
+    const processedFields: EntryFields = {};
 
     const fields$ = entry.fields;
 
     Object.keys(entry.fields).forEach((key: string) => {
-        const field$ = resolveStringReference({}, strings$, strings$, fields$[key]);
+        const field$ = resolveStringReference({}, processedFields, strings$, fields$[key]);
         switch (key) {
             case "author":
-                fieldz[key] = new Authors(field$);
+                processedFields[key] = new Authors(field$);
                 break;
             case "title":
-                fieldz[key] = field$;
+                processedFields[key] = field$;
                 break;
             default:
-                fieldz[key] = field$;
+                processedFields[key] = field$;
                 break;
         }
     });
@@ -197,6 +138,6 @@ export function processEntry(entry: BibEntry, strings$: { [p: string]: FieldValu
     return new BibEntry(
         entry.type,
         entry._id,
-        fieldz
+        processedFields
     );
 }

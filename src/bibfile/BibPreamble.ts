@@ -1,4 +1,4 @@
-import {isString, mustBeArray} from "../util";
+import {mustBeArray} from "../util";
 import {parseBibEntriesAndNonEntries} from "./BibFile";
 
 export class Preamble {

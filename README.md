@@ -9,7 +9,7 @@ This module literally just parses a BibTex file and processes it **as far as Bib
 ## Implementation
 Not all internal BibTeX functions are implemented, simply because I don't need them personally. Most notably [sorting entries is still an open issue](https://github.com/digitalheir/bibtex-js/issues/1) because BibTeX has a little complicated algorithm which required a function that "purifies" field values, which for example makes `{\ss}` equivalent to `ss` but makes `ä` come after `z`. I am unsure if that is actually what anyone wants in modern days though. A modern approach would be to use Unicode collation and then sort.
 
-Pull requests and issues are welcome.
+[]Pull requests and issues are welcome.](https://github.com/digitalheir/bibtex-js/issues)
 
 ## Usage
 

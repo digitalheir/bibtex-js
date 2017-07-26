@@ -2,13 +2,13 @@ import * as nearley from "nearley";
 
 import {grammar} from "../parser/ts-parser";
 
-import Lexer from "../lexer/Lexer";
 import {isArray, mustBeString} from "../util";
-import {isKeyVal} from "./KeyVal";
-import {BibEntry, FieldValue, isBibEntry, parseEntryFields, processEntry} from "./entry/BibEntry";
+import {FieldValue, isKeyVal} from "./datatype/KeyVal";
+import {BibEntry, isBibEntry, parseEntryFields, processEntry} from "./entry/BibEntry";
 import {BibComment, CommentEntry, flattenPlainText, isBibComment} from "./BibComment";
 import {isPreamble, Preamble, newPreambleNode} from "./BibPreamble";
-import {newStringNode, resolveStrings, StringEntry} from "./string/StringEntry";
+import {newStringEntry, resolveStrings, StringEntry} from "./entry/StringEntry";
+import Lexer from "../lexer/Lexer";
 
 
 export type NonBibComment = BibEntry | CommentEntry | StringEntry | Preamble;
@@ -120,7 +120,7 @@ function parseEntry(entry: any): NonBibComment {
             const type = mustBeString(data.type);
             switch (type) {
                 case "string":
-                    return newStringNode(data);
+                    return newStringEntry(data);
                 case "preamble":
                     return newPreambleNode(data);
                 // case "bracedstringwrapper":

@@ -1,11 +1,15 @@
-import {KeyVal, isKeyVal, newKeyVal} from "../KeyVal";
-import {FieldValue} from "../entry/BibEntry";
-import {BibStringComponent, BibStringData, isBibStringComponent} from "./BibStringItem";
-import {isStringRef, StringRef} from "./StringRef";
-import {isOuterQuotedString, isQuotedString, OuterQuotedString, QuotedString} from "./QuotedString";
-import {BracedString, isBracedString, isOuterBracedString, OuterBracedString} from "./BracedString";
+import {KeyVal, isKeyVal, newKeyVal, FieldValue} from "../datatype/KeyVal";
+import {isStringRef, StringRef} from "../datatype/string/StringRef";
+import {isOuterQuotedString, isQuotedString, OuterQuotedString, QuotedString} from "../datatype/string/QuotedString";
+import {BracedString, isBracedString, isOuterBracedString, OuterBracedString} from "../datatype/string/BracedString";
 import {isNumber, isString} from "../../util";
+import {BibStringComponent} from "../datatype/string/BibStringComponent";
+import {BibStringData} from "../datatype/string/BibStringData";
+import {isBibStringComponent} from "../datatype/string/bib-string-utils";
 
+/**
+ * An "@string{}" entry
+ */
 export class StringEntry {
     readonly type: string;
 
@@ -19,26 +23,22 @@ export class StringEntry {
     }
 }
 
-function findKeyVal(data: any): KeyVal {
+export function newStringEntry(data: any): StringEntry {
+    const {key, value}: KeyVal = convertToKeyVal(data);
+    return new StringEntry(key, value);
+}
+
+function convertToKeyVal(data: any): KeyVal {
     if (isKeyVal(data)) {
         return newKeyVal(data);
     } else {
         if (data.type !== "string") {
             throw new Error("Unexpected node: " + JSON.stringify(data));
         }
-        return findKeyVal(data.data);
+        return convertToKeyVal(data.data);
     }
 }
 
-
-export function resolveStrings(strings: { [key: string]: FieldValue }): { [key: string]: FieldValue } {
-    const resolved: { [key: string]: FieldValue } = {};
-    Object.keys(strings).forEach(key => {
-        if (!resolved[key])
-            resolved[key] = resolveStringReference({}, resolved, strings, strings[key]);
-    });
-    return resolved;
-}
 // function resolveStringDeclarations(wrapper: FieldValue,
 //                                    compiledSoFar: { [key: string]: FieldValue },
 //                                    rawStrings: { [key: string]: FieldValue }) {
@@ -51,12 +51,14 @@ export function resolveStrings(strings: { [key: string]: FieldValue }): { [key: 
 //     //    throw new Error("Unexpected object to resolve: " + JSON.stringify(wrapper));
 // }
 
-
-export function newStringNode(data: any): StringEntry {
-    const {key, value}: KeyVal = findKeyVal(data);
-    return new StringEntry(key, value);
+export function resolveStrings(strings: { [key: string]: FieldValue }): { [key: string]: FieldValue } {
+    const resolved: { [key: string]: FieldValue } = {};
+    Object.keys(strings).forEach(key => {
+        if (!resolved[key])
+            resolved[key] = resolveStringReference({}, resolved, strings, strings[key]);
+    });
+    return resolved;
 }
-
 
 export function resolveStringReferences(o: BibStringComponent, seenBeforeStack: { [key: string]: boolean },
                                         alreadyResolved: { [key: string]: /*Resolved*/FieldValue },
@@ -86,6 +88,28 @@ export function resolveStringReference(seenBeforeStack: { [key: string]: boolean
     //     return data.copyWithResolvedStringReferences(alreadyResolved, refs);
     // else throw new Error();
     return data;
+}
+
+function resolveStringRef(seenBeforeStack: { [key: string]: boolean },
+                          refs: { [key: string]: FieldValue },
+                          data: StringRef,
+                          alreadyResolved: { [key: string]: FieldValue }): FieldValue {
+    const refName = data.stringref;
+    if (seenBeforeStack[refName])
+        throw new Error("Cycle detected: " + refName);
+    if (alreadyResolved[refName]) {
+        return alreadyResolved[refName];
+    }
+    if (!refs[refName])
+        throw new Error(`Unresolved reference: "${data.stringref}" (${JSON.stringify(data)})`);
+
+    alreadyResolved[refName] = resolveStringReference(
+        Object.assign({}, seenBeforeStack, {[refName]: true}),
+        alreadyResolved,
+        refs,
+        refs[refName]
+    );
+    return alreadyResolved[refName];
 }
 
 
@@ -120,26 +144,4 @@ export function copyOuterWithResolvedStringReferences(obj: OuterQuotedString | O
     );
     if (!isOuterBracedString(copied) && !isOuterQuotedString(copied)) throw new Error();
     return copied;
-}
-
-function resolveStringRef(seenBeforeStack: { [key: string]: boolean },
-                          refs: { [key: string]: FieldValue },
-                          data: StringRef,
-                          alreadyResolved: { [key: string]: FieldValue }): FieldValue {
-    const refName = data.stringref;
-    if (seenBeforeStack[refName])
-        throw new Error("Cycle detected: " + refName);
-    if (alreadyResolved[refName]) {
-        return alreadyResolved[refName];
-    }
-    if (!refs[refName])
-        throw new Error("Unresolved reference: " + JSON.stringify(data));
-
-    alreadyResolved[refName] = resolveStringReference(
-        Object.assign({}, seenBeforeStack, {[refName]: true}),
-        alreadyResolved,
-        refs,
-        refs[refName]
-    );
-    return alreadyResolved[refName];
 }

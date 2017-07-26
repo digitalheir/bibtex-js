@@ -1,5 +1,13 @@
-import {BibOuterStringComponent, BibStringComponent, BibStringData} from "./BibStringItem";
+import {
+    BibOuterStringComponent,
+    BibStringComponent
+} from "./BibStringComponent";
 
+import {BibStringData} from "./BibStringData";
+
+/**
+ * thisObject = "A string between quotes"
+ */
 export class QuotedString extends BibStringComponent {
     constructor(braceDepth: number, data: BibStringData) {
         super("quotedstring", braceDepth, data);
@@ -19,11 +27,3 @@ export function isOuterQuotedString(x: any): x is OuterQuotedString {
 export function isQuotedString(x: any): x is QuotedString {
     return x.type === "quotedstring";
 }
-
-// export class DefiniteOuterQuotedString extends BibStringComponent {
-//     readonly data: DefiniteStringy[];
-//
-//     constructor(braceDepth: number, data: DefiniteStringy[]) {
-//         super("quotedstringwrapper", braceDepth, data);
-//     }
-// }
