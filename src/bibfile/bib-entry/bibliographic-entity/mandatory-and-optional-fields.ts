@@ -1,5 +1,5 @@
-import {isArray, isString} from "../../util";
-import {BibEntry} from "./BibEntry";
+import {isArray, isString} from "../../../util";
+import {BibEntry} from "../BibEntry";
 
 /**
  * From Taming the BeaST: http://ctan.cs.uu.nl/info/bibtex/tamethebeast/ttb_en.pdf

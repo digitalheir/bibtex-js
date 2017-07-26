@@ -1,14 +1,14 @@
 
-import {isArray, isNumber} from "../../util";
+import {isArray, isNumber} from "../../../util";
 import Author from "./Author";
-import {isOuterQuotedString} from "../datatype/string/QuotedString";
-import {BibOuterStringComponent} from "../datatype/string/BibStringComponent";
-import {BibStringData} from "../datatype/string/BibStringData";
+import {isOuterQuotedString} from "../../datatype/string/QuotedString";
+import {BibOuterStringComponent} from "../../datatype/string/BibStringComponent";
+import {BibStringData} from "../../datatype/string/BibStringData";
 import {
     flattenQuotedStrings, globContiguousStrings, isContiguousSimpleString,
     joinContiguousSimpleStrings, splitOnAnd
-} from "../datatype/string/bib-string-utils";
-import {FieldValue} from "../datatype/KeyVal";
+} from "../../datatype/string/bib-string-utils";
+import {FieldValue} from "../../datatype/KeyVal";
 
 
 /**

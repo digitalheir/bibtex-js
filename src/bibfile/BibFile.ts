@@ -4,14 +4,14 @@ import {grammar} from "../parser/ts-parser";
 
 import {isArray, mustBeString} from "../util";
 import {FieldValue, isKeyVal} from "./datatype/KeyVal";
-import {BibEntry, isBibEntry, parseEntryFields, processEntry} from "./entry/BibEntry";
-import {BibComment, CommentEntry, flattenPlainText, isBibComment} from "./BibComment";
-import {isPreamble, Preamble, newPreambleNode} from "./BibPreamble";
-import {newStringEntry, resolveStrings, StringEntry} from "./entry/StringEntry";
+import {BibEntry, isBibEntry, parseEntryFields, processEntry} from "./bib-entry/BibEntry";
+import {BibComment, CommentEntry, flattenPlainText, isBibComment} from "./bib-entry/BibComment";
+import {isPreamble, Preamble, newPreambleNode} from "./bib-entry/BibPreamble";
+import {newStringEntry, resolveStrings, BibStringEntry} from "./bib-entry/BibStringEntry";
 import Lexer from "../lexer/Lexer";
 
 
-export type NonBibComment = BibEntry | CommentEntry | StringEntry | Preamble;
+export type NonBibComment = BibEntry | CommentEntry | BibStringEntry | Preamble;
 
 /**
  * A bibfile is a sequence of entries, with comments interspersed

@@ -1,4 +1,4 @@
-import {flattenMyArray, isArray, isString, mustBeString} from "../util";
+import {flattenMyArray, isArray, isString, mustBeString} from "../../util";
 
 export class BibComment {
     readonly type: string;

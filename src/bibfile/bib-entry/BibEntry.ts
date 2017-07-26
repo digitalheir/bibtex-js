@@ -1,10 +1,10 @@
-import {Authors, mustBeAuthors} from "./Authors";
+import {Authors, mustBeAuthors} from "./bibliographic-entity/Authors";
 import {
     findError,
     hasMandatoryFields,
     mandatoryFields
-} from "./mandatory-and-optional-fields";
-import {resolveStringReference} from "./StringEntry";
+} from "./bibliographic-entity/mandatory-and-optional-fields";
+import {resolveStringReference} from "./BibStringEntry";
 import {FieldValue, parseFieldValue} from "../datatype/KeyVal";
 
 /**

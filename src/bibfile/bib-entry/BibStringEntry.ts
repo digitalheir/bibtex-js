@@ -10,7 +10,7 @@ import {isBibStringComponent} from "../datatype/string/bib-string-utils";
 /**
  * An "@string{}" entry
  */
-export class StringEntry {
+export class BibStringEntry {
     readonly type: string;
 
     readonly key: string;
@@ -23,9 +23,9 @@ export class StringEntry {
     }
 }
 
-export function newStringEntry(data: any): StringEntry {
+export function newStringEntry(data: any): BibStringEntry {
     const {key, value}: KeyVal = convertToKeyVal(data);
-    return new StringEntry(key, value);
+    return new BibStringEntry(key, value);
 }
 
 function convertToKeyVal(data: any): KeyVal {

@@ -1,5 +1,5 @@
-import {mustBeArray} from "../util";
-import {parseBibEntriesAndNonEntries} from "./BibFile";
+import {mustBeArray} from "../../util";
+import {parseBibEntriesAndNonEntries} from "../BibFile";
 
 export class Preamble {
     readonly type: string;
