@@ -127,8 +127,10 @@ export function processEntry(entry: BibEntry, strings$: { [p: string]: FieldValu
                 processedFields[key] = new Authors(field$);
                 break;
             case "title":
-                processedFields[key] = new Title(field$);
+                processedFields[key] = (field$);
                 break;
+            case "incollection":
+                // TODO cross reference
             default:
                 processedFields[key] = field$;
                 break;
