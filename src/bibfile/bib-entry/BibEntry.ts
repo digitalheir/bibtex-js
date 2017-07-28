@@ -1,4 +1,5 @@
 import {Authors, mustBeAuthors} from "./bibliographic-entity/Authors";
+import {Title} from "./bibliographic-entity/Title";
 import {
     findError,
     hasMandatoryFields,
@@ -126,7 +127,7 @@ export function processEntry(entry: BibEntry, strings$: { [p: string]: FieldValu
                 processedFields[key] = new Authors(field$);
                 break;
             case "title":
-                processedFields[key] = field$;
+                processedFields[key] = new Title(field$);
                 break;
             default:
                 processedFields[key] = field$;
