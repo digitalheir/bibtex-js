@@ -9,10 +9,83 @@ import {determineAuthorNames$} from "../src/bibfile/bib-entry/bibliographic-enti
 import {BracedString} from "../src/bibfile/datatype/string/BracedString";
 import Lexer from "../src/lexer/Lexer";
 import {BibStringData} from "../src/bibfile/datatype/string/BibStringData";
-import {flattenQuotedStrings} from "../src/bibfile/datatype/string/bib-string-utils";
+import {flattenQuotedStrings, splitOnComma, splitOnPattern} from "../src/bibfile/datatype/string/bib-string-utils";
 import {FieldValue} from "../src/bibfile/datatype/KeyVal";
+import {parseAuthorName} from "../src/bibfile/bib-entry/bibliographic-entity/Author";
 
 // TODO test crossref?
+
+
+describe("Author", () => {
+    it("von Last, Jr., First", function () {
+        expect(
+            parseAuthorName(["von ", "Last", ", Jr.", ",", "firstName, ", ".,,,etc,,"])
+        ).to.deep.equal(
+            []
+        );
+    });
+});
+describe("utils", () => {
+    it("split on pattern", function () {
+        expect(
+            splitOnPattern(
+                ["xx", "xx", "endfirst xxx startsecond", "  xxx xxx xxx3", "xxx xxx", "midxxxEOF"],
+                /\s*xxx\s*/g,
+                3
+            )
+        ).to.deep.equal(
+            [
+                [
+                    "xx",
+                    "xx",
+                    "endfirst"
+                ],
+                [
+                    "startsecond",
+                    ""
+                ],
+                [
+                    ""
+                ],
+                [
+                    "xxx3",
+                    "xxx xxx",
+                    "midxxxEOF"
+                ],
+            ]
+        );
+    });
+    it("split on pattern", function () {
+        expect(
+            splitOnPattern(["xx", "xx", "xx"], /\s*xxx\s*/g, 3)
+        ).to.deep.equal(
+            [["xx", "xx", "xx"]]
+        );
+    });
+
+    it("split on ,", function () {
+        expect(
+            splitOnComma(["von ", "Last", ", ", "name, ", "Jr.,,,etc,,"], 3)
+        ).to.deep.equal(
+            [
+                [
+                    "von ",
+                    "Last",
+                    ""
+                ],
+                [
+                    "name"
+                ],
+                [
+                    "Jr."
+                ],
+                [
+                    ",,etc,,"
+                ]
+            ]
+        );
+    });
+});
 
 
 describe("lexer", () => {

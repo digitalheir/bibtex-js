@@ -1,6 +1,6 @@
 
 import {isArray, isNumber} from "../../../util";
-import Author from "./Author";
+// import {AuthorName} from "./Author";
 import {isOuterQuotedString} from "../../datatype/string/QuotedString";
 import {BibOuterStringComponent} from "../../datatype/string/BibStringComponent";
 import {BibStringData} from "../../datatype/string/BibStringData";
@@ -25,16 +25,14 @@ export class Authors extends BibOuterStringComponent {
 
 
         const authorNames = determineAuthorNames$(fieldValue);
-        this.authors$ = authorNames.map(name => /*new Author*/(name));
+        this.authors$ = authorNames.map(name => parseAuthor(name));
     }
 }
 
 
-function parseAuthors(data: BibOuterStringComponent): Author[] {
-    const authors: Author[] = [];
-    // todo
-    data.data;
-    return authors;
+function parseAuthor(data: BibStringData) {
+return data;
+//     return new Author();
 }
 
 

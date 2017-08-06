@@ -1,5 +1,4 @@
 import {Authors, mustBeAuthors} from "./bibliographic-entity/Authors";
-import {Title} from "./bibliographic-entity/Title";
 import {
     findError,
     hasMandatoryFields,
@@ -16,6 +15,7 @@ export class BibEntry {
     readonly _id: string;
 
     readonly fields: EntryFields;
+    // noinspection JSUnusedGlobalSymbols
     readonly fields$: EntryFields;
 
     /**

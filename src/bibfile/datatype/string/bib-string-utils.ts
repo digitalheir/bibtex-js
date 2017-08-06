@@ -126,25 +126,51 @@ export function globContiguousStrings(data: BibStringData): (BibStringDatum | Co
 }
 
 export function splitOnAnd(data: BibStringData): BibStringData[] {
+    return splitOnPattern(data, /\s+and\s+/g);
+}
+
+export function splitOnComma(data: BibStringData, limit = 2): BibStringData[] {
+    return splitOnPattern(data, /\s*,\s*/g, limit);
+}
+
+export function splitOnPattern(data: BibStringData, pattern: RegExp, stopAfter?: number): BibStringData[] {
     const splitted: BibStringData[] = [];
 
     let buffer: BibStringData = [];
     for (const datum of data) {
-        if (isString(datum)) {
-            const authors: string[] = datum.split(/\s+and\s+/g);
-            buffer.push(authors[0]);
+        if (isString(datum) && (stopAfter === undefined || stopAfter > 0)) {
+            let match: RegExpExecArray | null | undefined = pattern.exec(datum);
+            let end = 0;
+            if (match) {
+                do {
+                    const prevEnd = end;
+                    end = match.index + match[0].length;
+                    // if(prevEnd !== match.index)
+                    buffer.push(datum.substring(prevEnd, match.index));
 
-            for (let i = 1; i < authors.length; i++) {
-                splitted.push(buffer);
-                buffer = [authors[i]];
+                    if (stopAfter === undefined || stopAfter > 0) {
+                        splitted.push(buffer);
+                        buffer = [];
+                        if (stopAfter !== undefined && stopAfter > 0) stopAfter--;
+                    }
+
+                    if (stopAfter === undefined || stopAfter > 0)
+                        match = pattern.exec(datum);
+                    else
+                        match = undefined;
+                } while (match);
+
+                if (end > 0 && end < datum.length)
+                    buffer.push(datum.substring(end));
+            } else {
+                buffer.push(datum);
             }
-        } else {
-            buffer.push(datum);
         }
+        else
+            buffer.push(datum);
     }
 
-    if (buffer.length > 0)
-        splitted.push(buffer);
+    if (buffer.length > 0) splitted.push(buffer);
     return splitted;
 }
 
