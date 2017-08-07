@@ -54,6 +54,26 @@ export function parseStringComponent(braceDepth: number, obj: any): BibStringCom
     }
 }
 
+export function toStringBibStringDatum(data: BibStringDatum): string {
+    if (isString(data))
+        return data;
+    if (isNumber(data))
+        return data + "";
+    if (
+        isBracedString(data)
+        || isQuotedString(data)
+        || isOuterQuotedString(data)
+        || isOuterBracedString(data)
+    )
+        return toStringBibStringData(data.data);
+
+    throw new Error(JSON.stringify(data));
+}
+
+export function toStringBibStringData(data: BibStringData) {
+    return data.map(toStringBibStringDatum).join("");
+}
+
 export function flattenQuotedStrings(data: BibStringData, hideQuotes?: boolean): BibStringData {
     let result: BibStringData = [];
     for (const datum of data) {

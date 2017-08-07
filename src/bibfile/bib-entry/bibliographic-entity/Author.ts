@@ -3,7 +3,7 @@ import {isString} from "../../../util";
 import {isOuterQuotedString, isQuotedString} from "../../datatype/string/QuotedString";
 import {isStringRef} from "../../datatype/string/StringRef";
 import {isOuterBracedString} from "../../datatype/string/BracedString";
-import {splitOnAnd, splitOnComma, splitOnPattern} from "../../datatype/string/bib-string-utils";
+import {splitOnAnd, splitOnComma, splitOnPattern, toStringBibStringData} from "../../datatype/string/bib-string-utils";
 
 function word2string(obj) {
     if (typeof obj === "string") return obj;
@@ -38,7 +38,10 @@ export class AuthorName {
         this.lastNames = lastNames; // .map(flattenToString); // todo ?
         this.jrs = jrs; // .map(flattenToString); // todo ?
 
-        this.id = this.firstNames.join("-") + "-" + this.vons.join("-") + "-" + this.lastNames.join("-") + "-" + this.jrs.join("-");
+        this.id = this.firstNames.map(toStringBibStringData).join("-") + "-"
+            + this.vons.map(toStringBibStringData).join("-") + "-"
+            + this.lastNames.map(toStringBibStringData).join("-") + "-"
+            + this.jrs.map(toStringBibStringData).join("-");
     }
 }
 
@@ -114,7 +117,7 @@ function vonLastFirst(vonLastStr: BibStringData, firstStr: BibStringData) {
     let vonStartInclusive = -1;
     let vonEndExclusive = -1;
 
-    for (let i = 0; i < vonLast.length; i++)
+    for (let i = 0; i < vonLast.length - 1; i++)
         if (startsWithLowerCaseBSD(vonLast[i])) {
             if (vonStartInclusive < 0) vonStartInclusive = i;
             vonEndExclusive = i + 1;
@@ -149,7 +152,7 @@ function vonLastJrFirst(vonLastStr: BibStringData, jrStr: BibStringData, firstSt
     let vonStartInclusive = -1;
     let vonEndExclusive = -1;
 
-    for (let i = 0; i < vonLast.length; i++)
+    for (let i = 0; i < vonLast.length - 1; i++)
         if (startsWithLowerCaseBSD(vonLast[i])) {
             if (vonStartInclusive < 0) vonStartInclusive = i;
             vonEndExclusive = i + 1;
@@ -182,7 +185,7 @@ export function parseAuthorName(normalizedFieldValue: BibStringData): AuthorName
     // console.log(commaCount,JSON.stringify(authorRaw));
     switch (partitions.length) {
         case 1:
-            return firstVonLast(normalizedFieldValue);
+            return firstVonLast(partitions[0]);
         case 2:
             return vonLastFirst(mdbsd(partitions[0]), mdbsd(partitions[1]));
         case 3:
