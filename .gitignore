@@ -20,3 +20,4 @@ jspm_packages
 # /*.js
 #/src/**/*.js
 #/test/**/*.js
+/ts-compiled/

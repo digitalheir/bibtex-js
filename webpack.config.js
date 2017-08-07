@@ -18,7 +18,7 @@ const libraryName = "bibtex-parser",
         })
     ];
 
-console.log(libraryName + "." + VERSION + ".min.js");
+console.log(libraryName + /*"." + VERSION + */".min.js");
 
 const config = {
     entry: {
