@@ -2,18 +2,6 @@ import * as React from "react";
 import {StatelessComponent} from "react";
 import {Parser, Result} from "parsimmon";
 
-import {
-    isTeXBraces,
-    isTeXComm,
-    isTeXComment,
-    isFixArg,
-    isOptArg,
-    isTeXEnv, isTeXLineBreak, isTeXMath,
-    isTeXRaw,
-    LaTeX,
-    TeXArg
-} from "latex-parser";
-
 const Arguments: StatelessComponent<{ args: TeXArg[] }> = ({args}) => <span>
     {[].concat(...args.map((e, i) => [", ", <span key={i}>{renderTokens(e)}</span>])).slice(1)}
     </span>;
@@ -22,7 +10,19 @@ function isArray(x: any): x is LaTeX[] {
     return x.constructor === Array;
 }
 
-function renderTokens(parsed: LaTeX): React.ReactElement<any> {
+function renderEntry(entry: BibEntry): React.ReactElement<any> {
+    
+    if(isBibEntry(entry))
+        return <>;
+    if(isCommentEntry(entry))
+        return <>;
+    if(isBibStringEntry(entry))
+        return <>;
+    if(isPreamble(entry))
+        return <>;
+    if(isBibComment(entry))
+        return <>;
+    throw new Error("Unknown entry: " + JSON.stringify(entry))
     if (isTeXComment(parsed))
         return <span className={"TeXBlock " + parsed.type}>{parsed.text}<br/></span>;
     else if (isTeXRaw(parsed))
