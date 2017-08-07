@@ -18,11 +18,27 @@ import {parseAuthorName} from "../src/bibfile/bib-entry/bibliographic-entity/Aut
 
 describe("Author", () => {
     it("von Last, Jr., First", function () {
-        expect(
-            parseAuthorName(["von ", "Last", ", Jr.", ",", "firstName, ", ".,,,etc,,"])
-        ).to.deep.equal(
-            []
-        );
+        const authorName = parseAuthorName(["von ", "Last", ", Jr.", ",", "firstName, ", ".,,,etc,,"])
+        expect(authorName.vons[0].indexOf("von")).to.greaterThan(-1);
+        expect(authorName.lastNames[0].indexOf("Last")).to.greaterThan(-1);
+        expect(authorName.jrs[0].indexOf("Jr.")).to.greaterThan(-1);
+        expect(authorName.firstNames[0].indexOf("firstName,")).to.greaterThan(-1);
+    });
+
+    it("von Last, First", function () {
+        const authorName = parseAuthorName(["Von De la ", "Last", ",", "firstName= ", "."]);
+        expect(authorName.vons[1].indexOf("De")).to.greaterThan(-1);
+        expect(authorName.lastNames[0].indexOf("Last")).to.greaterThan(-1);
+        expect(authorName.jrs).to.deep.equal([]);
+        expect(authorName.firstNames[0].indexOf("firstName=")).to.greaterThan(-1);
+    });
+
+    it("First von Last", function () {
+        const authorName = parseAuthorName(["First von Last"]);
+        expect(authorName.vons[0].indexOf("von")).to.greaterThan(-1);
+        expect(authorName.lastNames[0].indexOf("Last")).to.greaterThan(-1);
+        expect(authorName.jrs.length).to.equal(0);
+        expect(authorName.firstNames[0].indexOf("First")).to.greaterThan(-1);
     });
 });
 describe("utils", () => {

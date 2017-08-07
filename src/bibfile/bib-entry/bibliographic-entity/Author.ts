@@ -14,12 +14,14 @@ function word2string(obj) {
     else throw new Error("? " + JSON.stringify(obj));
 }
 
+const WHITESPACES = /\s+/g;
+
 export class AuthorName {
     readonly firstNames: BibStringData[];
     readonly initials: string[];
-    readonly vons: BibStringData;
-    readonly lastNames: BibStringData;
-    readonly jrs: BibStringData;
+    readonly vons: BibStringData[];
+    readonly lastNames: BibStringData[];
+    readonly jrs: BibStringData[];
 
     readonly id: string;
 
@@ -29,10 +31,10 @@ export class AuthorName {
      * @param lastNames Array of word objects
      * @param jrs Array of word objects
      */
-    constructor(firstNames: BibStringData, vons: BibStringData, lastNames: BibStringData, jrs: BibStringData) {
-        this.firstNames = splitOnPattern(firstNames, /\s+/g);
+    constructor(firstNames: BibStringData[], vons: BibStringData[], lastNames: BibStringData[], jrs: BibStringData[]) {
+        this.firstNames = firstNames;
         this.initials = this.firstNames.map(getFirstLetter);
-        this.vons = vons; // .map(flattenToString); // todo ?
+        this.vons = vons;
         this.lastNames = lastNames; // .map(flattenToString); // todo ?
         this.jrs = jrs; // .map(flattenToString); // todo ?
 
@@ -46,6 +48,11 @@ function getFirstLetter(bsd: BibStringData) {
 
 function isPartOfName(char) {
     return (char === "," || char.match(/\s/));
+}
+
+function startsWithLowerCaseBSD(authorToken: BibStringData) {
+    if (authorToken.length > 0) return startsWithLowerCase(authorToken[0]);
+    else return false;
 }
 
 function startsWithLowerCase(authorToken: BibStringDatum) {
@@ -69,16 +76,15 @@ function startsWithLowerCase(authorToken: BibStringDatum) {
     return false;
 }
 
-function firstVonLast(authorTokens: BibStringData): AuthorName {
+function firstVonLast(outer: BibStringData): AuthorName {
+    const authorTokens: BibStringData[] = splitOnPattern(outer, WHITESPACES);
+
     let vonStartInclusive = -1;
     let vonEndExclusive = -1;
     let firstNameEndExclusive = -1;
 
-    for (let i = 0; i < authorTokens.length - 1; i++) {// -1 because last word must be lastName
-        // console.log("STARLOW", (authorTokens[i]));
-        // console.log("STARLOW", startsWithLowerCase(authorTokens[i]));
-
-        if (startsWithLowerCase(authorTokens[i])) {
+    for (let i = 0; i < authorTokens.length - 1; i++) {
+        if (startsWithLowerCaseBSD(authorTokens[i])) {
             if (vonStartInclusive < 0)
             // Start von if not already started
                 vonStartInclusive = i;
@@ -86,12 +92,12 @@ function firstVonLast(authorTokens: BibStringData): AuthorName {
             vonEndExclusive = i + 1;
         }
     }
-    if (vonStartInclusive > 0) firstNameEndExclusive = vonStartInclusive;
+    if (vonStartInclusive >= 0) firstNameEndExclusive = vonStartInclusive;
     else firstNameEndExclusive = authorTokens.length - 1;
 
-    const von = vonStartInclusive > 0 ? getSubStringAsArray(authorTokens, vonStartInclusive, vonEndExclusive) : [];
-    const firstName = getSubStringAsArray(authorTokens, 0, firstNameEndExclusive);
-    const lastName = getSubStringAsArray(authorTokens, Math.max(vonEndExclusive, firstNameEndExclusive), authorTokens.length);
+    const von: BibStringData[] = vonStartInclusive >= 0 ? getSubStringAsArray(authorTokens, vonStartInclusive, vonEndExclusive) : [];
+    const firstName: BibStringData[] = getSubStringAsArray(authorTokens, 0, firstNameEndExclusive);
+    const lastName: BibStringData[] = getSubStringAsArray(authorTokens, Math.max(vonEndExclusive, firstNameEndExclusive), authorTokens.length);
 
     return new AuthorName(
         firstName,
@@ -101,17 +107,20 @@ function firstVonLast(authorTokens: BibStringData): AuthorName {
     );
 }
 
-function vonLastFirst(vonLast: BibStringData, first: BibStringData) {
+function vonLastFirst(vonLastStr: BibStringData, firstStr: BibStringData) {
+    const vonLast = splitOnPattern(vonLastStr, WHITESPACES);
+    const first = splitOnPattern(firstStr, WHITESPACES);
+
     let vonStartInclusive = -1;
     let vonEndExclusive = -1;
 
     for (let i = 0; i < vonLast.length; i++)
-        if (startsWithLowerCase(vonLast[i])) {
+        if (startsWithLowerCaseBSD(vonLast[i])) {
             if (vonStartInclusive < 0) vonStartInclusive = i;
             vonEndExclusive = i + 1;
         }
 
-    const von = vonStartInclusive > 0 ? getSubStringAsArray(vonLast, 0, vonEndExclusive) : [];
+    const von = vonStartInclusive >= 0 ? getSubStringAsArray(vonLast, 0, vonEndExclusive) : [];
     const firstName = first;
     const lastName = getSubStringAsArray(vonLast, Math.max(vonEndExclusive, 0));
 
@@ -124,25 +133,29 @@ function vonLastFirst(vonLast: BibStringData, first: BibStringData) {
 }
 
 
-function getSubStringAsArray(tokens: BibStringData, startIncl: number, endExcl?: number) {
-    const arr: BibStringData = [];
+function getSubStringAsArray<T>(tokens: T[], startIncl: number, endExcl?: number) {
+    const arr: T[] = [];
     for (let i = startIncl; i < (endExcl === undefined ? tokens.length : endExcl); i++) {
         arr.push(tokens[i]);
     }
     return arr;
 }
 
-function vonLastJrFirst(vonLast, jr, first) {
+function vonLastJrFirst(vonLastStr: BibStringData, jrStr: BibStringData, firstStr: BibStringData) {
+    const vonLast = splitOnPattern(vonLastStr, WHITESPACES);
+    const first = splitOnPattern(firstStr, WHITESPACES);
+    const jr = splitOnPattern(jrStr, WHITESPACES);
+
     let vonStartInclusive = -1;
     let vonEndExclusive = -1;
 
     for (let i = 0; i < vonLast.length; i++)
-        if (startsWithLowerCase(vonLast[i])) {
+        if (startsWithLowerCaseBSD(vonLast[i])) {
             if (vonStartInclusive < 0) vonStartInclusive = i;
             vonEndExclusive = i + 1;
         }
 
-    const von = vonStartInclusive > 0 ? getSubStringAsArray(vonLast, 0, vonEndExclusive) : [];
+    const von = vonStartInclusive >= 0 ? getSubStringAsArray(vonLast, 0, vonEndExclusive) : [];
     const lastName = getSubStringAsArray(vonLast, Math.max(vonEndExclusive, 0));
 
     return new AuthorName(

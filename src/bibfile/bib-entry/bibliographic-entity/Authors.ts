@@ -1,12 +1,14 @@
-
 import {isArray, isNumber} from "../../../util";
 // import {AuthorName} from "./Author";
 import {isOuterQuotedString} from "../../datatype/string/QuotedString";
 import {BibOuterStringComponent} from "../../datatype/string/BibStringComponent";
 import {BibStringData} from "../../datatype/string/BibStringData";
 import {
-    flattenQuotedStrings, globContiguousStrings, isContiguousSimpleString,
-    joinContiguousSimpleStrings, splitOnAnd
+    flattenQuotedStrings,
+    globContiguousStrings,
+    isContiguousSimpleString,
+    joinContiguousSimpleStrings,
+    splitOnAnd
 } from "../../datatype/string/bib-string-utils";
 import {FieldValue} from "../../datatype/KeyVal";
 
@@ -31,7 +33,7 @@ export class Authors extends BibOuterStringComponent {
 
 
 function parseAuthor(data: BibStringData) {
-return data;
+    return data;
 //     return new Author();
 }
 
@@ -53,10 +55,12 @@ function determineAuthorNames(data: BibStringData, hideQuotes?: boolean): BibStr
     return splitOnAnd(normalizedString);
 }
 
+
 export function mustBeAuthors(x: any): Authors {
     if (!isAuthors(x)) throw new Error();
     return x;
 }
+
 
 export function isAuthors(x: any): x is Authors {
     return (isArray(x["authors$"]) && x.type === "authors");
