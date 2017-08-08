@@ -1,5 +1,13 @@
 # bibtex-js 
 
+[![npm version](https://badge.fury.io/js/bibtex.svg)](https://badge.fury.io/js/bibtex)
+[![Build Status](https://travis-ci.org/digitalheir/bibtex.svg?branch=master)](https://travis-ci.org/digitalheir/bibtex)
+![License](https://img.shields.io/npm/l/bibtex.svg)
+[![Code Climate](https://codeclimate.com/github/digitalheir/bibtex/badges/gpa.svg)](https://codeclimate.com/github/digitalheir/bibtex)
+
+
+[Live demo in browser](#)
+
 Library for parsing BibTeX .bib files, based mostly on the excellent guide to BibTeX, [Tame the BeaST](http://tug.ctan.org/info/bibtex/tamethebeast/ttb_en.pdf). 
 
 Written in Typescript, compiled to ES5 Javascript (with typings provided).
