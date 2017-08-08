@@ -1,11 +1,8 @@
 import * as React from "react";
 import {
-    isOk,
-    latexParser
-} from "latex-parser";
-import {
-    ParsedTex
-} from "./ParsedTex";
+    BibFileComponent
+} from "./BibFile";
+import {parseBibFile} from "bibtex";
 
 export interface TexState {
     tex: string;
@@ -87,8 +84,15 @@ export class TexTranslator extends React.PureComponent<TexProps, TexState> {
         super();
 
         this.state = {
-            tex: `an   \\author[optional arg]{author name} and % a comment
-more text`,
+            tex: `@Book{abramowitz+stegun,
+ author    = "Milton {Abramowitz} and Irene A. {Stegun}",
+ title     = "Handbook of Mathematical Functions with
+              Formulas, Graphs, and Mathematical Tables",
+ publisher = "Dover",
+ year      =  1964,
+ address   = "New York City",
+ edition   = "ninth Dover printing, tenth GPO printing"
+}`,
             // styleSrc: JSON.stringify(defaultStyle, undefined, 2),
             // style: parseStyleFromProperties(defaultStyle)
         };
@@ -107,8 +111,8 @@ more text`,
         // rows="8"
         //                   cols={40}
         return <div className="demo">
-            <section className="input-field-tex">
-                <h2>TeX source</h2>
+            <div className="input-field-tex">
+                <h2>BibTeX source</h2>
                 <div className="mdc-textfield mdc-textfield--multiline">
                 <textarea
                     className="mdc-textfield__input input"
@@ -120,24 +124,17 @@ more text`,
                     placeholder="Input LaTeX / TeX here"
                 />
                 </div>
-            </section>
-            <section className="output">
-                <h2>Parsed TeX</h2>
+            </div>
+            <div className="output">
                 {getParsedTex(this.state.tex)}
-            </section>
+            </div>
         </div>;
     }
 }
 
 function getParsedTex(tex: string) {
-    const result = latexParser.parse(tex);
-    if (isOk(result)) {
-        return <ParsedTex
-            tex={result.value}
-        />;
-    } else {
-        return <div className="error">
-            {"ERROR: " + result.expected}
-        </div>;
-    }
+    const result = parseBibFile(tex);
+    return <BibFileComponent
+        bib={result}
+    />;
 }

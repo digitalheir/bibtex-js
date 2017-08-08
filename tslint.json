@@ -17,7 +17,7 @@
       "avoid-escape"
     ],
     "semicolon": true,
-    "whitespace": [true,
+    "whitespace": [false,
       "check-branch",
       "check-decl",
       "check-operator",
