@@ -17,14 +17,11 @@ import {FieldValue} from "../../datatype/KeyVal";
  * Represents a list of authors
  */
 export class Authors extends BibOuterStringComponent {
-    readonly authors$: any[];
+    readonly authors$: AuthorName[];
 
     constructor(fieldValue: FieldValue) {
         const data = isNumber(fieldValue) ? [fieldValue] : fieldValue.data;
         super("authors", data);
-
-        // todo
-
 
         const authorNames = determineAuthorNames$(fieldValue);
         this.authors$ = authorNames.map(name => parseAuthor(name));
@@ -33,8 +30,7 @@ export class Authors extends BibOuterStringComponent {
 
 
 function parseAuthor(data: BibStringData) {
-    return data;
-//     return new Author();
+    return parseAuthorName(data);
 }
 
 
