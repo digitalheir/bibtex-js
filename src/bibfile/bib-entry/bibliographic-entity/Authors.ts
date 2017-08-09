@@ -1,5 +1,5 @@
 import {isArray, isNumber} from "../../../util";
-// import {AuthorName} from "./Author";
+import {AuthorName, parseAuthorName} from "./Author";
 import {isOuterQuotedString} from "../../datatype/string/QuotedString";
 import {BibOuterStringComponent} from "../../datatype/string/BibStringComponent";
 import {BibStringData} from "../../datatype/string/BibStringData";

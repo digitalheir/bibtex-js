@@ -3,7 +3,10 @@ import {isString} from "../../../util";
 import {isOuterQuotedString, isQuotedString} from "../../datatype/string/QuotedString";
 import {isStringRef} from "../../datatype/string/StringRef";
 import {isOuterBracedString} from "../../datatype/string/BracedString";
-import {splitOnAnd, splitOnComma, splitOnPattern, toStringBibStringData} from "../../datatype/string/bib-string-utils";
+import {
+    splitOnAnd, splitOnComma, splitOnPattern, toStringBibStringData,
+    toStringBibStringDatum
+} from "../../datatype/string/bib-string-utils";
 
 function word2string(obj) {
     if (typeof obj === "string") return obj;
@@ -17,11 +20,16 @@ function word2string(obj) {
 const WHITESPACES = /\s+/g;
 
 export class AuthorName {
-    readonly firstNames: BibStringData[];
+    readonly firstNames$: BibStringData[];
     readonly initials: string[];
-    readonly vons: BibStringData[];
-    readonly lastNames: BibStringData[];
-    readonly jrs: BibStringData[];
+    readonly vons$: BibStringData[];
+    readonly lastNames$: BibStringData[];
+    readonly jrs$: BibStringData[];
+
+    readonly firstNames: string[];
+    readonly vons: string[];
+    readonly lastNames: string[];
+    readonly jrs: string[];
 
     readonly id: string;
 
@@ -32,21 +40,28 @@ export class AuthorName {
      * @param jrs Array of word objects
      */
     constructor(firstNames: BibStringData[], vons: BibStringData[], lastNames: BibStringData[], jrs: BibStringData[]) {
-        this.firstNames = firstNames;
-        this.initials = this.firstNames.map(getFirstLetter);
-        this.vons = vons;
-        this.lastNames = lastNames; // .map(flattenToString); // todo ?
-        this.jrs = jrs; // .map(flattenToString); // todo ?
+        this.firstNames$ = firstNames;
+        this.vons$ = vons;
+        this.lastNames$ = lastNames;
+        this.jrs$ = jrs;
 
-        this.id = this.firstNames.map(toStringBibStringData).join("-") + "-"
-            + this.vons.map(toStringBibStringData).join("-") + "-"
-            + this.lastNames.map(toStringBibStringData).join("-") + "-"
-            + this.jrs.map(toStringBibStringData).join("-");
+        this.initials = firstNames.map(getFirstLetter);
+
+        this.firstNames = firstNames.map(toStringBibStringData);
+        this.vons = vons.map(toStringBibStringData);
+        this.lastNames = lastNames.map(toStringBibStringData);
+        this.jrs = jrs.map(toStringBibStringData);
+
+        this.id = this.firstNames.join("-") + "-"
+            + this.vons.join("-") + "-"
+            + this.lastNames.join("-") + "-"
+            + this.jrs.join("-");
     }
 }
 
-function getFirstLetter(bsd: BibStringData) {
-    return "TODO"; // todo
+function getFirstLetter(bsd: BibStringData): string {
+    const asString = toStringBibStringData(bsd);
+    return asString ? asString.charAt(0) : "";
 }
 
 function isPartOfName(char) {

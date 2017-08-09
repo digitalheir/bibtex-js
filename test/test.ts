@@ -5,7 +5,7 @@ import {parseBibFile} from "../src/bibfile/BibFile";
 import {isOuterQuotedString, OuterQuotedString, QuotedString} from "../src/bibfile/datatype/string/QuotedString";
 import {isNumber, mustBeArray, mustBeDefined} from "../src/util";
 import {BibEntry, EntryFields} from "../src/bibfile/bib-entry/BibEntry";
-import {determineAuthorNames$} from "../src/bibfile/bib-entry/bibliographic-entity/Authors";
+import {determineAuthorNames$, mustBeAuthors} from "../src/bibfile/bib-entry/bibliographic-entity/Authors";
 import {BracedString} from "../src/bibfile/datatype/string/BracedString";
 import Lexer from "../src/lexer/Lexer";
 import {BibStringData} from "../src/bibfile/datatype/string/BibStringData";
@@ -22,51 +22,51 @@ import {parseAuthorName} from "../src/bibfile/bib-entry/bibliographic-entity/Aut
 describe("Author: von Last, First", () => {
     it("von Last, First", function () {
         const authorName = parseAuthorName(["Von De la ", "Last", ",", "firstName= ", "."]);
-        expect(authorName.vons[1].indexOf("De")).to.greaterThan(-1);
-        expect(authorName.lastNames[0].indexOf("Last")).to.greaterThan(-1);
-        expect(authorName.jrs).to.deep.equal([]);
-        expect(authorName.firstNames[0].indexOf("firstName=")).to.greaterThan(-1);
+        expect(authorName.vons$[1].indexOf("De")).to.greaterThan(-1);
+        expect(authorName.lastNames$[0].indexOf("Last")).to.greaterThan(-1);
+        expect(authorName.jrs$).to.deep.equal([]);
+        expect(authorName.firstNames$[0].indexOf("firstName=")).to.greaterThan(-1);
     });
 
     // NOTE: This case raises an error message from BibTEX, complaining that a name ends with a comma. It is a common error to separate names with commas instead of “and”
     it("jean de la fontaine,", function () {
         const authorName = parseAuthorName(["jean de la fontaine,"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("jean de la");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("jean de la");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("");
     });
 
     it("de la fontaine, Jean", function () {
         const authorName = parseAuthorName(["de la fontaine, Jean"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("Jean");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("de la");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("Jean");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("de la");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("");
     });
 
     it("De La Fontaine, Jean", function () {
         const authorName = parseAuthorName(["De La Fontaine, Jean"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("Jean");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("De La Fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("Jean");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("De La Fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("");
     });
 
     it("De la Fontaine, Jean", function () {
         const authorName = parseAuthorName(["De la Fontaine, Jean"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("Jean");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("De la");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("Fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("Jean");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("De la");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("Fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("");
     });
 
     it("de La Fontaine, Jean", function () {
         const authorName = parseAuthorName(["de La Fontaine, Jean"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("Jean");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("de");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("La Fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("Jean");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("de");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("La Fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("");
     });
 
 });
@@ -76,48 +76,48 @@ describe("Author: von Last, Jr, First", () => {
     // NOTE: This case raises an error message from BibTEX, complaining that a name ends with a comma. It is a common error to separate names with commas instead of “and”
     it("jean de la fontaine,", function () {
         const authorName = parseAuthorName(["jean de la fontaine,,"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("jean de la");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("jean de la");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("");
     });
     it("de la fontaine, Jr., Jean", function () {
         const authorName = parseAuthorName(["de la fontaine, Jr., Jean"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("Jean");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("de la");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("Jr.");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("Jean");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("de la");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("Jr.");
     });
 
     it("De La Fontaine, Jr., Jean", function () {
         const authorName = parseAuthorName(["De La Fontaine, Jr., Jean"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("Jean");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("De La Fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("Jr.");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("Jean");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("De La Fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("Jr.");
     });
 
     it("De la Fontaine, Jr., Jean", function () {
         const authorName = parseAuthorName(["De la Fontaine, Jr., Jean"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("Jean");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("De la");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("Fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("Jr.");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("Jean");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("De la");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("Fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("Jr.");
     });
 
     it("de La Fontaine, Jr., Jean", function () {
         const authorName = parseAuthorName(["de La Fontaine, Jr., Jean"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("Jean");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("de");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("La Fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("Jr.");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("Jean");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("de");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("La Fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("Jr.");
     });
     it("von Last, Jr., First", function () {
         const authorName = parseAuthorName(["von ", "Last", ", Jr.", ",", "firstName, ", ".,,,etc,,"])
-        expect(authorName.vons[0].indexOf("von")).to.greaterThan(-1);
-        expect(authorName.lastNames[0].indexOf("Last")).to.greaterThan(-1);
-        expect(authorName.jrs[0].indexOf("Jr.")).to.greaterThan(-1);
-        expect(authorName.firstNames[0].indexOf("firstName,")).to.greaterThan(-1);
+        expect(authorName.vons$[0].indexOf("von")).to.greaterThan(-1);
+        expect(authorName.lastNames$[0].indexOf("Last")).to.greaterThan(-1);
+        expect(authorName.jrs$[0].indexOf("Jr.")).to.greaterThan(-1);
+        expect(authorName.firstNames$[0].indexOf("firstName,")).to.greaterThan(-1);
     });
 
 
@@ -125,76 +125,76 @@ describe("Author: von Last, Jr, First", () => {
 describe("Author: First von Last", () => {
     it("First von Last", function () {
         const authorName = parseAuthorName(["First von Last"]);
-        expect(authorName.vons[0].indexOf("von")).to.greaterThan(-1);
-        expect(authorName.lastNames[0].indexOf("Last")).to.greaterThan(-1);
-        expect(authorName.jrs.length).to.equal(0);
-        expect(authorName.firstNames[0].indexOf("First")).to.greaterThan(-1);
+        expect(authorName.vons$[0].indexOf("von")).to.greaterThan(-1);
+        expect(authorName.lastNames$[0].indexOf("Last")).to.greaterThan(-1);
+        expect(authorName.jrs$.length).to.equal(0);
+        expect(authorName.firstNames$[0].indexOf("First")).to.greaterThan(-1);
     });
 
     it("jean de la fontaine", function () {
         const authorName = parseAuthorName(["jean de la fontaine"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("jean de la");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("jean de la");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("");
     });
 
     it("Jean de la fontaine", function () {
         const authorName = parseAuthorName(["Jean de la fontaine"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("Jean");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("de la");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("Jean");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("de la");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("");
     });
 
     it("Jean {de} la fontaine", function () {
         const authorName = parseAuthorName(["Jean ", new BracedString(0, ["de"]), " la fontaine"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("Jean de");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("la");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("Jean de");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("la");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("");
     });
 
     it("jean {de} {la} fontaine", function () {
         const authorName = parseAuthorName(["jean ", new BracedString(0, ["de"]), " ",
             new BracedString(0, ["la"]), " fontaine"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("jean");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("de la fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("jean");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("de la fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("");
     });
 
     it("Jean {de} {la} fontaine", function () {
         const authorName = parseAuthorName(["Jean ", new BracedString(0, ["de"]), " ",
             new BracedString(0, ["la"]), " fontaine"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("Jean de la");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("Jean de la");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("");
     });
 
     it("Jean De La Fontaine", function () {
         const authorName = parseAuthorName(["Jean De La Fontaine"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("Jean De La");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("Fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("Jean De La");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("Fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("");
     });
 
     it("jean De la Fontaine", function () {
         const authorName = parseAuthorName(["jean De la Fontaine"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("jean De la");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("Fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("jean De la");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("Fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("");
     });
 
     it("Jean de La Fontaine", function () {
         const authorName = parseAuthorName(["Jean de La Fontaine"]);
-        expect(authorName.firstNames.map(toStringBibStringData).join(" ")).to.eq("Jean");
-        expect(authorName.vons.map(toStringBibStringData).join(" ")).to.eq("de");
-        expect(authorName.lastNames.map(toStringBibStringData).join(" ")).to.eq("La Fontaine");
-        expect(authorName.jrs.map(toStringBibStringData).join(" ")).to.eq("");
+        expect(authorName.firstNames$.map(toStringBibStringData).join(" ")).to.eq("Jean");
+        expect(authorName.vons$.map(toStringBibStringData).join(" ")).to.eq("de");
+        expect(authorName.lastNames$.map(toStringBibStringData).join(" ")).to.eq("La Fontaine");
+        expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("");
     });
 
 });
@@ -542,12 +542,13 @@ describe("parser", () => {
 
         console.log(JSON.stringify(bib.content));
 
-        // TODO
-        // let bibliography = new Bibliography(parse);
-        // bibliography.entries.comp4nion.fields.author._authors.forEach((author) => {
-        // });
         const entry: BibEntry = mustBeDefined(bib.getEntry("Comp4nion"));
-        expect(mustBeDefined(entry.getField("author"))).to.not.be.null;
+
+        const authors = mustBeAuthors(mustBeDefined(entry.getField("author")));
+        expect(authors).to.not.be.null;
+        expect(authors.authors$.length).to.eq(3);
+
+        console.log(authors.authors$);
     });
 
     it("should parse preamble entries", function () {

@@ -1,4 +1,3 @@
-
 import {StringRef} from "./StringRef";
 import {BracedString, OuterBracedString} from "./BracedString";
 import {OuterQuotedString, QuotedString} from "./QuotedString";
@@ -18,3 +17,5 @@ export type BibStringDatum = (
 
 
 export type BibStringData = BibStringDatum[];
+
+export const ar = [];

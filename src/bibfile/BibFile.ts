@@ -16,7 +16,7 @@ export type NonBibComment = BibEntry | CommentEntry | BibStringEntry | Preamble;
 /**
  * A bibfile is a sequence of entries, with comments interspersed
  */
-export class BibFile {
+export class BibFilePresenter {
     readonly content: (NonBibComment | BibComment)[];
     readonly comments: BibComment[];
 
@@ -150,11 +150,11 @@ export const parseBibEntriesAndNonEntries = function (parse: any): (BibComment |
     });
 };
 
-export function parseBibFile(input: string): BibFile {
+export function parseBibFile(input: string): BibFilePresenter {
     const p = new nearley.Parser(grammar.ParserRules, grammar.ParserStart);
     p.feed(new Lexer(input).readTokens());
     const res = p.results;
     const parse = res[0];
 
-    return new BibFile(parseBibEntriesAndNonEntries(parse));
+    return new BibFilePresenter(parseBibEntriesAndNonEntries(parse));
 }
