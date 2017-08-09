@@ -92,7 +92,23 @@ export class TexTranslator extends React.PureComponent<TexProps, TexState> {
  year      =  1964,
  address   = "New York City",
  edition   = "ninth Dover printing, tenth GPO printing"
-}`,
+}
+
+@proceedings{bex2016legal,
+  title={Legal Knowledge and Information Systems: JURIX 2016: The Twenty-Ninth Annual Conference},
+  author={Bex, Floris and Villata, Serena},
+  volume={294},
+  year={2016},
+  publisher={IOS Press}
+}
+
+@INPROCEEDINGS{trompper2016automatic,
+    title={Automatic Assignment of Section Structure to Texts of Dutch Court Judgments},
+  author={Trompper, Maarten and Winkels, Raboud},
+  pages = {167-172},
+  crossref = {bex2016legal}
+}
+`,
             // styleSrc: JSON.stringify(defaultStyle, undefined, 2),
             // style: parseStyleFromProperties(defaultStyle)
         };
@@ -133,8 +149,14 @@ export class TexTranslator extends React.PureComponent<TexProps, TexState> {
 }
 
 function getParsedTex(tex: string) {
-    const result = parseBibFile(tex);
-    return <BibFileComponent
-        bib={result}
-    />;
+    try {
+        const result = parseBibFile(tex);
+        return <BibFileComponent
+            bib={result}
+        />;
+    } catch (e) {
+        return <div className="error">
+            {"ERROR: " + e.message}
+        </div>;
+    }
 }

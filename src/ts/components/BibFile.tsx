@@ -74,7 +74,6 @@ const AuthorComponent: StatelessComponent<{ author: AuthorName }> = ({author}) =
 };
 const ValueCell: StatelessComponent<{ entry: FieldValue }> = ({entry}) => {
     if (isAuthors(entry)) {
-        console.log("AUTHRs");
         return <td className="field-value">
             <ul>{
                 entry.authors$
