@@ -8,7 +8,7 @@
 
 [Live demo in browser](https://digitalheir.github.io/bibtex-js/)
 
-Library for parsing BibTeX .bib files, based mostly on the excellent guide to BibTeX, [Tame the BeaST](http://tug.ctan.org/info/bibtex/tamethebeast/ttb_en.pdf). 
+Library for parsing BibTeX .bib files, based mostly on the excellent guide to BibTeX, [*Tame the BeaST*](http://tug.ctan.org/info/bibtex/tamethebeast/ttb_en.pdf). 
 
 Written in Typescript, compiled to ES5 Javascript (with typings provided).
 
