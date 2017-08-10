@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/bibtex.svg)](https://badge.fury.io/js/bibtex)
 [![Build Status](https://travis-ci.org/digitalheir/bibtex.svg?branch=master)](https://travis-ci.org/digitalheir/bibtex)
-![License](https://img.shields.io/npm/l/bibtex.svg)
+[![License](https://img.shields.io/npm/l/bibtex.svg)](https://github.com/digitalheir/bibtex-js/blob/master/LICENSE)
 [![Code Climate](https://codeclimate.com/github/digitalheir/bibtex/badges/gpa.svg)](https://codeclimate.com/github/digitalheir/bibtex)
 
 
@@ -46,4 +46,4 @@ console.log(
 ```
 
 ## License
-MIT
+[MIT](https://github.com/digitalheir/bibtex-js/blob/master/LICENSE)
