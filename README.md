@@ -1,9 +1,9 @@
 # bibtex-js 
 
 [![npm version](https://badge.fury.io/js/bibtex.svg)](https://badge.fury.io/js/bibtex)
-[![Build Status](https://travis-ci.org/digitalheir/bibtex.svg?branch=master)](https://travis-ci.org/digitalheir/bibtex)
+[![Build Status](https://travis-ci.org/digitalheir/bibtex-js.svg?branch=master)](https://travis-ci.org/digitalheir/bibtex-js)
 [![License](https://img.shields.io/npm/l/bibtex.svg)](https://github.com/digitalheir/bibtex-js/blob/master/LICENSE)
-[![Code Climate](https://codeclimate.com/github/digitalheir/bibtex/badges/gpa.svg)](https://codeclimate.com/github/digitalheir/bibtex)
+[![Code Climate](https://codeclimate.com/github/digitalheir/bibtex-js/badges/gpa.svg)](https://codeclimate.com/github/digitalheir/bibtex-js)
 
 
 [Live demo in browser](https://digitalheir.github.io/bibtex-js/)
