@@ -4,9 +4,10 @@
   "description": "For parsing a BiBTeX file in pure Javascript / Typescript",
   "main": "index.js",
   "types": "index.d.ts",
-  "repository": "git@github.com:digitalheir/tex-string-handler.git",
+  "repository": "git@github.com:digitalheir/bibtex-js.git",
   "author": "Maarten Trompper",
   "license": "MIT",
+  "keywords": ["bibtex", "parser"],
   "dependencies": {},
   "devDependencies": {
     "@types/chai": "^4.0.1",
