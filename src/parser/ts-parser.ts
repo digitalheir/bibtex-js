@@ -51,7 +51,8 @@ function addToObj(obj, keyval) {
     if (keyval.type !== "keyval") throw new Error("Expected a keyval object");
     const key = keyval.key.toLowerCase();
     if (obj.fields[key]) {
-        console.log("WARNING: field '" + key + "' was already defined on " + obj["@type"] + " object with id '" + obj._id + "'. Ignoring this value.");
+        // TODO error?
+        // console.log("WARNING: field '" + key + "' was already defined on " + obj["@type"] + " object with id '" + obj._id + "'. Ignoring this value.");
         return;
     } else {
         obj.fields[key] = keyval.value;

@@ -1,10 +1,13 @@
 {
   "name": "bibtex",
-  "version": "0.5.0",
-  "description": "For parsing a BiBTeX file in pure Javascript / Typescript",
+  "version": "0.9.0",
+  "description": "Library for parsing a BiBTeX file in pure Javascript / Typescript",
   "main": "index.js",
   "types": "index.d.ts",
-  "repository": "git@github.com:digitalheir/bibtex-js.git",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:digitalheir/bibtex-js.git"
+  },
   "author": "Maarten Trompper",
   "license": "MIT",
   "keywords": [
@@ -46,7 +49,8 @@
   "contributors": [
     {
       "name": "Maarten Trompper",
-      "email": "maartentrompper@freedom.nl"
+      "email": "maartentrompper@freedom.nl",
+      "url": "https://github.com/digitalheir/"
     }
   ]
 }

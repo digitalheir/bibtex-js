@@ -1,24 +1,19 @@
-const webpack = require('webpack'),
-    path = require('path'),
-    yargs = require('yargs');
+const webpack = require('webpack');
+// const path = require('path');
 
-
-const VERSION = "0.2.2";
-
-
-const libraryName = "bibtex-parser",
-    plugins = [
-        new webpack.LoaderOptionsPlugin({
-            options: {
-                tslint: {
-                    emitErrors: true,
-                    failOnHint: true
-                }
+const plugins = [
+    new webpack.LoaderOptionsPlugin({
+        options: {
+            tslint: {
+                emitErrors: true,
+                failOnHint: true
             }
-        })
-    ];
+        }
+    })
+];
 
-console.log(libraryName + /*"." + VERSION + */".min.js");
+// const libraryName = "bibtex-parser";
+// console.log(libraryName + /*"." + VERSION + */".min.js");
 
 const config = {
     entry: {
@@ -29,7 +24,6 @@ const config = {
         filename: "index.js",
         path: __dirname + '/',
         libraryTarget: 'umd',
-        library: "rechtspraak"
     },
     module: {
         rules: [
@@ -41,10 +35,11 @@ const config = {
             },
             {
                 test: /\.tsx?$/,
-                loader: [
-                    'babel-loader?presets[]=es2015',
-                    'awesome-typescript-loader'
-                ],
+                loader: "awesome-typescript-loader",
+                options: {
+                    configFileName: "tsconfig.json",
+                    useBabel: false
+                },
                 exclude: /node_modules/
             }
         ]
@@ -53,8 +48,6 @@ const config = {
         extensions: ['.js', '.ts', '.jsx', '.tsx']
     },
     plugins: plugins
-
-    // Individual Plugin Options
 };
 
 module.exports = config;

@@ -21,3 +21,6 @@ jspm_packages
 #/src/**/*.js
 #/test/**/*.js
 /ts-compiled/
+
+/index.js
+/index.js.map

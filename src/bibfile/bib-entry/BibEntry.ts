@@ -113,13 +113,14 @@ export function isBibEntry(x: any): x is BibEntry {
 }
 
 export function processEntry(entry: BibEntry, strings$: { [p: string]: FieldValue }) {
-    if (hasMandatoryFields(entry.type))
-        mandatoryFields[entry.type]
-            .map(e => findError(entry, e))
-            .forEach(e => {
-                if (!!e) console.warn(e.message);
-            })
-        ;
+    // TODO do something with this?
+    // if (hasMandatoryFields(entry.type))
+    //     mandatoryFields[entry.type]
+    //         .map(e => findError(entry, e))
+    //         .forEach(e => {
+    //             if (!!e) console.warn(e.message);
+    //         })
+    //     ;
 
     const processedFields: EntryFields = {};
 

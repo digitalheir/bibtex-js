@@ -200,7 +200,6 @@ function vonLastJrFirst(vonLastStr: BibStringData, jrStr: BibStringData, firstSt
 export function parseAuthorName(normalizedFieldValue: BibStringData): AuthorName {
     const partitions: BibStringData[] = splitOnComma(normalizedFieldValue);
 
-    // console.log(commaCount,JSON.stringify(authorRaw));
     switch (partitions.length) {
         case 1:
             return firstVonLast(partitions[0]);
