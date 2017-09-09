@@ -9,10 +9,7 @@ import {determineAuthorNames$, mustBeAuthors} from "../src/bibfile/bib-entry/bib
 import {BracedString} from "../src/bibfile/datatype/string/BracedString";
 import Lexer from "../src/lexer/Lexer";
 import {BibStringData} from "../src/bibfile/datatype/string/BibStringData";
-import {
-    flattenQuotedStrings, splitOnComma, splitOnPattern,
-    toStringBibStringData
-} from "../src/bibfile/datatype/string/bib-string-utils";
+import {splitOnComma, splitOnPattern, toStringBibStringData} from "../src/bibfile/datatype/string/bib-string-utils";
 import {FieldValue} from "../src/bibfile/datatype/KeyVal";
 import {parseAuthorName} from "../src/bibfile/bib-entry/bibliographic-entity/Author";
 
@@ -361,9 +358,13 @@ describe("field values", () => {
         }
 
         expect(determineAuthorNames$(new OuterQuotedString([1]))).to.deep.equal([["1"]]);
-        expect(determineAuthorNames$(new OuterQuotedString(
+        const auth2 = new OuterQuotedString(
             [1, qs([" a"]), "n", "d", qs([" "]), bs(["\\", "two"])]
-        ))).to.deep.equal([["1"], [{
+        );
+        const authNames2 = determineAuthorNames$(auth2);
+        expect(authNames2.length).to.deep.equal(2);
+        expect(authNames2[0]).to.deep.equal(["1"]);
+        expect(authNames2[1][0]["type"]).to.deep.equal("bracedstring"/*{
             "braceDepth": 0,
             "data": [
                 "\\",
@@ -371,7 +372,7 @@ describe("field values", () => {
             ],
             "isSpecialCharacter": true,
             "type": "bracedstring"
-        }]]);
+        }*/);
     });
 
     it("should determine author names", function () {
@@ -385,7 +386,7 @@ describe("field values", () => {
         const book: BibEntry = mustBeDefined(bib.getEntry("COMP4NION"));
 
         // console.log(
-            mustBeDefined(book.getAuthors()).authors$;
+        mustBeDefined(book.getAuthors()).authors$;
         // );
     });
 

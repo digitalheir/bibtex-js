@@ -21,21 +21,21 @@ export class BibStringComponent {
     }
 
 
-    private static isBibStringComponent(x: any): x is BibStringComponent {
-        return typeof x.braceDepth === "number" && typeof x.type === "string";
-    }
-
-    private static stringifyDatum(datum: BibStringDatum): string {
-        if (isString(datum)) return datum;
-        if (isNumber(datum)) return datum.toString();
-        if (BibStringComponent.isBibStringComponent(datum)) return datum.stringify();
-        // if (isStringRef(datum)) throw new Error("Unexpected state");
-        else throw new Error("Unexpected state");
-    }
-
     stringify(): string {
-        return this.data.map(BibStringComponent.stringifyDatum).join("");
+        return this.data.map(stringifyDatum).join("");
     }
+}
+
+function isBibStringComponent(x: any): x is BibStringComponent {
+    return typeof x.braceDepth === "number" && typeof x.type === "string";
+}
+
+export function stringifyDatum(datum: BibStringDatum): string {
+    if (isString(datum)) return datum;
+    if (isNumber(datum)) return datum.toString();
+    if (isBibStringComponent(datum)) return datum.stringify();
+    // if (isStringRef(datum)) throw new Error("Unexpected state");
+    else throw new Error("Unexpected state");
 }
 
 export class BibOuterStringComponent extends BibStringComponent {
