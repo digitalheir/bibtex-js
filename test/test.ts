@@ -113,7 +113,7 @@ describe("Author: von Last, Jr, First", () => {
         expect(authorName.jrs$.map(toStringBibStringData).join(" ")).to.eq("Jr.");
     });
     it("von Last, Jr., First", function () {
-        const authorName = parseAuthorName(["von ", "Last", ", Jr.", ",", "firstName, ", ".,,,etc,,"])
+        const authorName = parseAuthorName(["von ", "Last", ", Jr.", ",", "firstName, ", ".,,,etc,,"]);
         expect(authorName.vons$[0].indexOf("von")).to.greaterThan(-1);
         expect(authorName.lastNames$[0].indexOf("Last")).to.greaterThan(-1);
         expect(authorName.jrs$[0].indexOf("Jr.")).to.greaterThan(-1);
@@ -383,9 +383,10 @@ describe("field values", () => {
             }`);
 
         const book: BibEntry = mustBeDefined(bib.getEntry("COMP4NION"));
-        console.log(
-            mustBeDefined(book.getAuthors()).authors$
-        );
+
+        // console.log(
+            mustBeDefined(book.getAuthors()).authors$;
+        // );
     });
 
     it("should flatten quoted strings", function () {
@@ -402,11 +403,11 @@ describe("field values", () => {
         const fields$: EntryFields = a.fields;
         const bracedcomplex: FieldValue = fields$.bracedcomplex;
         if (isNumber(bracedcomplex)) throw Error();
-        console.log(flattenQuotedStrings(bracedcomplex.data, true));
+        // console.log(flattenQuotedStrings(bracedcomplex.data, true));
 
         const quotedComplex: FieldValue = fields$.quotedcomplex;
         if (isNumber(quotedComplex)) throw Error();
-        console.log(flattenQuotedStrings(quotedComplex.data, true));
+        // console.log(flattenQuotedStrings(quotedComplex.data, true));
 
         const nineEleven: FieldValue = fields$.number;
         expect(nineEleven).to.equal(911);
@@ -463,7 +464,7 @@ describe("field values", () => {
 describe("parser", () => {
     it("should parse comments", function () {
         const bib = parseBibFile("\n\t\nthisisallacommentof{}commentswitheverythingexceptan\", whichweca123nescapewitha0123  ");
-        console.log(JSON.stringify(bib));
+        // console.log(JSON.stringify(bib));
         expect(bib.entries_raw.length).to.equal(0);
         expect(bib.comments.length).to.equal(1);
         expect(bib.content.length).to.equal(1);
@@ -541,7 +542,7 @@ describe("parser", () => {
 
         expect(bib.content.length).to.equal(4);
 
-        console.log(JSON.stringify(bib.content));
+        // console.log(JSON.stringify(bib.content));
 
         const entry: BibEntry = mustBeDefined(bib.getEntry("Comp4nion"));
 
@@ -549,7 +550,7 @@ describe("parser", () => {
         expect(authors).to.not.be.null;
         expect(authors.authors$.length).to.eq(3);
 
-        console.log(authors.authors$);
+        // console.log(authors.authors$);
     });
 
     it("should parse preamble entries", function () {
