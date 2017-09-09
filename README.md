@@ -1,6 +1,6 @@
-# bibtex-js 
+# Bibtex.js
 
-[![npm version](https://badge.fury.io/js/bibtex.svg)](https://badge.fury.io/js/bibtex)
+[![npm version](https://badge.fury.io/js/bibtex.svg)](https://www.npmjs.com/package/bibtex)
 [![Build Status](https://travis-ci.org/digitalheir/bibtex-js.svg?branch=master)](https://travis-ci.org/digitalheir/bibtex-js)
 [![License](https://img.shields.io/npm/l/bibtex.svg)](https://github.com/digitalheir/bibtex-js/blob/master/LICENSE)
 [![Code Climate](https://codeclimate.com/github/digitalheir/bibtex-js/badges/gpa.svg)](https://codeclimate.com/github/digitalheir/bibtex-js)
@@ -20,6 +20,12 @@ Not all internal BibTeX functions are implemented, simply because I don't need t
 [Pull requests and issues are welcome.](https://github.com/digitalheir/bibtex-js/issues)
 
 ## Usage
+
+Download standalone ES5 file ([latest](https://github.com/digitalheir/bibtex-js/releases/latest)) or get [from npm](https://www.npmjs.com/package/bibtex):
+
+```
+npm install bibtex
+```
 
 ```js
 import {parseBibFile} from "bibtex";
