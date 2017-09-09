@@ -51,5 +51,8 @@ console.log(
 ); // Prints some complicated string
 ```
 
+## Contact
+Maarten Trompper (<maartentrompper@freedom.nl>)
+
 ## License
 [MIT](https://github.com/digitalheir/bibtex-js/blob/master/LICENSE)
