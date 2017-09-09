@@ -12,7 +12,7 @@ Library for parsing BibTeX .bib files, based mostly on the excellent guide to Bi
 
 Written in Typescript, compiled to ES5 Javascript (with typings provided).
 
-This module literally just parses a BibTex file and processes it **as far as BibTeX goes**. It doesn't process TeX commands (i.e., `{\"o}` is not translated to `ö`). If you want to actually work with a bibliography, look for [Bibliography.js](https://github.com/digitalheir/bibliography-js).
+This module literally just parses a BibTex file and processes it **as far as BibTeX goes**. It doesn't process TeX commands (i.e., `{\"o}` is not translated to `ö`). If you want to actually work with a bibliography, look into [Bibliography.js](https://github.com/digitalheir/bibliography-js) or [Citation.js](https://github.com/larsgw/citation.js) or [Zotero](https://github.com/zotero/zotero).
 
 ## Implementation
 Not all internal BibTeX functions are implemented, simply because I don't need them personally. Most notably [sorting entries is still an open issue](https://github.com/digitalheir/bibtex-js/issues/1) because BibTeX has a little complicated algorithm which required a function that "purifies" field values, which for example makes `{\ss}` equivalent to `ss` but makes `ä` come after `z`. I am unsure if that is actually what anyone wants in modern days though. A modern approach would be to use Unicode collation and then sort.
