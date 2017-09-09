@@ -60,3 +60,9 @@ export function parseFieldValue(value: any): FieldValue {
  * For numerical values, curly braces and double quotes can be omitted.
  */
 export type FieldValue = number | BibOuterStringComponent;
+
+export function normalizeFieldValue(field?: FieldValue): string | number | undefined {
+    if(!field) return undefined;
+    if(isNumber(field)) return field;
+    else return field.stringify();
+}

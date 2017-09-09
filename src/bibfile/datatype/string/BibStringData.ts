@@ -18,4 +18,3 @@ export type BibStringDatum = (
 
 export type BibStringData = BibStringDatum[];
 
-export const ar = [];

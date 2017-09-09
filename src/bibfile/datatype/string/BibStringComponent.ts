@@ -1,4 +1,5 @@
-import {BibStringData} from "./BibStringData";
+import {BibStringData, BibStringDatum} from "./BibStringData";
+import {isNumber, isString} from "../../../util";
 
 /**
  * A fully formed string (between {braces} or "quotes").
@@ -17,6 +18,23 @@ export class BibStringComponent {
         this.type = type;
         this.braceDepth = braceDepth;
         this.data = data;
+    }
+
+
+    private static isBibStringComponent(x: any): x is BibStringComponent {
+        return typeof x.braceDepth === "number" && typeof x.type === "string";
+    }
+
+    private static stringifyDatum(datum: BibStringDatum): string {
+        if (isString(datum)) return datum;
+        if (isNumber(datum)) return datum.toString();
+        if (BibStringComponent.isBibStringComponent(datum)) return datum.stringify();
+        // if (isStringRef(datum)) throw new Error("Unexpected state");
+        else throw new Error("Unexpected state");
+    }
+
+    stringify(): string {
+        return this.data.map(BibStringComponent.stringifyDatum).join("");
     }
 }
 

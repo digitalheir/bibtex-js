@@ -5,7 +5,7 @@ import {
     mandatoryFields
 } from "./bibliographic-entity/mandatory-and-optional-fields";
 import {resolveStringReference} from "./BibStringEntry";
-import {FieldValue, parseFieldValue} from "../datatype/KeyVal";
+import {FieldValue, normalizeFieldValue, parseFieldValue} from "../datatype/KeyVal";
 
 /**
  * Represents a single "@[entityName]" entity, not a special entity such as @string
@@ -56,6 +56,11 @@ export class BibEntry {
 
     getField(key: string): FieldValue | undefined {
         return this.fields[key.toLowerCase()];
+    }
+
+    getFieldAsString(key: string): string | number| undefined {
+        const field: FieldValue | undefined = this.getField(key);
+        return normalizeFieldValue(field);
     }
 
     getAuthors(): Authors | undefined {

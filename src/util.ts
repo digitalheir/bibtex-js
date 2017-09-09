@@ -1,3 +1,6 @@
+import {BibStringDatum} from "./bibfile/datatype/string/BibStringData";
+import {isStringRef} from "./bibfile/datatype/string/StringRef";
+import {isBibStringComponent} from "./bibfile/datatype/string/bib-string-utils";
 
 export function mustBeString(str: any, o?: any): string {
     if (typeof str !== "string")

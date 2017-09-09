@@ -4,7 +4,10 @@ import {isOuterQuotedString, isQuotedString} from "../../datatype/string/QuotedS
 import {isStringRef} from "../../datatype/string/StringRef";
 import {isOuterBracedString} from "../../datatype/string/BracedString";
 import {
-    splitOnAnd, splitOnComma, splitOnPattern, toStringBibStringData,
+    splitOnAnd,
+    splitOnComma,
+    splitOnPattern,
+    toStringBibStringData,
     toStringBibStringDatum
 } from "../../datatype/string/bib-string-utils";
 

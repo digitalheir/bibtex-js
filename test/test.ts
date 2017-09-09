@@ -515,12 +515,13 @@ describe("parser", () => {
 
         const acab$ = bib.strings$.acab;
         if (isOuterQuotedString(acab$)) {
+            expect(acab$.stringify()).to.equal("all comp\\\"uters are beautiful");
+
             const thirdDatum: any = acab$.data[3];
             expect(thirdDatum.type).to.equal("bracedstringwrapper");
             const fourthDatum: any = acab$.data[4];
             expect(fourthDatum["type"]).to.equal("quotedstring");
-        } else
-            expect(isOuterQuotedString(acab$)).to.throw();
+        } else expect(isOuterQuotedString(acab$)).to.throw();
     });
 
     it("should parse bib entries", function () {

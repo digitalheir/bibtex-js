@@ -13,3 +13,4 @@ export * from "./bibfile/datatype/string/QuotedString";
 export * from "./bibfile/datatype/string/StringRef";
 export * from "./bibfile/datatype/KeyVal";
 export * from "./bibfile/BibFile";
+export * from "./util";

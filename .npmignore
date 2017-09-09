@@ -2,8 +2,8 @@ node_modules/
 *.log
 *.tgz
 
-/src/
-/test/
+src/
+test/
 gulpfile.js
 testrun.ts
 webpack.config.js
@@ -12,5 +12,5 @@ webpack.config.js
 /typings.json
 typings
 dist/test
-
+*.pdf
 /try.js

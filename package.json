@@ -1,33 +1,36 @@
 {
   "name": "bibtex",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "For parsing a BiBTeX file in pure Javascript / Typescript",
   "main": "index.js",
   "types": "index.d.ts",
   "repository": "git@github.com:digitalheir/bibtex-js.git",
   "author": "Maarten Trompper",
   "license": "MIT",
-  "keywords": ["bibtex", "parser"],
+  "keywords": [
+    "bibtex",
+    "parser"
+  ],
   "dependencies": {},
   "devDependencies": {
     "@types/chai": "^4.0.1",
-    "@types/mocha": "^2.2.40",
+    "@types/mocha": "^2.2.43",
     "assert": "^1.4.1",
-    "awesome-typescript-loader": "^3.2.2",
-    "babel-cli": "^6.24.1",
-    "babel-core": "^6.24.1",
-    "babel-loader": "^7.0.0",
+    "awesome-typescript-loader": "^3.2.3",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.5.1",
     "babel-preset-es2015": "^6.24.1",
     "chai": "^4.1.0",
-    "latex-to-unicode-converter": "^0.2.1",
+    "latex-to-unicode-converter": "^0.5.0",
     "mocha": "^3.5.0",
-    "nearley": "^2.9.2",
+    "nearley": "^2.11.0",
     "rimraf": "^2.5.4",
     "ts-node": "^3.0.4",
-    "tslint": "^5.6.0",
+    "tslint": "^5.7.0",
     "tslint-loader": "^3.5.3",
-    "typescript": "^2.3.3",
+    "typescript": "^2.5.2",
     "webpack": "^3.4.1"
   },
   "scripts": {
@@ -43,7 +46,7 @@
   "contributors": [
     {
       "name": "Maarten Trompper",
-      "email": "maartentrompper@gmail.com"
+      "email": "maartentrompper@freedom.nl"
     }
   ]
 }
