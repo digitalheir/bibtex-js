@@ -31,24 +31,27 @@ npm install bibtex
 import {parseBibFile} from "bibtex";
 
 const bibFile = parseBibFile(`
-
-@InProceedings{mut2011,
-  author    = {Pradeep Muthukrishnan and Dragomir Radev and Qiaozhu Mei},
-  title     = {Simultaneous Similarity Learning and Feature-Weight Learning for Document Clustering},
-  booktitle = {Proceedings of TextGraphs-6: Graph-based Methods for Natural Language Processing},
-  month     = {June},
-  year      = {2011},
-  address   = {Portland, Oregon},
-  publisher = {Association for Computational Linguistics},
-  url       = {http://www.aclweb.org/anthology/W11-1107},
-  pages = {42--50}
-}
+          @InProceedings{sci69,
+            author    = {Marteen Fredrik Adriaan ding de la Trumppert and مهدي N\\"allen and henQuq, jr, Mathize},
+            title     = {A Definite Proof That {P} \\gtreqqless {NP} Using Super-{T}uring Computation Near Big Black Holes},
+            booktitle = {Book of Quq},
+            month     = {July},
+            year      = {2005},
+            address   = {Dordrecht},
+            publisher = {Willems Uitgeverij},
+            url       = {https://github.com/digitalheir/},
+            pages     = {14--88}
+          }
 `);
 
+
+// Keys are case-insensitive
+bibFile.getEntry("MUT2011").getField("TITLE"); // This is a complex BibTeX string
+
 console.log(
-    // Keys are case-insensitive
-    bibFile.getEntry("MUT2011").getField("TITLE")
-); // Prints some complicated string
+    // But we can normalize to a JavaScript string
+    normalizeFieldValue(fieldValue)
+); 
 ```
 
 ## Contact
