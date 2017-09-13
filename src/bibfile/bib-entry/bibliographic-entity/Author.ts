@@ -194,8 +194,7 @@ function vonLastJrFirst(vonLastStr: BibStringData, jrStr: BibStringData, firstSt
  * • von Last, First;
  * • von Last, Jr, First.
  *
- * The format to be considered is obtained by counting the number of commas in the name. Here are
- * the characteristics of these formats:
+ * The format to be considered is obtained by counting the number of commas in the name. 
  */
 export function parseAuthorName(normalizedFieldValue: BibStringData): AuthorName {
     const partitions: BibStringData[] = splitOnComma(normalizedFieldValue);
@@ -220,15 +219,3 @@ function mdbsd(x: any): BibStringData {
     if (isdbsd(x)) return x; else throw new Error("???????");
 }
 
-
-export class Authorrr {
-    readonly first;
-    readonly von;
-    readonly last;
-
-    constructor(first: string, von: string | undefined, last: string | undefined) {
-        this.first = first;
-        this.von = von;
-        this.last = last;
-    }
-}
