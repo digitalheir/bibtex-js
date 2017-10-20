@@ -44,13 +44,18 @@ const bibFile = parseBibFile(`
           }
 `);
 
-
-const fieldValue = bibFile
+const entry = bibFile
   .getEntry("realscience") // Keys are case-insensitive
+
+const fieldValue = entry
   .getField("TITLE"); // This is a complex BibTeX string
 
-const authorField = bibFile
-  .getEntry("realscience") // Keys are case-insensitive
+console.log(
+    // But we can normalize to a JavaScript string
+    normalizeFieldValue(fieldValue)
+); 
+
+const authorField = entry
   .getField("author"); // This is a special object, divided into first names, vons and last names according to BibTeX spec
 
 authorField.authors$.map((author, i) => console.log("Author: " 
@@ -59,10 +64,6 @@ authorField.authors$.map((author, i) => console.log("Author: "
             .concat(author.lastNames)
             .concat(author.jrs)).join(" ")));
 
-console.log(
-    // But we can normalize to a JavaScript string
-    normalizeFieldValue(fieldValue)
-); 
 ```
 
 ## Contact
