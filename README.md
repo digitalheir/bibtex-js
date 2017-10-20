@@ -54,10 +54,10 @@ const authorField = bibFile
   .getField("author"); // This is a special object, divided into first names, vons and last names according to BibTeX spec
 
 authorField.authors$.map((author, i) => console.log("Author: " 
-  + author.vons.join(" ") 
-  + author.lastNames.join(" ") + ", " 
-  + author.jrs.join(" ") + ", " 
-  + author.firstNames.join(" ")));
+  + (author.firstNames
+            .concat(author.vons)
+            .concat(author.lastNames)
+            .concat(author.jrs)).join(" ")));
 
 console.log(
     // But we can normalize to a JavaScript string
