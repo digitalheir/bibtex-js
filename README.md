@@ -5,7 +5,9 @@
 [![License](https://img.shields.io/npm/l/bibtex.svg)](https://github.com/digitalheir/bibtex-js/blob/master/LICENSE)
 [![Code Climate](https://codeclimate.com/github/digitalheir/bibtex-js/badges/gpa.svg)](https://codeclimate.com/github/digitalheir/bibtex-js)
 
-Library for parsing BibTeX .bib files, based mostly on the excellent guide to BibTeX, [*Tame the BeaST*](http://tug.ctan.org/info/bibtex/tamethebeast/ttb_en.pdf). [Live demo in browser](https://digitalheir.github.io/bibtex-js/)
+Library for parsing BibTeX .bib files, based mostly on the excellent guide to BibTeX, [*Tame the BeaST*](http://tug.ctan.org/info/bibtex/tamethebeast/ttb_en.pdf). 
+
+[Live demo in browser](https://digitalheir.github.io/bibtex-js/)
 
 
 Written in Typescript, compiled to ES5 Javascript (with typings provided).
