@@ -31,7 +31,7 @@ npm install bibtex
 import {parseBibFile} from "bibtex";
 
 const bibFile = parseBibFile(`
-          @InProceedings{sci69,
+          @InProceedings{realscience,
             author    = {Marteen Fredrik Adriaan ding de la Trumppert and مهدي N\\"allen and henQuq, jr, Mathize},
             title     = {You Won't Believe This Proof That {P} \\gtreqqless {NP} Using Super-{T}uring Computation Near Big Black Holes},
             booktitle = {Book of Qeq},
@@ -40,13 +40,14 @@ const bibFile = parseBibFile(`
             address   = {Dordrecht},
             publisher = {Willems Uitgeverij},
             url       = {https://github.com/digitalheir/},
-            pages     = {14--88}
+            pages     = {6--9}
           }
 `);
 
 
-// Keys are case-insensitive
-bibFile.getEntry("MUT2011").getField("TITLE"); // This is a complex BibTeX string
+const fieldValue = bibFile
+  .getEntry("realscience") // Keys are case-insensitive
+  .getField("TITLE"); // This is a complex BibTeX string
 
 console.log(
     // But we can normalize to a JavaScript string
