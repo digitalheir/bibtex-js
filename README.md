@@ -28,7 +28,7 @@ npm install bibtex
 ```
 
 ```js
-import {parseBibFile} from "bibtex";
+import {parseBibFile, normalizeFieldValue} from "bibtex";
 
 const bibFile = parseBibFile(`
           @InProceedings{realscience,
