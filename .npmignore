@@ -2,7 +2,6 @@ node_modules/
 *.log
 *.tgz
 
-src/
 test/
 gulpfile.js
 testrun.ts
