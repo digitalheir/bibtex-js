@@ -1,0 +1,1 @@
+{"version":3,"file":"BibBlockTypes.js","sourceRoot":"","sources":["../../src/lexer/BibBlockTypes.ts"],"names":[],"mappings":";;AAAa,QAAA,QAAQ,GAAG;IACpB,MAAM,EAAE,SAAS;IACjB,QAAQ,EAAE,WAAW;IACrB,OAAO,EAAE,UAAU;IACnB,GAAG,EAAE,MAAM;CACd,CAAC;AAIW,QAAA,SAAS,GAAG,UAAU,CAAS;IACxC,MAAM,CAAC,gBAAQ,CAAC,cAAc,CAAC,CAAC,CAAC,CAAC;AACtC,CAAC,CAAC"}

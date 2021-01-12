@@ -1,0 +1,36 @@
+import { BibEntry } from "../BibEntry";
+export declare const address = "address";
+export declare const author = "author";
+export declare const booktitle = "booktitle";
+export declare const chapter = "chapter";
+export declare const edition = "edition";
+export declare const editor = "editor";
+export declare const howpublished = "howpublished";
+export declare const institution = "institution";
+export declare const journal = "journal";
+export declare const month = "month";
+export declare const note = "note";
+export declare const number = "number";
+export declare const organization = "organization";
+export declare const pages = "pages";
+export declare const publisher = "publisher";
+export declare const school = "school";
+export declare const series = "series";
+export declare const title = "title";
+export declare const type = "type";
+export declare const volume = "volume";
+export declare const year = "year";
+export declare type KnownField = "address" | "author" | "booktitle" | "chapter" | "edition" | "editor" | "howpublished" | "institution" | "journal" | "month" | "note" | "number" | "organization" | "pages" | "publisher" | "school" | "series" | "title" | "type" | "volume" | "year";
+export declare type MandatoryFields = KnownField | KnownField[];
+export declare type OptionalFields = KnownField | KnownField[];
+export declare const optionalFields: {
+    [k: string]: (KnownField | KnownField[])[];
+};
+export declare const mandatoryFields: {
+    [k: string]: (KnownField | KnownField[])[];
+};
+export declare function hasOptionalFields(s: any): s is (keyof typeof optionalFields);
+export declare function hasMandatoryFields(s: any): s is (keyof typeof mandatoryFields);
+export declare function getMandatoryFields(s: string): MandatoryFields[];
+export declare function getOptionalFields(s: string): OptionalFields[];
+export declare const findError: (entry: BibEntry, field: "number" | "author" | "type" | "title" | "address" | "booktitle" | "chapter" | "edition" | "editor" | "howpublished" | "institution" | "journal" | "month" | "note" | "organization" | "pages" | "publisher" | "school" | "series" | "volume" | "year" | KnownField[]) => Error | undefined;
