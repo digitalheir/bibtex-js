@@ -200,11 +200,11 @@ export const mandatoryFields: { [k: string]: (KnownField | KnownField[])[] } = {
     "unpublished": ["author", "title", "note"]
 };
 
-export function hasOptionalFields(s: string): s is (keyof typeof optionalFields) {
+export function hasOptionalFields(s: any): s is (keyof typeof optionalFields) {
     return optionalFields.hasOwnProperty(s);
 }
 
-export function hasMandatoryFields(s: string): s is (keyof typeof mandatoryFields) {
+export function hasMandatoryFields(s: any): s is (keyof typeof mandatoryFields) {
     return mandatoryFields.hasOwnProperty(s);
 }
 
