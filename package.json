@@ -1,6 +1,6 @@
 {
   "name": "bibtex",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Library for parsing a BiBTeX file in pure Javascript / Typescript",
   "main": "index.js",
   "types": "index.d.ts",
